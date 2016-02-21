@@ -1,7 +1,10 @@
 
 package org.usfirst.frc.team4213.robot;
 
+import org.team4213.lib14.AIRFLOController;
+
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +21,13 @@ public class Robot extends IterativeRobot {
     final String customAuto = "My Auto";
     String autoSelected;
     SendableChooser chooser;
+    
+    
+    AIRFLOController driverController;
+    DriveTrain driveTrain;
+    
+    
+    
 	
     /**
      * This function is run when the robot is first started up and should be
@@ -28,6 +38,11 @@ public class Robot extends IterativeRobot {
         chooser.addDefault("Default Auto", defaultAuto);
         chooser.addObject("My Auto", customAuto);
         SmartDashboard.putData("Auto choices", chooser);
+        
+        driverController = new AIRFLOController(0);
+        driveTrain = new DriveTrain(new Talon(0), new Talon(1));
+        
+        
     }
     
 	/**
@@ -64,6 +79,8 @@ public class Robot extends IterativeRobot {
      * This function is called periodically during operator control
      */
     public void teleopPeriodic() {
+    	
+    	driveTrain.drive(driverController, true);
         
     }
     
