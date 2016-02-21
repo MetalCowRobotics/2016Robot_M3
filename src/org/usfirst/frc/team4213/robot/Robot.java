@@ -86,11 +86,11 @@ public class Robot extends IterativeRobot {
     	
     	driveTrain.drive(driverController, true);
     	
-    	if(Math.abs(gunnerController.XBOX_AXIS_LTRIGGER)>0){
-    	gunnerController.setRumble(RumbleType.kLeftRumble, gunnerController.XBOX_AXIS_LTRIGGER);
+    	if(Math.abs(gunnerController.getLT())>0){
+    	gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
     	}
-    	if(Math.abs(gunnerController.XBOX_AXIS_RTRIGGER)>0){
-    	gunnerController.setRumble(RumbleType.kRightRumble, gunnerController.XBOX_AXIS_RTRIGGER);
+    	if(Math.abs(gunnerController.getRT())>0){
+    	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
     	}
     	
     	
