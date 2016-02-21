@@ -1,16 +1,15 @@
-package org.usfirst.frc.team4213.robot;
+package org.usfirst.frc.team4213.robot.controllers;
 
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.Xbox360Controller;
+import org.usfirst.frc.team4213.robot.systems.DriveMap;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 
-public class DriveTrain{
-	
-	//the actual logical drive that matches the physical drive
-	private RobotDrive drive;
+public class DriveController extends RobotDrive{
+
 	
 	//Set the top speeds for the driver
 	double topSpeedNormal = .6;
@@ -22,8 +21,16 @@ public class DriveTrain{
 	 * @param leftMotor - the speed controller for the left motor
 	 * @param rightMotor - the speed controller for the right motor
 	 */
-	public DriveTrain(SpeedController leftMotor, SpeedController rightMotor){
-		drive = new RobotDrive(leftMotor, rightMotor);
+	public DriveController(SpeedController leftMotor, SpeedController rightMotor){
+		super(leftMotor, rightMotor);
+	}
+
+	/**
+	 * Create the DriveTrain, this one has two motors
+	 * @param DriveMap - Takes in a DriveMap and then identifies the motors.
+	 */
+	public DriveController(DriveMap driveMap){
+		this(driveMap.LEFT_MOTOR, driveMap.RIGHT_MOTOR);
 	}
 	
 	/**
@@ -65,7 +72,7 @@ public class DriveTrain{
 	 */
 	private void drive(double direction, double rotation, double throttle, boolean squareUnits){	
 		//Move the robot
-		drive.arcadeDrive(direction*throttle, rotation*throttle, squareUnits); //ArcadeMode
+		this.arcadeDrive(direction*throttle, rotation*throttle, squareUnits); //ArcadeMode
 	}
 
 	

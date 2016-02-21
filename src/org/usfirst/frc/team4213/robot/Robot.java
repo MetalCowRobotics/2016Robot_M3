@@ -2,12 +2,20 @@
 package org.usfirst.frc.team4213.robot;
 
 import org.team4213.lib14.AIRFLOController;
+<<<<<<< HEAD
 import org.team4213.lib14.Xbox360Controller;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
+=======
+import org.usfirst.frc.team4213.robot.controllers.DriveController;
+import org.usfirst.frc.team4213.robot.systems.DriveMap;
+
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
+>>>>>>> master
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -26,8 +34,12 @@ public class Robot extends IterativeRobot {
     
     
     AIRFLOController driverController;
+<<<<<<< HEAD
     Xbox360Controller gunnerController;
     DriveTrain driveTrain;
+=======
+    DriveController driveTrain;
+>>>>>>> master
     
     
     
@@ -43,8 +55,15 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto choices", chooser);
         
         driverController = new AIRFLOController(0);
+<<<<<<< HEAD
         gunnerController = new Xbox360Controller(1);
         driveTrain = new DriveTrain(new Talon(8), new Talon(9));
+=======
+        
+        //TODO: Read-in and Populate the RobotMap from a textFile
+        
+        driveTrain = new DriveController(new DriveMap());
+>>>>>>> master
         
         
     }
@@ -81,6 +100,7 @@ public class Robot extends IterativeRobot {
 
     /**
      * This function is called periodically during operator control
+     * Working Calls for Drivers to do their stuff
      */
     public void teleopPeriodic() {
     	
@@ -98,8 +118,11 @@ public class Robot extends IterativeRobot {
     
     /**
      * This function is called periodically during test mode
+     * Coders and Developers use this during their tests
      */
     public void testPeriodic() {
+    	
+    	driveTrain.drive(driverController, true);
     
     }
     
