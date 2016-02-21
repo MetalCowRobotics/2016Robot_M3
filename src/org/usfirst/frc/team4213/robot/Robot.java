@@ -2,10 +2,11 @@
 package org.usfirst.frc.team4213.robot;
 
 import org.team4213.lib14.AIRFLOController;
+import org.usfirst.frc.team4213.robot.controllers.DriveController;
+import org.usfirst.frc.team4213.robot.systems.DriveMap;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Talon;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -24,7 +25,7 @@ public class Robot extends IterativeRobot {
     
     
     AIRFLOController driverController;
-    DriveTrain driveTrain;
+    DriveController driveTrain;
     
     
     
@@ -40,7 +41,10 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto choices", chooser);
         
         driverController = new AIRFLOController(0);
-        driveTrain = new DriveTrain(new Talon(0), new Talon(1));
+        
+        //TODO: Read-in and Populate the RobotMap from a textFile
+        
+        driveTrain = new DriveController(new DriveMap());
         
         
     }
@@ -77,6 +81,7 @@ public class Robot extends IterativeRobot {
 
     /**
      * This function is called periodically during operator control
+     * Working Calls for Drivers to do their stuff
      */
     public void teleopPeriodic() {
     	
@@ -86,8 +91,11 @@ public class Robot extends IterativeRobot {
     
     /**
      * This function is called periodically during test mode
+     * Coders and Developers use this during their tests
      */
     public void testPeriodic() {
+    	
+    	driveTrain.drive(driverController, true);
     
     }
     
