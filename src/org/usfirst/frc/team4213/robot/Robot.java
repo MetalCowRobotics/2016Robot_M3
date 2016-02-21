@@ -44,7 +44,7 @@ public class Robot extends IterativeRobot {
         
         driverController = new AIRFLOController(0);
         gunnerController = new Xbox360Controller(1);
-        driveTrain = new DriveTrain(new Talon(0), new Talon(1));
+        driveTrain = new DriveTrain(new Talon(8), new Talon(9));
         
         
     }
