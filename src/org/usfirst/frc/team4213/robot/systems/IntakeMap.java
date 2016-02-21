@@ -7,4 +7,8 @@ public class IntakeMap {
 
 public static final SpeedController INTAKE_MOTOR = new Talon(RobotMap.Intake.MOTOR_CHANNEL);
 
+public static final double INTAKE_SPEED = 1;
+
+public static final double EJECT_SPEED = -1;
+
 }
