@@ -2,8 +2,10 @@
 package org.usfirst.frc.team4213.robot;
 
 import org.team4213.lib14.AIRFLOController;
+import org.team4213.lib14.Xbox360Controller;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick.RumbleType;
 import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -24,6 +26,7 @@ public class Robot extends IterativeRobot {
     
     
     AIRFLOController driverController;
+    Xbox360Controller gunnerController;
     DriveTrain driveTrain;
     
     
@@ -40,6 +43,7 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto choices", chooser);
         
         driverController = new AIRFLOController(0);
+        gunnerController = new Xbox360Controller(1);
         driveTrain = new DriveTrain(new Talon(0), new Talon(1));
         
         
@@ -81,7 +85,9 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	
     	driveTrain.drive(driverController, true);
-        
+    	
+    	gunnerController.setRumble(RumbleType.kLeftRumble, gunnerController.XBOX_AXIS_LTRIGGER);
+    	gunnerController.setRumble(RumbleType.kRightRumble, gunnerController.XBOX_AXIS_RTRIGGER);
     }
     
     /**
