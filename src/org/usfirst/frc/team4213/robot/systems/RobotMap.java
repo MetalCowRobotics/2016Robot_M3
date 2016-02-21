@@ -1,10 +1,15 @@
 package org.usfirst.frc.team4213.robot.systems;
 
 public final class RobotMap {
+	
+	//TODO - to extrapolate to a .txt file
+	//make these into private variables with public getters() and setters()
+	//Then in robotInit() read in the text file and use all the setter() to build the robotMap
+	//Then rather than reading FINALS actually call the getters()
 
 	public final class Drivetrain {
-		public static final int LEFT_MOTOR = 8;
-		public static final int RIGHT_MOTOR = 9;
+		public static final int LEFT_MOTOR_CHANNEL = 8;
+		public static final int RIGHT_MOTOR_CHANNEL = 9;
 		public static final double SPRINT_SPEED = 1;
 		public static final double NORMAL_SPEED = 0.6;
 		public static final double CRAWL_SPEED = 0.4;
