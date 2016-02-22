@@ -19,70 +19,73 @@ public class Xbox360Controller extends Joystick {
 	boolean[] previousStates;
 	boolean[] toggleStates;
 	
-	private final int		XBOX_AXIS_LX			= 0;
+	public static final int		XBOX_AXIS_LX			= 0;
 	
-	private final int		XBOX_AXIS_LY			= 1;
+	public static final int		XBOX_AXIS_LY			= 1;
+
 	/**
 	 * The primary Xbox 360 controller left trigger. Values range from 0.0 to
 	 * 1.0.
 	 */
-	private final int		XBOX_AXIS_LTRIGGER		= 2;
+
+	public static final int		XBOX_AXIS_LTRIGGER		= 2;
 	/**
 	 * The primary Xbox 360 controller right trigger. Values range from 0.0 to
 	 * 1.0.
 	 */
-	private final int		XBOX_AXIS_RTRIGGER		= 3;
+
+	public static final int		XBOX_AXIS_RTRIGGER		= 3;
 	/**
 	 * The primaryXbox 360 controller right X-axis.
 	 */
-	private final int		XBOX_AXIS_RX			= 4;
+	public static final int		XBOX_AXIS_RX			= 4;
 	/**
 	 * The primary Xbox 360 controller right Y-axis.
 	 */
-	private final int		XBOX_AXIS_RY			= 5;
-	
+	public static final int		XBOX_AXIS_RY			= 5;
+
 	
 	/**
 	 * The driver Xbox 360 controller A (south) button. See {@link http
 	 * ://www.chiefdelphi.com/forums/showpost.php?p=1003245&postcount=8}.
 	 */
-	private final int		XBOX_BTN_A				= 1;
+	public static final int		XBOX_BTN_A				= 1;
 	/**
 	 * The primary Xbox 360 controller B (east) button.
 	 */
-	private final int		XBOX_BTN_B				= 2;
+	public static final int		XBOX_BTN_B				= 2;
 	/**
 	 * The primary Xbox 360 controller X (west) button.
 	 */
-	private final int		XBOX_BTN_X				= 3;
+	public static final int		XBOX_BTN_X				= 3;
 	/**
 	 * The primary Xbox 360 controller Y (north) button.
 	 */
-	private final int		XBOX_BTN_Y				= 4;
+	public static final int		XBOX_BTN_Y				= 4;
 	/**
 	 * The primary Xbox 360 controller left bumper.
 	 */
-	private final int		XBOX_BTN_LBUMP			= 5;
+	public static final int		XBOX_BTN_LBUMP			= 5;
 	/**
 	 * The primary Xbox 360 controller right bumper.
 	 */
-	private final int		XBOX_BTN_RBUMP			= 6;
+	public static final int		XBOX_BTN_RBUMP			= 6;
 	/**
 	 * The primary Xbox 360 controller and Guitar Hero X-plorer back button.
 	 */
-	private final int		XBOX_BTN_BACK			= 7;
+	public static final int		XBOX_BTN_BACK			= 7;
 	/**
 	 * The primary Xbox 360 controller and Guitar Hero X-plorer start button.
 	 */
-	private final int		XBOX_BTN_START			= 8;
+	public static final int		XBOX_BTN_START			= 8;
 	/**
 	 * The primary Xbox 360 controller left joystick (pressed).
 	 */
-	private final int		XBOX_BTN_LSTICK			= 9;
+	public static final int		XBOX_BTN_LSTICK			= 9;
 	/**
 	 * The primary Xbox 360 controller right joystick (pressed).
 	 */
-	private final int		XBOX_BTN_RSTICK			= 10;
+	public static final int		XBOX_BTN_RSTICK			= 10;
 	
 	public Xbox360Controller(int port) {
 		super(port);
