@@ -41,7 +41,15 @@ public class TurretYawController {
 		else{
 			turretYaw.CLOCK_WISE_SPEED = Math.abs(error/100);
 		}
-
+	}
+	
+	public boolean isZeroed(){
+		if((turretYaw.CURRENT_POSITION < 510 && turretYaw.CURRENT_POSITION > 490) && turretYaw.YAW_SWITCH.get() == true){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 	
 }
