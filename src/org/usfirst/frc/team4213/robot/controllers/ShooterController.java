@@ -64,7 +64,7 @@ public class ShooterController {
 	public void step(){
 		switch(state){
 		case SHOOTING:
-			if(Math.abs(desiredCamAngle - shooter.getEncDist()) < 5 && getCurrentTimeMS() - shootTime >  1*1000 ){ // 1 Second of Wheel Spinning. ( ADD TO CONFIG )
+			if(Math.abs(desiredCamAngle - shooter.getEncDist()) < 3 && getCurrentTimeMS() - shootTime >  1*1000 ){ // 1 Second of Wheel Spinning. ( ADD TO CONFIG )
 				shooter.resetEnc();
 				idle();
 				desiredCamAngle = 0;
