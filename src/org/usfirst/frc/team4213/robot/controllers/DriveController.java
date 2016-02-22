@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.SpeedController;
 
-public class DriveController extends RobotDrive{
+public class DriveController{  //TODO: Extends RobotDrive to get other methods
 
 	
 	//Set the top speeds for the driver
@@ -16,13 +16,16 @@ public class DriveController extends RobotDrive{
 	double topSpeedCrawl = .3;
 	double topSpeedSprint = 1;
 	
+	RobotDrive robotDrive;
+	
 	/**
 	 * Create the DriveTrain, this one has two motors
 	 * @param leftMotor - the speed controller for the left motor
 	 * @param rightMotor - the speed controller for the right motor
 	 */
 	public DriveController(SpeedController leftMotor, SpeedController rightMotor){
-		super(leftMotor, rightMotor);
+		//TODO: see class definition comment ---- super(leftMotor, rightMotor);  
+		robotDrive = new RobotDrive(leftMotor, rightMotor);
 	}
 
 	/**
@@ -72,7 +75,7 @@ public class DriveController extends RobotDrive{
 	 */
 	private void drive(double direction, double rotation, double throttle, boolean squareUnits){	
 		//Move the robot
-		this.arcadeDrive(direction*throttle, rotation*throttle, squareUnits); //ArcadeMode
+		robotDrive.arcadeDrive(direction*throttle, rotation*throttle, squareUnits); //ArcadeMode
 	}
 
 	
