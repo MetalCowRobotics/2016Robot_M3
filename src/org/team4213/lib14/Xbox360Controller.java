@@ -19,27 +19,27 @@ public class Xbox360Controller extends Joystick {
 	boolean[] previousStates;
 	boolean[] toggleStates;
 	
-	private static final int		XBOX_AXIS_LX			= 0;
+	public static final int		XBOX_AXIS_LX			= 0;
 	
-	private static final int		XBOX_AXIS_LY			= 1;
+	public static final int		XBOX_AXIS_LY			= 1;
 	/**
 	 * The primary Xbox 360 controller left trigger. Values range from 0.0 to
 	 * 1.0.
 	 */
-	private static final int		XBOX_AXIS_LTRIGGER		= 2;
+	public static final int		XBOX_AXIS_LTRIGGER		= 2;
 	/**
 	 * The primary Xbox 360 controller right trigger. Values range from 0.0 to
 	 * 1.0.
 	 */
-	private static final int		XBOX_AXIS_RTRIGGER		= 3;
+	public static final int		XBOX_AXIS_RTRIGGER		= 3;
 	/**
 	 * The primaryXbox 360 controller right X-axis.
 	 */
-	private static final int		XBOX_AXIS_RX			= 4;
+	public static final int		XBOX_AXIS_RX			= 4;
 	/**
 	 * The primary Xbox 360 controller right Y-axis.
 	 */
-	private static final int		XBOX_AXIS_RY			= 5;
+	public static final int		XBOX_AXIS_RY			= 5;
 	
 
 	/**
