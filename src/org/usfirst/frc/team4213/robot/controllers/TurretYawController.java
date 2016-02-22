@@ -21,4 +21,15 @@ public class TurretYawController {
 		turretYawMove(turretYaw.COUNTER_CLOCK_WISE_SPEED);
 	}
 	
+	public void upperLimmit(){
+		if(turretYaw.UPPER_LIMIT >= turretYaw.CURRENT_POSITION){
+			turretYaw.COUNTER_CLOCK_WISE_SPEED = 0;
+		}
+	}
+	
+	public void lowerLimmit(){
+		if(turretYaw.LOWER_LIMIT <= turretYaw.CURRENT_POSITION){
+			turretYaw.CLOCK_WISE_SPEED = 0;
+		}
+	}
 }
