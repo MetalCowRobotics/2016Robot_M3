@@ -44,7 +44,7 @@ public class TurretYawController {
 	}
 	
 	public boolean isZeroed(){
-		if((turretYaw.CURRENT_POSITION < 510 && turretYaw.CURRENT_POSITION > 490) && turretYaw.YAW_SWITCH.get() == true){
+		if((turretYaw.CURRENT_POSITION < turretYaw.START_POSITION + 10 && turretYaw.CURRENT_POSITION > turretYaw.START_POSITION - 10) && turretYaw.YAW_SWITCH.get() == true){
 			return true;
 		}
 		else{
