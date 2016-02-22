@@ -18,7 +18,7 @@ public class TurretYawController {
 	}
 	
 	public void yawCounterClockWise(){
-		turretYawMove(turretYaw.COUNTER_CLOCK_WISE_SPEED);
+		turretYaw(turretYaw.COUNTER_CLOCK_WISE_SPEED);
 	}
 	
 	public void upperLimmit(){

@@ -18,9 +18,16 @@ public class TurretYawMap {
 	
 	public static final CANTalon YAW_MOTOR = new CANTalon(Yaw_Motor.MOTOR_CHANNEL);
 	
+<<<<<<< HEAD
 	public static double CLOCK_WISE_SPEED = 0.4;
 
 	public static double COUNTER_CLOCK_WISE_SPEED = -0.4;
 	
 	
+=======
+	//TODO add string potentiometer
+	public static final double CLOCK_WISE_SPEED = 1;
+
+	public static final double COUNTER_CLOCK_WISE_SPEED = -1;
+>>>>>>> parent of 885dff5... Map and Controller is done for raw movement
 }
