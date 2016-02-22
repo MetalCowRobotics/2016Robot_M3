@@ -5,6 +5,8 @@ import java.util.Calendar;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class ShooterController {
 	private ShooterMap shooter;
 	private int desiredCamAngle;
@@ -32,24 +34,31 @@ public class ShooterController {
 	}
 
 	public void intake() {
+		if(desiredCamAngle == 120){
+			desiredCamAngle = 0;
+		}
 		shooter.setWheelSpeed(Shooter.INTAKE_SPEED);
 		state = ShooterState.INTAKE;
 	}
 
 	public void shoot() {
-		desiredCamAngle = 360;
-		shootTime = getCurrentTimeMS();
-		state = ShooterState.SHOOTING;
+		if(state == ShooterState.ARMED){
+			desiredCamAngle = 360;
+			shootTime = getCurrentTimeMS();
+			state = ShooterState.SHOOTING;
+		}else{
+			// TODO VIBE CONTROLLER
+			DriverStation.reportError("Shooter is Not Armed so it Cannot be Shot", false);
+		}
 	}
 	public void idle(){
-		shooter.setCamSpeed(0);
+		//shooter.setCamSpeed(0); // Don't Need ( Unsure )
 		shooter.setWheelSpeed(0);
 		state = ShooterState.IDLE;
 	}
 	
 	public void lowerCam(){
-		desiredCamAngle = 120; // ADD TO CONFIG
-		
+		desiredCamAngle = 120; // ADD TO CONFIG		
 	}
 	
 	private long getCurrentTimeMS(){
