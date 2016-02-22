@@ -34,14 +34,5 @@ public class TurretYawController {
 		}
 	}
 	
-	public void zeroYaw(){
-		double error = turretYaw.START_POSITION - turretYaw.CURRENT_POSITION;
-		if(turretYaw.CURRENT_POSITION < 500){
-			turretYaw.COUNTER_CLOCK_WISE_SPEED = Math.abs(error/100);
-		}
-		else{
-			turretYaw.CLOCK_WISE_SPEED = Math.abs(error/100);
-		}
-
-	}
+	
 }
