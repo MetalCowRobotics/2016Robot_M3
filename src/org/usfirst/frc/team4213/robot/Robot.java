@@ -2,11 +2,17 @@
 package org.usfirst.frc.team4213.robot;
 
 import org.team4213.lib14.AIRFLOController;
+
+import org.team4213.lib14.Xbox360Controller;
+
+import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick.RumbleType;
+
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -25,6 +31,7 @@ public class Robot extends IterativeRobot {
     
     
     AIRFLOController driverController;
+    Xbox360Controller gunnerController;
     DriveController driveTrain;
     
     
@@ -41,10 +48,12 @@ public class Robot extends IterativeRobot {
         SmartDashboard.putData("Auto choices", chooser);
         
         driverController = new AIRFLOController(0);
+        gunnerController = new Xbox360Controller(1);
         
         //TODO: Read-in and Populate the RobotMap from a textFile
         
         driveTrain = new DriveController(new DriveMap());
+
         
         
     }
@@ -86,7 +95,15 @@ public class Robot extends IterativeRobot {
     public void teleopPeriodic() {
     	
     	driveTrain.drive(driverController, true);
-        
+    	
+    	if(Math.abs(gunnerController.getLT())>0){
+    	gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
+    	}
+    	if(Math.abs(gunnerController.getRT())>0){
+    	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
+    	}
+    	
+    	
     }
     
     /**
