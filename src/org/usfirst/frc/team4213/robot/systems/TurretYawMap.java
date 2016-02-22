@@ -1,9 +1,11 @@
 package org.usfirst.frc.team4213.robot.systems;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Turret.Yaw_Motor;
+
 import edu.wpi.first.wpilibj.*;
 
 public class TurretYawMap {
-	
+	public static DigitalInput YAW_SWITCH = new DigitalInput(5);
+
 	public static final AnalogPotentiometer STRING_POT = new AnalogPotentiometer(0, 1000 , 0);
 	
 	public static final int START_POSITION = 500;
