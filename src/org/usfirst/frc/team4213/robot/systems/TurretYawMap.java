@@ -8,5 +8,7 @@ public class TurretYawMap {
 	public static final CANTalon YAW_MOTOR = new CANTalon(Yaw_Motor.MOTOR_CHANNEL);
 	
 	//TODO add string potentiometer
-	
+	public static final double CLOCK_WISE_SPEED = 1;
+
+	public static final double COUNTER_CLOCK_WISE_SPEED = -1;
 }
