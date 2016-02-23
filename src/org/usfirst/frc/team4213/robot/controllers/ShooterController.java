@@ -8,6 +8,7 @@ import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class ShooterController {
+	
 	private ShooterMap shooter;
 	private int desiredCamAngle;
 	public ShooterState state;
@@ -18,8 +19,8 @@ public class ShooterController {
 		this.shooter = shooter;
 		state = ShooterState.IDLE;
 		//shooter.camMotor.enableBrakeMode(true); // DOES THIS WORK ???? 
-		desiredCamAngle = 0;
 		shooter.resetEnc();
+		desiredCamAngle = 0;
 		shooter.camEncoder.setDistancePerPulse(1 / Shooter.COUNT_PER_DEG);
 	}
 
@@ -34,7 +35,7 @@ public class ShooterController {
 	}
 
 	public void intake() {
-		if(desiredCamAngle == 120){
+		if(desiredCamAngle != 0){
 			desiredCamAngle = 0;
 		}
 		shooter.setWheelSpeed(Shooter.INTAKE_SPEED);
@@ -48,9 +49,10 @@ public class ShooterController {
 			state = ShooterState.SHOOTING;
 		}else{
 			// TODO VIBE CONTROLLER
-			DriverStation.reportError("Shooter is Not Armed so it Cannot be Shot", false);
+			DriverStation.reportError("Shooter is Not Armed : Ball Cannot be Shot", false);
 		}
 	}
+	
 	public void idle(){
 		//shooter.setCamSpeed(0); // Don't Need ( Unsure )
 		shooter.setWheelSpeed(0);
@@ -62,7 +64,7 @@ public class ShooterController {
 	}
 	
 	private long getCurrentTimeMS(){
-		return  Calendar.getInstance().get(Calendar.MILLISECOND);
+		return Calendar.getInstance().get(Calendar.MILLISECOND);
 	}
 	
 	private void runCamPID(){
