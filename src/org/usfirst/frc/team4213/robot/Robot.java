@@ -95,8 +95,69 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
     	
-//    	driveTrain.drive(driverController, true);
+/**
+ * MrHughes wants a stripped down rigging to test the drive train with.
+ * He doesn't care about encoders or smart measurements just that it all moves
+ * so that he can validate the wiring and motor gearing... this is that branch.
+ * 
+ * If he asks why it goes past a certain degree, or doesn't auto zero the turret
+ * it is because we are not reading the encoders at all and so that does not work.
+ * 
+ * WARNING: Pick a really good driver/gunner, with a fineness on the sticks
+ */
+    	//This will allow the driver on the AIRFLO to drive ArcadeMode
+    	driveTrain.drive(driverController, true);
     	
+    	
+    	
+    	
+    	//From here down the gunnerController will be used for actions
+    	
+    	//////
+    	// Intake In/Out
+    	/////
+    	if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Positive
+    		
+    	}else if(){ //Motor Negative
+    		
+    	}else{ //STOP
+    		
+    	}
+    	
+    	
+    	
+    	
+    	
+    	//////
+    	// Turret Up/Down
+    	/////
+    	
+    	
+    	
+    	//////
+    	// Turret Left/Right
+    	/////
+    	
+    	
+    	//////
+    	// Shooter Intake/Fire
+    	/////
+    	
+    	
+    	//////
+    	// Intake Up/Down
+    	/////
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	
+    	/* Haptic Feedback tests --- ignore for now
+
     	if(Math.abs(gunnerController.getLT())>0.5){
     		gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
     	}
@@ -111,6 +172,9 @@ public class Robot extends IterativeRobot {
     	
     	DriverStation.reportError("RightTrigger : "+gunnerController.getRT(), false);
     	DriverStation.reportError("LeftTrigger : "+gunnerController.getLT(), false);
+    	
+    	*/
+    	
     	
     	
     }
