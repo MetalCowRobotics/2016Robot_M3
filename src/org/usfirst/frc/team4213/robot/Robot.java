@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
+import org.usfirst.frc.team4213.robot.controllers.ShooterController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
+import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 
 import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
 
@@ -34,6 +36,8 @@ public class Robot extends IterativeRobot {
     AIRFLOController driverController;
     Xbox360Controller gunnerController;
     DriveController driveTrain;
+    ShooterMap shooterMap;
+    ShooterController shooter;
     
     
     
@@ -54,7 +58,8 @@ public class Robot extends IterativeRobot {
         //TODO: Read-in and Populate the RobotMap from a textFile
         
         driveTrain = new DriveController(new DriveMap());
-
+        shooterMap = new ShooterMap();
+        shooter = new ShooterController(shooterMap);
         
         
     }
@@ -185,6 +190,7 @@ public class Robot extends IterativeRobot {
      */
     public void testPeriodic() {
     	
+<<<<<<< HEAD
     	//driveTrain.drive(driverController, true);
     	
     	if(Math.abs(gunnerController.getLT())>0){
@@ -195,6 +201,21 @@ public class Robot extends IterativeRobot {
     	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
     	DriverStation.reportError("RightTrigger : "+gunnerController.getRT(), false);
     	}
+=======
+    	if(gunnerController.getButtonTripped(Xbox360Controller.XBOX_BTN_A)){
+    		shooter.intake();
+    	}else if(gunnerController.getButtonTripped(Xbox360Controller.XBOX_BTN_LBUMP)){
+    		shooter.arm();
+    	}else if(gunnerController.getButtonTripped(Xbox360Controller.XBOX_BTN_RBUMP)){
+    		shooter.shoot();
+    	}
+    	
+    	if(gunnerController.getButtonReleased(Xbox360Controller.XBOX_BTN_A)){
+    		shooter.idle();
+    	}
+    	
+    	shooter.step();
+>>>>>>> origin/Shooter
     
     }
     
