@@ -74,7 +74,7 @@ public class IntakeController {
 	
 	public void runPitchPID(){
 		error = desiredPitchAngle - intake.getEncDistance();
-		intake.setPitchSpeed(-error / 180);
+		intake.setPitchSpeed(-error / Intake.PID_P_VAL);
 	}
 
 	public void step() {

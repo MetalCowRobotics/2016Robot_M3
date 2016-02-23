@@ -55,6 +55,9 @@ public final class RobotMap {
 		
 		public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 		public static final int RAISE_ANGLE = 90;
+		public static final int LIMIT_SWITCH_CH = 8;
+		
+		public static final int PID_P_VAL = 120;
 	}
 
 	public final class Shooter {
