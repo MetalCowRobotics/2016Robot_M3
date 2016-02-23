@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
+import org.usfirst.frc.team4213.robot.controllers.IntakeController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 
@@ -35,6 +36,7 @@ public class Robot extends IterativeRobot {
     AIRFLOController driverController;
     Xbox360Controller gunnerController;
     DriveController driveTrain;
+    IntakeController intakeController;
     
     
     
@@ -54,6 +56,7 @@ public class Robot extends IterativeRobot {
         
         //TODO: Read-in and Populate the RobotMap from a textFile
         intake = new IntakeMap();
+        intakeController = new IntakeController(intake);
         driveTrain = new DriveController(new DriveMap());
 
         
@@ -113,14 +116,26 @@ public class Robot extends IterativeRobot {
      * Coders and Developers use this during their tests
      */
     public void testPeriodic() {
-    	intake.setPitchSpeed(-gunnerController.getRY()*0.3);
-    	if(gunnerController.getButton(Xbox360Controller.XBOX_BTN_A)){
-    		intake.setRollerSpeed(-.8);
-    	}else{
-    		intake.setRollerSpeed(0);
-    	}    	
+    	
+    	if(driverController.getPOV() == 180 || driverController.getPOV() == 135 || driverController.getPOV() == 235){
+    		intakeController.lowerIntake();
+    	}else if(driverController.getPOV() == 0){
+    		intakeController.raiseIntake();
+    	}
+    		
+    	if(driverController.getButtonTripped(1)){
+    		intakeController.intakeBall();
+    	}else if(driverController.getButtonReleased(1)){
+    		DriverStation.reportError("Button Released", false);
+    		intakeController.idle();
+    	}
+    	
+    	driveTrain.drive(driverController, true);
+
     	DriverStation.reportError("\n Position = " + intake.getEncPosition(), false);
-    	DriverStation.reportError("POV TEST : " + gunnerController.getPOV() , false);
+    	DriverStation.reportError("POV TEST : " + driverController.getPOV() , false);
+    	
+    	intakeController.step();
     }
     
 }

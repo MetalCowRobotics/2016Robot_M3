@@ -47,7 +47,7 @@ public class IntakeController {
 
 	public void raiseIntake() {
 		if( state == IntakeState.IDLE || state == IntakeState.LOWERING ){
-			desiredPitchAngle = 80;
+			desiredPitchAngle = Intake.RAISE_ANGLE;
 			state = IntakeState.RAISING;
 		}else{
 			DriverStation.reportError("You cannot Raise while Intaking", false);
@@ -74,7 +74,7 @@ public class IntakeController {
 	
 	public void runPitchPID(){
 		error = desiredPitchAngle - intake.getEncDistance();
-		intake.setPitchSpeed(error / 180);
+		intake.setPitchSpeed(-error / 180);
 	}
 
 	public void step() {
