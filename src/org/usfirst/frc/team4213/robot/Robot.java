@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
+import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 
 import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
 
@@ -29,7 +30,7 @@ public class Robot extends IterativeRobot {
     String autoSelected;
     SendableChooser chooser;
     
-    
+    IntakeMap intake;
     AIRFLOController driverController;
     Xbox360Controller gunnerController;
     DriveController driveTrain;
@@ -51,7 +52,7 @@ public class Robot extends IterativeRobot {
         gunnerController = new Xbox360Controller(1);
         
         //TODO: Read-in and Populate the RobotMap from a textFile
-        
+        intake = new IntakeMap();
         driveTrain = new DriveController(new DriveMap());
 
         
@@ -111,9 +112,7 @@ public class Robot extends IterativeRobot {
      * Coders and Developers use this during their tests
      */
     public void testPeriodic() {
-    	
-    	driveTrain.drive(driverController, true);
-    
+    	intake.setPitchSpeed(-gunnerController.getRY()*0.3);
     }
     
 }
