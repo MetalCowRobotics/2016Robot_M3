@@ -35,16 +35,17 @@ public class TurretYawController {
 	
 	public void zeroYaw(){
 		double error = turretYaw.START_POSITION - turretYaw.CURRENT_POSITION;
-		if(turretYaw.CURRENT_POSITION < 500){
+		if(turretYaw.CURRENT_POSITION < turretYaw.START_POSITION - 10){
 			turretYaw.COUNTER_CLOCK_WISE_SPEED = Math.abs(error/100);
 		}
 		else{
 			turretYaw.CLOCK_WISE_SPEED = Math.abs(error/100);
 		}
+		
 	}
 	
-	public boolean isZeroed(){
-		if((turretYaw.CURRENT_POSITION < turretYaw.START_POSITION + 10 && turretYaw.CURRENT_POSITION > turretYaw.START_POSITION - 10) && turretYaw.YAW_SWITCH.get() == true){
+	public boolean isZeroedEncoder(){
+		if(turretYaw.CURRENT_POSITION < turretYaw.START_POSITION - 10){
 			return true;
 		}
 		else{
