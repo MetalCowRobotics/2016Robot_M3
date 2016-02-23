@@ -124,13 +124,24 @@ public class Robot extends IterativeRobot {
     		myShooter.setWheelSpeed(0);
     	}
     	
-    	//////CAM-Kicker
+    	//////
+    	// CAM-Kicker In/Out
+    	/////
+    	//ShooterMap myShooter = new ShooterMap();
+    	if(gunnerController.getButton(gunnerController.XBOX_BTN_RBUMP)){ //Motor Positive
+    		myShooter.setCamSpeed(.8);
+    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_LBUMP)){ //Motor Negative
+    		myShooter.setCamSpeed(.5);
+    	}else{ //STOP
+    		myShooter.setCamSpeed(0);
+    	}
+    	
     	
     	
     	//////
     	// Turret Up/Down
     	/////
-    	TurretYawMap myTurretPitch = new TurretPitchMap();
+    	TurretPitchMap myTurretPitch = new TurretPitchMap();
     	if(gunnerController.XBOX_AXIS_LY>.25){ //Motor Positive
     		myTurretPitch.PITCH_MOTOR.set(.5);
     	}else if(gunnerController.XBOX_AXIS_LY<-.25){ //Motor Negative
@@ -138,8 +149,7 @@ public class Robot extends IterativeRobot {
     	}else{ //STOP
     		myTurretPitch.PITCH_MOTOR.set(0);
     	}
-    	
-    	
+    	    	
     	//////
     	// Turret Left/Right
     	/////
@@ -171,7 +181,7 @@ public class Robot extends IterativeRobot {
     	//////
     	// Intake Up/Down
     	/////
-    	/***Uses the myIntake from above ***/
+    	//IntakeMap myIntake = new IntakeMap();
     	if(gunnerController.getButton(gunnerController.XBOX_BTN_X)){ //Motor Positive
     		myIntake.PITCH_MOTOR.set(.5);
     	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Negative
