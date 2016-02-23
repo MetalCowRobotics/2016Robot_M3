@@ -1,5 +1,7 @@
 package org.usfirst.frc.team4213.robot.systems;
 
+import edu.wpi.first.wpilibj.DigitalSource;
+
 public final class RobotMap {
 
 	// TODO - to extrapolate to a .txt file
@@ -42,7 +44,19 @@ public final class RobotMap {
 
 	// Probably need to Add More Here.
 	public final class Intake {
-		public static final int MOTOR_CHANNEL = 2;
+		public static final int ROLLER_MOTOR_CHANNEL = 2;
+		public static final int PITCH_MOTOR_CHANNEL = 6; 
+		public static final double INTAKE_SPEED = -0.5;
+		public static final double EJECT_SPEED = 0.5;
+		public static final int ENCODER_CH_A = 0; //TODO Intake Encoders
+		public static final int ENCODER_CH_B = 1;
+		private static final int GEARSGR = 3;
+		private static final int PLANETARYGR = 71;
+		private static final int PPR = 5; 
+		
+		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360; //TODO Intake Gear Ratios
+		public static final double RAISE_SPEED = 0;
+		public static final double LOWER_SPEED = 0; //TODO Set Speeds
 	}
 
 	public final class Shooter {
@@ -53,7 +67,7 @@ public final class RobotMap {
 		public static final int LIMIT_SWITCH = 3;
 		private static final int GEARSGR = 3;
 		private static final int PLANETARYGR = 27;
-		private static final int PPR = 5; // Potentially need to Change
+		private static final int PPR = 5; // TODO Potentially need to Change
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 		public static final double SHOOT_SPEED = -1;
 		public static final double INTAKE_SPEED = .6;
