@@ -10,10 +10,9 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
-import org.usfirst.frc.team4213.robot.controllers.ShooterController;
-import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
+import org.usfirst.frc.team4213.robot.systems.TurretPitchMap;
 import org.usfirst.frc.team4213.robot.systems.TurretYawMap;
 
 import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
@@ -36,7 +35,12 @@ public class Robot extends IterativeRobot {
     
     AIRFLOController driverController;
     Xbox360Controller gunnerController;
+    
     DriveController driveTrain;
+	ShooterMap myShooter;
+	TurretPitchMap myTurretPitch;
+	TurretYawMap myTurretYaw;
+	IntakeMap myIntake;
 
     
     /**
@@ -51,6 +55,12 @@ public class Robot extends IterativeRobot {
         
         driverController = new AIRFLOController(0);
         gunnerController = new Xbox360Controller(1);
+        
+    	myShooter = new ShooterMap();
+    	myTurretPitch = new TurretPitchMap();
+    	myTurretYaw = new TurretYawMap();
+    	myIntake = new IntakeMap();
+    	
         
         //TODO: Read-in and Populate the RobotMap from a textFile
         
@@ -115,7 +125,6 @@ public class Robot extends IterativeRobot {
     	//////
     	// Shooter In/Out
     	/////
-    	ShooterMap myShooter = new ShooterMap();
     	if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Positive
     		myShooter.setWheelSpeed(1);
     	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_Y)){ //Motor Negative
@@ -127,7 +136,6 @@ public class Robot extends IterativeRobot {
     	//////
     	// CAM-Kicker In/Out
     	/////
-    	//ShooterMap myShooter = new ShooterMap();
     	if(gunnerController.getButton(gunnerController.XBOX_BTN_RBUMP)){ //Motor Positive
     		myShooter.setCamSpeed(.8);
     	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_LBUMP)){ //Motor Negative
@@ -141,10 +149,9 @@ public class Robot extends IterativeRobot {
     	//////
     	// Turret Up/Down
     	/////
-    	TurretPitchMap myTurretPitch = new TurretPitchMap();
-    	if(gunnerController.XBOX_AXIS_LY>.25){ //Motor Positive
+    	if(gunnerController.XBOX_AXIS_LY > .25){ //Motor Positive
     		myTurretPitch.PITCH_MOTOR.set(.5);
-    	}else if(gunnerController.XBOX_AXIS_LY<-.25){ //Motor Negative
+    	}else if(gunnerController.XBOX_AXIS_LY < -.25){ //Motor Negative
     		myTurretPitch.PITCH_MOTOR.set(-.5);
     	}else{ //STOP
     		myTurretPitch.PITCH_MOTOR.set(0);
@@ -153,22 +160,18 @@ public class Robot extends IterativeRobot {
     	//////
     	// Turret Left/Right
     	/////
-    	TurretYawMap myTurretYaw = new TurretYawMap();
-    	if(gunnerController.XBOX_AXIS_RX>.25){ //Motor Positive
+    	if(gunnerController.XBOX_AXIS_RX > .25){ //Motor Positive
     		myTurretYaw.YAW_MOTOR.set(.5);
-    	}else if(gunnerController.XBOX_AXIS_RX<-.25){ //Motor Negative
+    	}else if(gunnerController.XBOX_AXIS_RX < -.25){ //Motor Negative
     		myTurretYaw.YAW_MOTOR.set(-.5);
     	}else{ //STOP
     		myTurretYaw.YAW_MOTOR.set(0);
     	}
     	
     	
-    	
-    	
     	//////
     	// Intake in/out
     	/////
-    	IntakeMap myIntake = new IntakeMap();
     	if(gunnerController.getButton(gunnerController.XBOX_BTN_X)){ //Motor Positive
     		myIntake.ROLLER_MOTOR.set(1);
     	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_B)){ //Motor Negative
@@ -177,14 +180,12 @@ public class Robot extends IterativeRobot {
     		myIntake.ROLLER_MOTOR.set(0);
     	}
     	
-    	
     	//////
     	// Intake Up/Down
     	/////
-    	//IntakeMap myIntake = new IntakeMap();
-    	if(gunnerController.getButton(gunnerController.XBOX_BTN_X)){ //Motor Positive
+    	if(gunnerController.getButton(gunnerController.XBOX_BTN_BACK)){ //Motor Positive
     		myIntake.PITCH_MOTOR.set(.5);
-    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Negative
+    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_BACK)){ //Motor Negative
     		myIntake.PITCH_MOTOR.set(-.5);
     	}else{ //STOP
     		myIntake.PITCH_MOTOR.set(0);
@@ -208,7 +209,7 @@ public class Robot extends IterativeRobot {
      * Coders and Developers use this during their tests
      */
     public void testPeriodic() {
-<<<<<<< HEAD
+
     	/* Haptic Feedback tests --- ignore for now
 
     	if(Math.abs(gunnerController.getLT())>0.5){
@@ -228,9 +229,7 @@ public class Robot extends IterativeRobot {
     	
     	*/
     
-=======
-    	intake.setPitchSpeed(-gunnerController.getRY()*0.3);
->>>>>>> origin/IntakeModel
+
     }
     
 }
