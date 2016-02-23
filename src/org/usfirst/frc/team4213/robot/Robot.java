@@ -123,7 +123,7 @@ public class Robot extends IterativeRobot {
     	/////
     	if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Positive
     		
-    	}else if(){ //Motor Negative
+    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_Y)){ //Motor Negative
     		
     	}else{ //STOP
     		
@@ -161,6 +161,17 @@ public class Robot extends IterativeRobot {
     	
     	
     	
+
+    	
+    	
+    	
+    }
+    
+    /**
+     * This function is called periodically during test mode
+     * Coders and Developers use this during their tests
+     */
+    public void testPeriodic() {
     	/* Haptic Feedback tests --- ignore for now
 
     	if(Math.abs(gunnerController.getLT())>0.5){
@@ -179,43 +190,6 @@ public class Robot extends IterativeRobot {
     	DriverStation.reportError("LeftTrigger : "+gunnerController.getLT(), false);
     	
     	*/
-    	
-    	
-    	
-    }
-    
-    /**
-     * This function is called periodically during test mode
-     * Coders and Developers use this during their tests
-     */
-    public void testPeriodic() {
-    	
-<<<<<<< HEAD
-    	//driveTrain.drive(driverController, true);
-    	
-    	if(Math.abs(gunnerController.getLT())>0){
-    	gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
-    	DriverStation.reportError("LeftTrigger : "+gunnerController.getLT(), false);
-    	}
-    	if(Math.abs(gunnerController.getRT())>0){
-    	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
-    	DriverStation.reportError("RightTrigger : "+gunnerController.getRT(), false);
-    	}
-=======
-    	if(gunnerController.getButtonTripped(Xbox360Controller.XBOX_BTN_A)){
-    		shooter.intake();
-    	}else if(gunnerController.getButtonTripped(Xbox360Controller.XBOX_BTN_LBUMP)){
-    		shooter.arm();
-    	}else if(gunnerController.getButtonTripped(Xbox360Controller.XBOX_BTN_RBUMP)){
-    		shooter.shoot();
-    	}
-    	
-    	if(gunnerController.getButtonReleased(Xbox360Controller.XBOX_BTN_A)){
-    		shooter.idle();
-    	}
-    	
-    	shooter.step();
->>>>>>> origin/Shooter
     
     }
     
