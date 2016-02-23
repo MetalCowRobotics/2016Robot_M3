@@ -13,6 +13,7 @@ import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.ShooterController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
+import org.usfirst.frc.team4213.robot.systems.TurretYawMap;
 
 import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
 
@@ -119,18 +120,16 @@ public class Robot extends IterativeRobot {
     	//From here down the gunnerController will be used for actions
     	
     	//////
-    	// Intake In/Out
+    	// Shooter In/Out
     	/////
+    	ShooterMap myShooter = new ShooterMap();
     	if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Positive
-    		
+    		myShooter.setWheelSpeed(1);
     	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_Y)){ //Motor Negative
-    		
+    		myShooter.setWheelSpeed(-.6);
     	}else{ //STOP
-    		
+    		myShooter.setWheelSpeed(0);
     	}
-    	
-    	
-    	
     	
     	
     	//////
@@ -142,11 +141,29 @@ public class Robot extends IterativeRobot {
     	//////
     	// Turret Left/Right
     	/////
+    	TurretYawMap myTurretYaw = new TurretYawMap();
+    	if(gunnerController.XBOX_AXIS_RX>.25){ //Motor Positive
+    		myTurretYaw.YAW_MOTOR.set(.5);
+    	}else if(gunnerController.XBOX_AXIS_RX<-.25){ //Motor Negative
+    		myTurretYaw.YAW_MOTOR.set(-.5);
+    	}else{ //STOP
+    		myTurretYaw.YAW_MOTOR.set(0);
+    	}
+    	
+    	
     	
     	
     	//////
-    	// Shooter Intake/Fire
+    	// Intake in/out
     	/////
+    	ShooterMap myShooter = new ShooterMap();
+    	if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Positive
+    		myShooter.setWheelSpeed(1);
+    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_Y)){ //Motor Negative
+    		myShooter.setWheelSpeed(-.6);
+    	}else{ //STOP
+    		myShooter.setWheelSpeed(0);
+    	}
     	
     	
     	//////
