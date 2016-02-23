@@ -112,7 +112,7 @@ public class Xbox360Controller extends Joystick {
 		return getRawAxis(XBOX_AXIS_RX);
 	}
 	public double getRT() {
-		return -getRawAxis(XBOX_AXIS_RTRIGGER);
+		return getRawAxis(XBOX_AXIS_RTRIGGER);
 	}
 	public double getLT(){
 		return getRawAxis(XBOX_AXIS_LTRIGGER);
