@@ -5,6 +5,7 @@ import org.team4213.lib14.AIRFLOController;
 
 import org.team4213.lib14.Xbox360Controller;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
@@ -98,9 +99,11 @@ public class Robot extends IterativeRobot {
     	
     	if(Math.abs(gunnerController.getLT())>0){
     	gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
+    	DriverStation.reportError("LeftTrigger : "+gunnerController.getLT(), false);
     	}
     	if(Math.abs(gunnerController.getRT())>0){
     	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
+    	DriverStation.reportError("RightTrigger : "+gunnerController.getRT(), false);
     	}
     	
     	
