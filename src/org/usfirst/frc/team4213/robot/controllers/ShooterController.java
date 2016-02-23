@@ -29,9 +29,13 @@ public class ShooterController {
 	}
 
 	public void arm() {
-		shooter.setWheelSpeed(Shooter.SHOOT_SPEED);
-		armTime = getCurrentTimeMS();
-		state = ShooterState.ARMING;
+		if(state == ShooterState.IDLE){
+			shooter.setWheelSpeed(Shooter.SHOOT_SPEED);
+			armTime = getCurrentTimeMS();
+			state = ShooterState.ARMING;
+		}else{
+			DriverStation.reportError("You cannot Arm unless You're Up and Idle", false);
+		}
 	}
 
 	public void intake() {
