@@ -95,16 +95,22 @@ public class Robot extends IterativeRobot {
      */
     public void teleopPeriodic() {
     	
-    	driveTrain.drive(driverController, true);
+//    	driveTrain.drive(driverController, true);
     	
-    	if(Math.abs(gunnerController.getLT())>0){
-    	gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
-    	DriverStation.reportError("LeftTrigger : "+gunnerController.getLT(), false);
+    	if(Math.abs(gunnerController.getLT())>0.5){
+    		gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
     	}
-    	if(Math.abs(gunnerController.getRT())>0){
-    	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
+    		gunnerController.setRumble(RumbleType.kLeftRumble, (float) 0.0);
+        
+    	
+    	if(Math.abs(gunnerController.getRT())>0.5){
+    		gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
+    	}
+    		gunnerController.setRumble(RumbleType.kRightRumble, (float) 0.0);
+    	
+    	
     	DriverStation.reportError("RightTrigger : "+gunnerController.getRT(), false);
-    	}
+    	DriverStation.reportError("LeftTrigger : "+gunnerController.getLT(), false);
     	
     	
     }
@@ -115,7 +121,16 @@ public class Robot extends IterativeRobot {
      */
     public void testPeriodic() {
     	
-    	driveTrain.drive(driverController, true);
+    	//driveTrain.drive(driverController, true);
+    	
+    	if(Math.abs(gunnerController.getLT())>0){
+    	gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
+    	DriverStation.reportError("LeftTrigger : "+gunnerController.getLT(), false);
+    	}
+    	if(Math.abs(gunnerController.getRT())>0){
+    	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
+    	DriverStation.reportError("RightTrigger : "+gunnerController.getRT(), false);
+    	}
     
     }
     
