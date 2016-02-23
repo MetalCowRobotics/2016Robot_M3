@@ -192,7 +192,7 @@ public class Robot extends IterativeRobot {
     	/////
     	if(gunnerController.getButton(gunnerController.XBOX_BTN_BACK)){ //Motor Positive
     		myIntake.PITCH_MOTOR.set(.5);
-    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_BACK)){ //Motor Negative
+    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_START)){ //Motor Negative
     		myIntake.PITCH_MOTOR.set(-.5);
     	}else{ //STOP
     		myIntake.PITCH_MOTOR.set(0);
