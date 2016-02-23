@@ -5,6 +5,7 @@ import org.team4213.lib14.AIRFLOController;
 
 import org.team4213.lib14.Xbox360Controller;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
@@ -113,6 +114,13 @@ public class Robot extends IterativeRobot {
      */
     public void testPeriodic() {
     	intake.setPitchSpeed(-gunnerController.getRY()*0.3);
+    	if(gunnerController.getButton(Xbox360Controller.XBOX_BTN_A)){
+    		intake.setRollerSpeed(-.8);
+    	}else{
+    		intake.setRollerSpeed(0);
+    	}    	
+    	DriverStation.reportError("\n Position = " + intake.getEncPosition(), false);
+    	DriverStation.reportError("POV TEST : " + gunnerController.getPOV() , false);
     }
     
 }

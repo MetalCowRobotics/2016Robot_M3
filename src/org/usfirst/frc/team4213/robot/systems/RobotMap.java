@@ -49,11 +49,11 @@ public final class RobotMap {
 		public static final double EJECT_SPEED = 0.5;
 		public static final int ENCODER_CH_A = 0; //TODO Intake Encoders
 		public static final int ENCODER_CH_B = 1;
-		private static final int GEARSGR = 3;
-		private static final int PLANETARYGR = 71;
+		private static final double GEARSGR = 4.5;
+		private static final double PLANETARYGR = 71;
 		private static final int PPR = 5; 
 		
-		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360; //TODO Intake Gear Ratios
+		public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360; //TODO Intake Gear Ratios
 		public static final double RAISE_SPEED = 0;
 		public static final double LOWER_SPEED = 0; //TODO Set Speeds
 	}
