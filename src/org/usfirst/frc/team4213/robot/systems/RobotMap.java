@@ -41,7 +41,11 @@ public final class RobotMap {
 
 	// Probably need to Add More Here.
 	public final class Intake {
-		public static final int MOTOR_CHANNEL = 2;
+		public static final int ROLLER_MOTOR_CHANNEL = 2;
+		public static final int PITCH_MOTOR_CHANNEL = 9; // TODO 
+		public static final double INTAKE_SPEED = 1;
+		public static final double EJECT_SPEED = -1;
+
 	}
 
 	public final class Shooter {
@@ -51,7 +55,7 @@ public final class RobotMap {
 		public static final int ENC_CH_B = 5;
 		private static final int GEARSGR = 3;
 		private static final int PLANETARYGR = 27;
-		private static final int PPR = 5; // Potentially need to Change
+		private static final int PPR = 5; // TODO Potentially need to Change
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 
 	}

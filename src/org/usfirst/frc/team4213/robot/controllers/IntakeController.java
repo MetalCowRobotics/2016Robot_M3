@@ -1,26 +1,29 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap.Intake;
 
 public class IntakeController {
 	
 	IntakeMap intake; 
 	
+	public enum intakeState {
+		IDLE ,EJECTING, INTAKING, RAISED;
+	}
 	
 	public IntakeController(IntakeMap intakeMap){
 		intake = intakeMap;
 	}
 	
-	private void spinIntake(double speed){
-		intake.INTAKE_MOTOR.set(speed);
-	}
-	
-	private void ejectBall(){
-		spinIntake(intake.EJECT_SPEED);
+	public void ejectBall(){
+		intake.setRollerSpeed(Intake.EJECT_SPEED);
 	}
 	
 	public void intakeBall(){
-		spinIntake(intake.INTAKE_SPEED);
+		intake.setRollerSpeed(Intake.INTAKE_SPEED);
 	}
 	
+	public void raiseIntake(){
+		
+	}
 }
