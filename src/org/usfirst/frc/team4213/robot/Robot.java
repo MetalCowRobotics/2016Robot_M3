@@ -168,6 +168,13 @@ public class Robot extends IterativeRobot {
     		myTurretYaw.YAW_MOTOR.set(0);
     	}
     	
+    	//////
+    	// Turret in Safe Dropping position
+    	/////
+    	//if(myTurretYaw.LIMITSWITCH???){
+    	//	DriverStation.reportError("   ++++++++++++ TURRET SAFE ++++++++++++   ", false);
+    	//}    	
+    	
     	
     	//////
     	// Intake in/out
@@ -192,7 +199,12 @@ public class Robot extends IterativeRobot {
     	}    	
     	
     	
-    	
+    	//////
+    	// BALL IN THE SHOOT!!! Alert
+    	/////
+    	if(myShooter.ballLimitSwitch.get()){
+    		DriverStation.reportError("   ++++++++++++ SHOOT THE BALL ++++++++++++   ", false);
+    	}
     	
     	
     	
