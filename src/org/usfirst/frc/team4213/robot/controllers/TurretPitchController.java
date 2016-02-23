@@ -22,4 +22,18 @@ TurretPitchMap turretPitch;
 		turretPitchMove(turretPitch.DOWN_SPEED);
 	}
 	
+	public void setMinHeight(){
+		double error = turretPitch.MIN_HEIGHT - turretPitch.getEncoder();
+		turretPitch.UP_SPEED = Math.abs(error/100);
+	}
+	
+	public void heightMax(){
+		if(turretPitch.MAX_HEIGHT <= turretPitch.getEncoder()){
+			turretPitch.UP_SPEED = 0;
+		}
+		else{
+			
+		}
+	}
+	//TODO make if yaw is not zeroed dont allow turret to go less than min height
 }
