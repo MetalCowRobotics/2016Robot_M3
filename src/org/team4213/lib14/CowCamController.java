@@ -330,8 +330,8 @@ public class CowCamController {
 					processFuture = Optional.of(executor.submit(task.get()));
 					
 				}*/
-				//task.get().setImage(getImg());
-				//dataOutput = task.get().call();
+				task.get().setImage(getImg());
+				dataOutput = task.get().call();
 				Thread.yield();
 			}
 		};
