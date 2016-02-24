@@ -1,8 +1,12 @@
 
 package org.usfirst.frc.team4213.robot;
 
-import org.team4213.lib14.AIRFLOController;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import org.team4213.lib14.AIRFLOController;
+import org.team4213.lib14.CowCamController;
+import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.Xbox360Controller;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -34,8 +38,23 @@ public class Robot extends IterativeRobot {
     Xbox360Controller gunnerController;
     DriveController driveTrain;
     
-    
-    
+	// Camera Controller
+	public static CowCamServer camServer;
+	// The Thread Pool / Executor of Tasks to Use
+	public ExecutorService executor;
+
+	// A new Camera Controller for the Shooter
+	public CowCamController shooterCamController;
+   
+	/*
+	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
+	 * Builds for the Roborio / ARMV7 )
+	 */
+	static {
+		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
+		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+	}
+
 	
     /**
      * This function is run when the robot is first started up and should be
@@ -52,9 +71,13 @@ public class Robot extends IterativeRobot {
         
         //TODO: Read-in and Populate the RobotMap from a textFile
         
-        driveTrain = new DriveController(new DriveMap());
-
+        camServer =  new CowCamServer(1180);
+        executor = Executors.newWorkStealingPool();
+        shooterCamController = new CowCamController(0, 20,CowCamController.ImageTask.SHOOTER);
         
+        driveTrain = new DriveController(new DriveMap());
+        
+        camServer.start(shooterCamController, executor);
         
     }
     
