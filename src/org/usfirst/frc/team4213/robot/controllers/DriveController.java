@@ -5,28 +5,12 @@ import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Drivetrain;
 
-import edu.wpi.first.wpilibj.RobotDrive;
-import edu.wpi.first.wpilibj.SpeedController;
-
-public class DriveController extends RobotDrive{
-
+public class DriveController{
 	
-	
-	/**
-	 * Create the DriveTrain, this one has two motors
-	 * @param leftMotor - the speed controller for the left motor
-	 * @param rightMotor - the speed controller for the right motor
-	 */
-	public DriveController(SpeedController leftMotor, SpeedController rightMotor){
-		super(leftMotor, rightMotor);
-	}
+	DriveMap driveMap;
 
-	/**
-	 * Create the DriveTrain, this one has two motors
-	 * @param DriveMap - Takes in a DriveMap and then identifies the motors.
-	 */
 	public DriveController(DriveMap driveMap){
-		this(driveMap.LEFT_MOTOR, driveMap.RIGHT_MOTOR);
+		this.driveMap = driveMap;
 	}
 	
 	/**
@@ -41,7 +25,7 @@ public class DriveController extends RobotDrive{
 		double rotation = driverController.getRX();
 		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED, Drivetrain.SPRINT_SPEED);
 		
-		drive(direction,rotation,throttle,squareUnits);
+		driveMap.drive(direction,rotation,throttle,squareUnits);
 	}
 	
 	/**
@@ -56,26 +40,7 @@ public class DriveController extends RobotDrive{
 		double rotation = driverController.getRX();
 		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED, Drivetrain.SPRINT_SPEED);
 		
-		drive(direction,rotation,throttle,squareUnits);
+		driveMap.drive(direction,rotation,throttle,squareUnits);
 	}
-		
-	/**
-	 * This one will actually move the robot.
-	 * @param direction - Forwards or Backwards [1,-1]
-	 * @param rotation - Left or Right [1, -1]
-	 * @param throttle - Modifier for speed of direction/rotation [0-1]
-	 * @param squareUnits - True, finer values at lower speeds
-	 */
-	private void drive(double direction, double rotation, double throttle, boolean squareUnits){	
-		//Move the robot
-		this.arcadeDrive(direction*throttle, rotation*throttle, squareUnits); //ArcadeMode
-	}
-
 	
-	
-	
-	
-
-	
-
 }
