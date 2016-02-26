@@ -54,8 +54,8 @@ public final class RobotMap {
 		private static final int PPR = 5; 
 		
 		public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360; //TODO Intake Gear Ratios
-		public static final double RAISE_SPEED = 0;
-		public static final double LOWER_SPEED = 0; //TODO Set Speeds
+		public static final double LOWER_SPEED = 0.4; //TODO Set Speeds
+		public static final int RAISE_ANGLE = 100;
 	}
 
 	public final class Shooter {
