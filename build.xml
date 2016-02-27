@@ -26,5 +26,6 @@
   <property file="${user.home}/wpilib/java/${version}/ant/build.properties"/>
   
   <import file="${wpilib.ant.dir}/build.xml"/>
+  <var name="classpath" value="${classpath}:.\lib\opencv-2410.jar" />
 
 </project> 

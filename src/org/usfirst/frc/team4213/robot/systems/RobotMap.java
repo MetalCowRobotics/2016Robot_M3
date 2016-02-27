@@ -22,24 +22,26 @@ public final class RobotMap {
 			public static final int STRING_POT = 0;
 			public static final int LIMIT_SWITCH = 8;
 			public static final int OFFSET = 0;
-			public static final int COUNT_PER_DEG = 12; // TODO UPDATE THIS LINE
+			public static final double COUNT_PER_DEG = 12; // TODO UPDATE THIS LINE
 			public static final int ENC_CH_A = 5;
 			public static final int ENC_CH_B = 6;
 			public static final int MAX_ANGLE = 360;
 			public static final int MIN_ANGLE = -360;
 			public static final double ABS_TOLERANCE = 3;
+			public static final double BUMP_AMT = 0.1;
 		}
 
 		public final class Pitch_Motor {
 			public static final int MOTOR_CHANNEL = 3;
 			private static final int GEARSGR = 3;
-			private static final int PLANETARYGR = 71;
-			private static final int PPR = 5; // TODO UPDATE THIS
-			public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
+			private static final int PLANETARYGR = 188;
+			private static final int PPR = 7; // TODO UPDATE THIS
+			public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 			private static final int START_ANGLE = -38;
 			public static final int MAX_ANGLE = 80 - START_ANGLE;
 			public static final int MIN_ANGLE = 20 - START_ANGLE;
 			public static final double ABS_TOLERANCE = 3;
+			public static final double BUMP_AMT = 0.1;
 		}
 
 	}

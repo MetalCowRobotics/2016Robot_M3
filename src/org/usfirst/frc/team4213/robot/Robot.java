@@ -12,6 +12,7 @@ import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
@@ -93,17 +94,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-
-		driveTrain.drive(driverController, true);
-
-	}
-
-	/**
-	 * This function is called periodically during test mode Coders and
-	 * Developers use this during their tests
-	 */
-	@Override
-	public void testPeriodic() {
+		
 		/*
 		 * if (driverController.getButtonTripped(1)) { shooter.intake(); }
 		 * 
@@ -118,11 +109,13 @@ public class Robot extends IterativeRobot {
 		 * driverController.getButtonReleased(5)) { shooter.idle(); }
 		 */
 
+		turret.setPitchSpeed(driverController.getRY());
 		if (driverController.getButtonTripped(5)) {
 			turret.engage();
 		}
 
-		if (driverController.getButtonReleased(5)) {
+		
+		if (driverController.getButtonTripped(6)) {
 			turret.idle();
 		}
 
@@ -133,6 +126,19 @@ public class Robot extends IterativeRobot {
 		if (driverController.getLY() > 0) {
 			turret.bumpTurretDown();
 		}
+		turret.step();
+
+		driveTrain.drive(driverController, true);
+
+	}
+
+	/**
+	 * This function is called periodically during test mode Coders and
+	 * Developers use this during their tests
+	 */
+	@Override
+	public void testPeriodic() {
+
 	}
 
 }
