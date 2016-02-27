@@ -78,6 +78,7 @@ public final class RobotMap {
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 		public static final double SHOOT_SPEED = -1;
 		public static final double INTAKE_SPEED = .6;
+		public static final double EJECT_SPEED = -.3;
 
 	}
 }
