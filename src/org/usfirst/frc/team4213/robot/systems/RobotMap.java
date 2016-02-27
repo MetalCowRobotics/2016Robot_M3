@@ -1,11 +1,12 @@
 package org.usfirst.frc.team4213.robot.systems;
 
 public final class RobotMap {
-	
-	//TODO - to extrapolate to a .txt file
-	//make these into private variables with public getters() and setters()
-	//Then in robotInit() read in the text file and use all the setter() to build the robotMap
-	//Then rather than reading FINALS actually call the getters()
+
+	// TODO - to extrapolate to a .txt file
+	// make these into private variables with public getters() and setters()
+	// Then in robotInit() read in the text file and use all the setter() to
+	// build the robotMap
+	// Then rather than reading FINALS actually call the getters()
 
 	public final class Drivetrain {
 		public static final int LEFT_MOTOR_CHANNEL = 8;
@@ -41,7 +42,28 @@ public final class RobotMap {
 
 	// Probably need to Add More Here.
 	public final class Intake {
-		public static final int MOTOR_CHANNEL = 2;
+		public static final int ROLLER_MOTOR_CHANNEL = 2;
+
+		public static final int PITCH_MOTOR_CHANNEL = 6;
+		public static final double INTAKE_SPEED = -1;
+		public static final double EJECT_SPEED = 1;
+
+		public static final int ENCODER_CH_A = 0;
+		public static final int ENCODER_CH_B = 1;
+		public static final int LIMIT_SWITCH_CH = 8;
+
+		private static final double GEARSGR = 4.5;
+		private static final double PLANETARYGR = 71;
+		private static final int PPR = 7;
+
+		public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360; // TODO
+																						// Intake
+																						// Gear
+																						// Ratios
+		public static final double LOWER_SPEED = 0.4; // TODO Set Speeds
+		public static final int RAISE_ANGLE = 100;
+		public static final double PID_P_VAL = 1.0 / 120;
+
 	}
 
 	public final class Shooter {
@@ -51,7 +73,7 @@ public final class RobotMap {
 		public static final int ENC_CH_B = 5;
 		private static final int GEARSGR = 3;
 		private static final int PLANETARYGR = 27;
-		private static final int PPR = 5; // Potentially need to Change
+		private static final int PPR = 5; // TODO Potentially need to Change
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 
 	}

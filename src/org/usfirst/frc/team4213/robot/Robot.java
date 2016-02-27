@@ -8,17 +8,11 @@ import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.Xbox360Controller;
-
-import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick.RumbleType;
-
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
+import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 
-import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
-
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -28,115 +22,87 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * directory.
  */
 public class Robot extends IterativeRobot {
-    final String defaultAuto = "Default";
-    final String customAuto = "My Auto";
-    String autoSelected;
-    SendableChooser chooser;
-    
-    
-    AIRFLOController driverController;
-    Xbox360Controller gunnerController;
-    DriveController driveTrain;
-    
+
+	IntakeMap intake;
+	AIRFLOController driverController;
+	Xbox360Controller gunnerController;
+	DriveController driveTrain;
+
 	// Camera Controller
 	public static CowCamServer camServer;
 	// The Thread Pool / Executor of Tasks to Use
 	public ExecutorService executor;
-
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController;
-   
-	/*
-	 * We added the OpenCV libraries to the RoboRIO manually over FTP ( Specific
-	 * Builds for the Roborio / ARMV7 )
-	 */
+
 	static {
 		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
 	}
 
-	
-    /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
-     */
-    public void robotInit() {
-        chooser = new SendableChooser();
-        chooser.addDefault("Default Auto", defaultAuto);
-        chooser.addObject("My Auto", customAuto);
-        SmartDashboard.putData("Auto choices", chooser);
-        
-        driverController = new AIRFLOController(0);
-        gunnerController = new Xbox360Controller(1);
-        
-        //TODO: Read-in and Populate the RobotMap from a textFile
-        
-        camServer =  new CowCamServer(1180);
-        executor = Executors.newWorkStealingPool();
-        shooterCamController = new CowCamController(0, 20,CowCamController.ImageTask.SHOOTER);
-        
-        driveTrain = new DriveController(new DriveMap());
-        
-        camServer.start(shooterCamController, executor);
-        
-    }
-    
 	/**
-	 * This autonomous (along with the chooser code above) shows how to select between different autonomous modes
-	 * using the dashboard. The sendable chooser code works with the Java SmartDashboard. If you prefer the LabVIEW
-	 * Dashboard, remove all of the chooser code and uncomment the getString line to get the auto name from the text box
-	 * below the Gyro
-	 *
-	 * You can add additional auto modes by adding additional comparisons to the switch structure below with additional strings.
-	 * If using the SendableChooser make sure to add them to the chooser code above as well.
+	 * This function is run when the robot is first started up and should be
+	 * used for any initialization code.
 	 */
-    public void autonomousInit() {
-    	autoSelected = (String) chooser.getSelected();
-//		autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
-		System.out.println("Auto selected: " + autoSelected);
-    }
+	@Override
+	public void robotInit() {
 
-    /**
-     * This function is called periodically during autonomous
-     */
-    public void autonomousPeriodic() {
-    	switch(autoSelected) {
-    	case customAuto:
-        //Put custom auto code here   
-            break;
-    	case defaultAuto:
-    	default:
-    	//Put default auto code here
-            break;
-    	}
-    }
+		driverController = new AIRFLOController(0);
+		gunnerController = new Xbox360Controller(1);
 
-    /**
-     * This function is called periodically during operator control
-     * Working Calls for Drivers to do their stuff
-     */
-    public void teleopPeriodic() {
-    	
-    	driveTrain.drive(driverController, true);
-    	
-    	if(Math.abs(gunnerController.getLT())>0){
-    	gunnerController.setRumble(RumbleType.kLeftRumble, (float) gunnerController.getLT());
-    	}
-    	if(Math.abs(gunnerController.getRT())>0){
-    	gunnerController.setRumble(RumbleType.kRightRumble, (float) gunnerController.getRT());
-    	}
-    	
-    	
-    }
-    
-    /**
-     * This function is called periodically during test mode
-     * Coders and Developers use this during their tests
-     */
-    public void testPeriodic() {
-    	
-    	driveTrain.drive(driverController, true);
-    
-    }
-    
+		camServer = new CowCamServer(1180);
+		executor = Executors.newWorkStealingPool();
+		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
+
+		// TODO: Read-in and Populate the RobotMap from a textFile
+		intake = new IntakeMap();
+		driveTrain = new DriveController(new DriveMap());
+
+		camServer.start(shooterCamController, executor);
+
+	}
+
+	/**
+	 * This autonomous (along with the chooser code above) shows how to select
+	 * between different autonomous modes using the dashboard. The sendable
+	 * chooser code works with the Java SmartDashboard. If you prefer the
+	 * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+	 * getString line to get the auto name from the text box below the Gyro
+	 *
+	 * You can add additional auto modes by adding additional comparisons to the
+	 * switch structure below with additional strings. If using the
+	 * SendableChooser make sure to add them to the chooser code above as well.
+	 */
+	@Override
+	public void autonomousInit() {
+
+	}
+
+	/**
+	 * This function is called periodically during autonomous
+	 */
+	@Override
+	public void autonomousPeriodic() {
+	}
+
+	/**
+	 * This function is called periodically during operator control Working
+	 * Calls for Drivers to do their stuff
+	 */
+	@Override
+	public void teleopPeriodic() {
+
+		driveTrain.drive(driverController, true);
+
+	}
+
+	/**
+	 * This function is called periodically during test mode Coders and
+	 * Developers use this during their tests
+	 */
+	@Override
+	public void testPeriodic() {
+
+	}
+
 }
