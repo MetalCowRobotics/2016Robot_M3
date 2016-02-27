@@ -10,7 +10,7 @@ import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
-import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.TurretMap;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -23,7 +23,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
 
-	IntakeMap intake;
+	TurretMap turret;
+	// ShooterMap shooter;
 	AIRFLOController driverController;
 	Xbox360Controller gunnerController;
 	DriveController driveTrain;
@@ -55,7 +56,8 @@ public class Robot extends IterativeRobot {
 		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
 
 		// TODO: Read-in and Populate the RobotMap from a textFile
-		intake = new IntakeMap();
+		turret = new TurretMap();
+		// shooter = new ShooterMap();
 		driveTrain = new DriveController(new DriveMap());
 
 		camServer.start(shooterCamController, executor);
@@ -102,7 +104,35 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		/*
+		 * if (driverController.getButtonTripped(1)) { shooter.intake(); }
+		 * 
+		 * if (driverController.getButtonTripped(2)) { shooter.eject(); }
+		 * 
+		 * if (driverController.getButtonTripped(5)) { shooter.arm(); }
+		 * 
+		 * if (driverController.getButtonTripped(6)) { shooter.shoot(); }
+		 * 
+		 * if (driverController.getButtonReleased(1) ||
+		 * driverController.getButtonReleased(2) ||
+		 * driverController.getButtonReleased(5)) { shooter.idle(); }
+		 */
 
+		if (driverController.getButtonTripped(5)) {
+			turret.engage();
+		}
+
+		if (driverController.getButtonReleased(5)) {
+			turret.idle();
+		}
+
+		if (driverController.getLY() < 0) {
+			turret.bumpTurretUp();
+		}
+
+		if (driverController.getLY() > 0) {
+			turret.bumpTurretDown();
+		}
 	}
 
 }

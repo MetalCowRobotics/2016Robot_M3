@@ -4,16 +4,17 @@ import java.util.Calendar;
 
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Jaguar;
+import edu.wpi.first.wpilibj.SpeedController;
 
 public class ShooterMap {
 
-	private static final CANTalon CAM_MOTOR = new CANTalon(Shooter.CAM_CHANNEL);
-	private static final CANTalon FLYWHEEL_MOTOR = new CANTalon(Shooter.FLYWHEEL_CHANNEL);
+	private static final SpeedController CAM_MOTOR = new Jaguar(Shooter.CAM_CHANNEL);
+	private static final SpeedController FLYWHEEL_MOTOR = new Jaguar(Shooter.FLYWHEEL_CHANNEL);
 	private static final Encoder CAM_ENCODER = new Encoder(Shooter.ENC_CH_A, Shooter.ENC_CH_B, false,
 			CounterBase.EncodingType.k4X);
 	private static final DigitalInput BALL_LIM_SWITCH = new DigitalInput(Shooter.LIMIT_SWITCH);
@@ -91,10 +92,6 @@ public class ShooterMap {
 		state = ShooterState.IDLE;
 	}
 
-	public void lowerCam() {
-		desiredCamAngle = 120; // ADD TO CONFIG
-	}
-
 	private long getCurrentTimeMS() {
 		return Calendar.getInstance().get(Calendar.MILLISECOND);
 	}
@@ -107,6 +104,10 @@ public class ShooterMap {
 	public void step() {
 		switch (state) {
 		case INTAKE:
+			if (getSwitchHit()) {
+				state = ShooterState.IDLE;
+				break;
+			}
 			desiredCamAngle = 0;
 			setWheelSpeed(Shooter.INTAKE_SPEED);
 			break;
@@ -133,6 +134,7 @@ public class ShooterMap {
 		case ARMED:
 			setWheelSpeed(Shooter.SHOOT_SPEED);
 		case IDLE:
+			desiredCamAngle = 120;
 			setWheelSpeed(0);
 			break;
 		default:

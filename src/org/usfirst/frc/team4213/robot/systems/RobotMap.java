@@ -12,8 +12,8 @@ public final class RobotMap {
 		public static final int LEFT_MOTOR_CHANNEL = 8;
 		public static final int RIGHT_MOTOR_CHANNEL = 9;
 		public static final double SPRINT_SPEED = 1;
-		public static final double NORMAL_SPEED = 0.6;
-		public static final double CRAWL_SPEED = 0.4;
+		public static final double NORMAL_SPEED = 0.7;
+		public static final double CRAWL_SPEED = 0.5;
 	}
 
 	public final class Turret {
@@ -22,20 +22,24 @@ public final class RobotMap {
 			public static final int STRING_POT = 0;
 			public static final int LIMIT_SWITCH = 8;
 			public static final int OFFSET = 0;
-			public static final int START_COUNT = 500 + OFFSET;
-			public static final int MIN_COUNT = 400 + OFFSET;
-			public static final int MAX_COUNT = 600 + OFFSET;
-			private static final int COUNT_PER_DEG = 100 / 360;
-
+			public static final int COUNT_PER_DEG = 12; // TODO UPDATE THIS LINE
+			public static final int ENC_CH_A = 5;
+			public static final int ENC_CH_B = 6;
+			public static final int MAX_ANGLE = 360;
+			public static final int MIN_ANGLE = -360;
+			public static final double ABS_TOLERANCE = 3;
 		}
 
 		public final class Pitch_Motor {
 			public static final int MOTOR_CHANNEL = 3;
 			private static final int GEARSGR = 3;
 			private static final int PLANETARYGR = 71;
-			private static final int PPR = 5; // Keep Track of this. This may
-												// not be accurate.
+			private static final int PPR = 5; // TODO UPDATE THIS
 			public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
+			private static final int START_ANGLE = -38;
+			public static final int MAX_ANGLE = 80 - START_ANGLE;
+			public static final int MIN_ANGLE = 20 - START_ANGLE;
+			public static final double ABS_TOLERANCE = 3;
 		}
 
 	}
@@ -56,10 +60,7 @@ public final class RobotMap {
 		private static final double PLANETARYGR = 71;
 		private static final int PPR = 7;
 
-		public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360; // TODO
-																						// Intake
-																						// Gear
-																						// Ratios
+		public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 		public static final double LOWER_SPEED = 0.4; // TODO Set Speeds
 		public static final int RAISE_ANGLE = 100;
 		public static final double PID_P_VAL = 1.0 / 120;
