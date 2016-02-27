@@ -109,7 +109,7 @@ public class Robot extends IterativeRobot {
 		 * driverController.getButtonReleased(5)) { shooter.idle(); }
 		 */
 
-		turret.setPitchSpeed(driverController.getRY());
+		//turret.setPitchSpeed(driverController.getRY());  //TODO: why did you have this?!  -- Tim
 		if (driverController.getButtonTripped(5)) {
 			turret.engage();
 		}

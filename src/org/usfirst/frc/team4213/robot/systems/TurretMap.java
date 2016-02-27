@@ -71,6 +71,7 @@ public class TurretMap { // Replace these with the Constants
 	public void bumpTurretUp() {
 		if (desiredPitchAngle < Turret.Pitch_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
 			desiredPitchAngle += Turret.Pitch_Motor.BUMP_AMT;
+			DriverStation.reportError("\n Moving Turret Up", false);
 		} else {
 			DriverStation.reportError("\n At Max Pitch Angle", false);
 		}
@@ -79,6 +80,7 @@ public class TurretMap { // Replace these with the Constants
 	public void bumpTurretDown() {
 		if (desiredPitchAngle > Turret.Pitch_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
 			desiredPitchAngle -= Turret.Pitch_Motor.BUMP_AMT;
+			DriverStation.reportError("\n Moving Turret Down", false);
 		} else {
 			DriverStation.reportError("\n At Min Pitch Angle", false);
 		}
