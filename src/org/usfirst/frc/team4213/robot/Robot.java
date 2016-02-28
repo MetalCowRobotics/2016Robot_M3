@@ -150,6 +150,13 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void testPeriodic() {
 		//turret.setPitchSpeed(driverController.getLY());
+		if(driverController.getButtonReleased(1)){
+			DriverStation.reportError("/n Released", false);
+		}
+		if(driverController.getButtonTripped(1)){
+			DriverStation.reportError("/n Pressed", false);
+		}
+
 		
 	}
 

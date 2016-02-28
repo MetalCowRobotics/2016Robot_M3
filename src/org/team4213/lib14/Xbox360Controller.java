@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import java.lang.Math;
 
 
-public class Xbox360Controller extends Joystick {
+public class Xbox360Controller extends Joystick{
 
 
 	boolean[] previousStates;
@@ -169,33 +169,19 @@ public class Xbox360Controller extends Joystick {
 	}
 	
 	public boolean getButtonTripped(int n) {
-		if (getRawButton(n)) {
-			if (previousStates[n]){
-				previousStates[n] = true;
-				return false;
-			} else {
-				previousStates[n] = true;
-				return true;
-			}
-			
+		if (getRawButton(n) && previousStates[n]==false) {
+			previousStates[n]=true;
+			return true; //return TRUE this changed 
 		} else {
-			previousStates[n] = false;
 			return false;
 		}
 	}
 	
 	public boolean getButtonReleased(int n) {
-		if (!getRawButton(n)) {
-			if (previousStates[n]){
-				previousStates[n] = false;
-				return true;
-			} else {
-				previousStates[n] = false;
-				return false;
-			}
-			
+		if (!getRawButton(n) && previousStates[n]==true) {
+			previousStates[n]=false;
+			return true; //return TRUE this changed
 		} else {
-			previousStates[n] = true;
 			return false;
 		}
 	}
