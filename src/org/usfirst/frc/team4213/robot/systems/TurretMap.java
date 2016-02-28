@@ -21,7 +21,7 @@ public class TurretMap { // Replace these with the Constants
 	private double pitchError;
 	private double yawError;
 
-	public TurretState state;
+	private TurretState state;
 
 	public enum TurretState {
 		ENGAGING, ENGAGED, IDLING, IDLE;
@@ -34,6 +34,10 @@ public class TurretMap { // Replace these with the Constants
 		PITCH_ENC.reset();
 		PITCH_ENC.setDistancePerPulse(1/Turret.Pitch_Motor.COUNT_PER_DEG);
 		PITCH_MOTOR.setInverted(true);
+	}
+	
+	public TurretState getState(){
+		return state;
 	}
 	
 	public void setRawYawSpeed(double speed){

@@ -68,11 +68,23 @@ public class IntakeMap {
 	public IntakeState getState() {
 		return state;
 	}
-
-	public void setState(IntakeState state) {
-		this.state = state;
+	
+	public void idle(){
+		state = IntakeState.DOWN;
+	}
+	
+	public void eject(){
+		state = IntakeState.EJECT;
+	}
+	
+	public void intake(){
+		state = IntakeState.INTAKE;
 	}
 
+	public void raise(){
+		state = IntakeState.UP;
+	}
+	
 	public boolean getBottomedOut() {
 		return !LIMIT_SWITCH.get();
 	}

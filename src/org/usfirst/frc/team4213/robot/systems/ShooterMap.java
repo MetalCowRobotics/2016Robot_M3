@@ -20,7 +20,7 @@ public class ShooterMap {
 	private static final DigitalInput BALL_LIM_SWITCH = new DigitalInput(Shooter.LIMIT_SWITCH);
 
 	private int desiredCamAngle;
-	public ShooterState state;
+	private ShooterState state;
 	private double error;
 	private Timer timer;
 	
@@ -38,6 +38,10 @@ public class ShooterMap {
 		resetEnc();
 		desiredCamAngle = 0;
 		CAM_ENCODER.setDistancePerPulse(1 / Shooter.COUNT_PER_DEG);
+	}
+	
+	public ShooterState getState(){
+		return state;
 	}
 
 	public void setCamSpeed(double speed) {

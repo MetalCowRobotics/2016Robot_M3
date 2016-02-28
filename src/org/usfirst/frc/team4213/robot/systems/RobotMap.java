@@ -35,7 +35,7 @@ public final class RobotMap {
 			public static final int MOTOR_CHANNEL = 3;
 			private static final int GEARSGR = 3;
 			private static final int PLANETARYGR = 188;
-			private static final int PPR = 7; // TODO UPDATE THIS
+			private static final int PPR = 7;
 			public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 			private static final int START_ANGLE = -38;
 			public static final int MAX_ANGLE = 80 - START_ANGLE;

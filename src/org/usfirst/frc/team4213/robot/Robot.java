@@ -97,6 +97,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
+		//TODO: Move all the OperatorController code to the OperatorController.java... maybe
+		
 		 if (driverController.getButtonTripped(1)) { shooter.intake(); }
 		 
 		 if (driverController.getButtonTripped(2)) { shooter.eject(); }
@@ -109,13 +111,20 @@ public class Robot extends IterativeRobot {
 		 if (driverController.getButtonTripped(4)){
 			 shooter.idle();
 		 }
+		 
+		 
 		 if (driverController.getButtonReleased(1) ||
 		 driverController.getButtonReleased(2) ||
 		 driverController.getButtonReleased(5)) { shooter.idle(); }
 		 
 		 shooter.step();
 
-		/*turret.setPitchSpeed(driverController.getRY());  //TODO: why did you have this?!  -- Tim
+		 
+		 //TODO: Enable the Camera for the gunner and then add the crosshairs
+		 //TODO: We need to calibrate the shooter to the crosshairs overlay
+		 
+		 
+		/*turret.setPitchSpeed(driverController.getRY());
 		if (driverController.getButtonTripped(5)) {
 			turret.engage();
 		}

@@ -1,21 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.team4213.lib14;
 
 import edu.wpi.first.wpilibj.Joystick;
 
-import java.lang.Math;
+public abstract class CowGamepad extends Joystick {
 
-
-public class AIRFLOController extends Joystick{
 	boolean[] previousStates;
 	boolean[] toggleStates;
 	
-	public AIRFLOController (int port) {
+	public CowGamepad(int port) {
 		super(port);
 		previousStates = new boolean[20];
 		toggleStates = new boolean[20];
@@ -24,45 +16,7 @@ public class AIRFLOController extends Joystick{
 			toggleStates[i] = false;
 		}
 	}
-	
-	public double getLY(){
-		return -getRawAxis(1);
-	}
-	
-	public double getLX(){
-		return -getRawAxis(0);
-	}
-	
-	public double getRY() {
-		return -getRawAxis(2);
-	}
-	public double getRX(){
-		return getRawAxis(3);
-	}
-	
-	public boolean getHeadingPadPressed(){
-		return getRawButton(1) || getRawButton(2) || getRawButton(3) || getRawButton(4);
-	}
-	
-	
-	
-	/**
-	* Determine the top speed threshold
-	* Bumper buttons on the controller will limit the speed to the CRAWL value
-	* Trigger buttons on the controller will limit the speed to the SPRINT value
-	* Otherwise it will allow the robot a speed up to Normal max.
-	*
-	* @param topSpeedNormal value double 0 to 1
-	* @param topSpeedCrawl value double 0 to 1
-	* @param topSpeedSprint  value double 0 to 1
-	* @return topSpeedCurrent value double 0 to 1
-	*/
-    public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
-        if(getRawButton(8) || getRawButton(7)) return topSpeedCrawl; //front-bottom triggers
-        else if(getRawButton(6) || getRawButton(9)) return topSpeedSprint; //fromt-bumper buttons
-        else return topSpeedNormal;
-    }
-	
+
 	public double getHeadingPadDirection(){
 		float x=0, y=0;
 		if (getRawButton(1)) y-=1;
