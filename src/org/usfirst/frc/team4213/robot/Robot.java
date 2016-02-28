@@ -7,9 +7,11 @@ import java.util.concurrent.Executors;
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
+import org.team4213.lib14.CowDash;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
+import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,8 +26,8 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
 
-	TurretMap turret;
-	// ShooterMap shooter;
+	//TurretMap turret;
+	ShooterMap shooter;
 	AIRFLOController driverController;
 	Xbox360Controller gunnerController;
 	DriveController driveTrain;
@@ -57,8 +59,8 @@ public class Robot extends IterativeRobot {
 		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
 
 		// TODO: Read-in and Populate the RobotMap from a textFile
-		turret = new TurretMap();
-		// shooter = new ShooterMap();
+		//turret = new TurretMap();
+		shooter = new ShooterMap();
 		driveTrain = new DriveController(new DriveMap());
 
 		camServer.start(shooterCamController, executor);
@@ -95,21 +97,25 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
-		/*
-		 * if (driverController.getButtonTripped(1)) { shooter.intake(); }
-		 * 
-		 * if (driverController.getButtonTripped(2)) { shooter.eject(); }
-		 * 
-		 * if (driverController.getButtonTripped(5)) { shooter.arm(); }
-		 * 
-		 * if (driverController.getButtonTripped(6)) { shooter.shoot(); }
-		 * 
-		 * if (driverController.getButtonReleased(1) ||
-		 * driverController.getButtonReleased(2) ||
-		 * driverController.getButtonReleased(5)) { shooter.idle(); }
-		 */
+		 if (driverController.getButtonTripped(1)) { shooter.intake(); }
+		 
+		 if (driverController.getButtonTripped(2)) { shooter.eject(); }
+		 
+		 if (driverController.getButtonTripped(5)) { shooter.arm(); }
+		 
+		 if (driverController.getButtonTripped(6)) { shooter.shoot(); }
+		 
+		 
+		 if (driverController.getButtonTripped(4)){
+			 shooter.idle();
+		 }
+		 if (driverController.getButtonReleased(1) ||
+		 driverController.getButtonReleased(2) ||
+		 driverController.getButtonReleased(5)) { shooter.idle(); }
+		 
+		 shooter.step();
 
-		//turret.setPitchSpeed(driverController.getRY());  //TODO: why did you have this?!  -- Tim
+		/*turret.setPitchSpeed(driverController.getRY());  //TODO: why did you have this?!  -- Tim
 		if (driverController.getButtonTripped(5)) {
 			turret.engage();
 		}
@@ -126,19 +132,25 @@ public class Robot extends IterativeRobot {
 		if (driverController.getLY() > 0) {
 			turret.bumpTurretDown();
 		}
-		turret.step();
+		
+		CowDash.setBool("TEST", driverController.getButtonTripped(1));
+		
 
 		driveTrain.drive(driverController, true);
 
+		turret.step();*/
 	}
 
 	/**
 	 * This function is called periodically during test mode Coders and
 	 * Developers use this during their tests
+	 * 
+	 * But here it's for mechanical team to test their shit
 	 */
 	@Override
 	public void testPeriodic() {
-
+		//turret.setPitchSpeed(driverController.getLY());
+		
 	}
 
 }

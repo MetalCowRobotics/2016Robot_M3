@@ -28,7 +28,7 @@ public final class RobotMap {
 			public static final int MAX_ANGLE = 360;
 			public static final int MIN_ANGLE = -360;
 			public static final double ABS_TOLERANCE = 3;
-			public static final double BUMP_AMT = 0.1;
+			public static final double BUMP_AMT = 0.5;
 		}
 
 		public final class Pitch_Motor {
@@ -41,7 +41,7 @@ public final class RobotMap {
 			public static final int MAX_ANGLE = 80 - START_ANGLE;
 			public static final int MIN_ANGLE = 20 - START_ANGLE;
 			public static final double ABS_TOLERANCE = 3;
-			public static final double BUMP_AMT = 0.1;
+			public static final double BUMP_AMT = 0.4;
 		}
 
 	}
@@ -71,16 +71,16 @@ public final class RobotMap {
 
 	public final class Shooter {
 		public static final int FLYWHEEL_CHANNEL = 3;
-		public static final int CAM_CHANNEL = 0;
-		public static final int ENC_CH_A = 4;
-		public static final int ENC_CH_B = 5;
-		public static final int LIMIT_SWITCH = 3;
+		public static final int CAM_CHANNEL = 5;
+		public static final int ENC_CH_A = 0;
+		public static final int ENC_CH_B = 1;
+		public static final int LIMIT_SWITCH = 4;
 		private static final int GEARSGR = 3;
 		private static final int PLANETARYGR = 27;
-		private static final int PPR = 5; // TODO Potentially need to Change
+		private static final int PPR = 7;
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 		public static final double SHOOT_SPEED = -1;
-		public static final double INTAKE_SPEED = .6;
+		public static final double INTAKE_SPEED = .6; // TODO ADD TO SMART DASHBOARD
 		public static final double EJECT_SPEED = -.3;
 
 	}

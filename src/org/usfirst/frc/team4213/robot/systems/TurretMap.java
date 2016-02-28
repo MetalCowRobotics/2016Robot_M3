@@ -35,15 +35,42 @@ public class TurretMap { // Replace these with the Constants
 		PITCH_ENC.setDistancePerPulse(1/Turret.Pitch_Motor.COUNT_PER_DEG);
 		PITCH_MOTOR.setInverted(true);
 	}
-
-	public void setYawSpeed(double speed) {
+	
+	public void setRawYawSpeed(double speed){
+		CowDash.setNum("Turret_yawSpeed", speed);
 		YAW_MOTOR.set(speed);
 	}
-
-	public void setPitchSpeed(double speed) {
+	
+	public void setRawPitchSpeed(double speed){
+		CowDash.setNum("Turret_pitchSpeed", speed);
 		PITCH_MOTOR.set(speed);
 	}
 
+	public void setYawSpeed(double speed) {
+			setRawYawSpeed(speed);
+		
+	}
+	
+
+	public void setPitchSpeed(double speed) {
+		CowDash.setNum("Turret Up Speed", speed);
+		if((speed > 0 && getPitchEncDistance() > Turret.Pitch_Motor.MAX_ANGLE) || (speed < 0 && getPitchEncDistance() < 0)){
+			setRawPitchSpeed(0);
+			return;
+		}
+		
+		if( state == TurretState.ENGAGED ){
+			if(speed<0 && getPitchEncDistance() < Turret.Pitch_Motor.MIN_ANGLE ){
+				setRawPitchSpeed(0);
+				return;
+			}	
+		}
+		
+		setRawPitchSpeed(speed);
+	}
+
+	
+	
 	public int getYawEncPosition() {
 		return YAW_ENC.get();
 	}
@@ -103,13 +130,19 @@ public class TurretMap { // Replace these with the Constants
 	}
 
 	private void runPitchPID() {
+		// TODO: Full PID
+		// TODO: Tuning constants on dashboard
+		
 		CowDash.setNum("Turret_desiredPitchAngle", desiredPitchAngle);
 		pitchError = desiredPitchAngle - getPitchEncDistance();
 		CowDash.setNum("Turret_pitchError", pitchError);
-		setPitchSpeed(pitchError / 10);
+		setPitchSpeed(pitchError * 0.2);
 	}
 
 	private void runYawPID() {
+		// TODO: Full PID
+		// TODO: Tuning constants on dashboard
+		
 		CowDash.setNum("Turret_desiredYawAngle", desiredYawAngle);
 		yawError = desiredYawAngle - getYawEncDistance();
 		CowDash.setNum("Turret_yawError", yawError);

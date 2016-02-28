@@ -1,7 +1,5 @@
 package org.usfirst.frc.team4213.robot.systems;
 
-import java.util.Calendar;
-
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
 
 import edu.wpi.first.wpilibj.CounterBase;
@@ -10,20 +8,22 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 
 public class ShooterMap {
 
 	private static final SpeedController CAM_MOTOR = new Jaguar(Shooter.CAM_CHANNEL);
 	private static final SpeedController FLYWHEEL_MOTOR = new Jaguar(Shooter.FLYWHEEL_CHANNEL);
+	private static final SpeedController FLYWHEEL_MOTOR2 = new Jaguar(4);
 	private static final Encoder CAM_ENCODER = new Encoder(Shooter.ENC_CH_A, Shooter.ENC_CH_B, false,
 			CounterBase.EncodingType.k4X);
 	private static final DigitalInput BALL_LIM_SWITCH = new DigitalInput(Shooter.LIMIT_SWITCH);
 
 	private int desiredCamAngle;
 	public ShooterState state;
-	private long armTime;
-	private long shootTime;
 	private double error;
+	private Timer timer;
+	
 
 	public enum ShooterState {
 		INTAKE, EJECT, IDLE, ARMING, ARMED, SHOOTING;
@@ -32,6 +32,9 @@ public class ShooterMap {
 	public ShooterMap() {
 		state = ShooterState.IDLE;
 		// shooter.camMotor.enableBrakeMode(true); // DOES THIS WORK ????
+		//CAM_ENCODER.setReverseDirection(true);
+		//CAM_MOTOR.setInverted(true);
+		timer = new Timer();
 		resetEnc();
 		desiredCamAngle = 0;
 		CAM_ENCODER.setDistancePerPulse(1 / Shooter.COUNT_PER_DEG);
@@ -43,10 +46,11 @@ public class ShooterMap {
 
 	public void setWheelSpeed(double speed) {
 		FLYWHEEL_MOTOR.set(speed);
+		FLYWHEEL_MOTOR2.set(-speed);
 	}
 
 	public boolean getSwitchHit() {
-		return BALL_LIM_SWITCH.get();
+		return !BALL_LIM_SWITCH.get();
 	}
 
 	public double getEncValue() {
@@ -63,7 +67,7 @@ public class ShooterMap {
 
 	public void arm() {
 		if (state == ShooterState.IDLE || state == ShooterState.EJECT) {
-			armTime = getCurrentTimeMS();
+			timer.start();
 			state = ShooterState.ARMING;
 		} else {
 			DriverStation.reportError("You cannot Arm unless You're Up and Idle", false);
@@ -80,7 +84,7 @@ public class ShooterMap {
 
 	public void shoot() {
 		if (state == ShooterState.ARMED) {
-			shootTime = getCurrentTimeMS();
+			timer.start();
 			state = ShooterState.SHOOTING;
 		} else {
 			// TODO VIBE CONTROLLER
@@ -92,12 +96,8 @@ public class ShooterMap {
 		state = ShooterState.IDLE;
 	}
 
-	private long getCurrentTimeMS() {
-		return Calendar.getInstance().get(Calendar.MILLISECOND);
-	}
-
 	private void runCamPID() {
-		error = desiredCamAngle - getEncDist();
+		error = -desiredCamAngle - getEncDist();
 		setCamSpeed(error / 180);
 	}
 
@@ -117,8 +117,10 @@ public class ShooterMap {
 			break;
 		case SHOOTING:
 			desiredCamAngle = 360;
-			if (error == 3 && getCurrentTimeMS() - shootTime > 1 * 1000) {
+			if ( timer.get() > 2) {
 				// 1 Second of Wheel Spinning. ( ADD TO CONFIG )
+				timer.stop();
+				timer.reset();
 				resetEnc();
 				idle();
 				desiredCamAngle = 0;
@@ -126,13 +128,17 @@ public class ShooterMap {
 			break;
 		case ARMING:
 			setWheelSpeed(Shooter.SHOOT_SPEED);
-			if (getCurrentTimeMS() - armTime > 2 * 1000) {
+			DriverStation.reportError("/n Time:" + (timer.get()), false);
+			if (timer.get() > 2) {
 				// 2 Seconds, Can be changed ( ADD TO CONFIG )
+				timer.stop();
+				timer.reset();
 				state = ShooterState.ARMED;
 			}
 			break;
 		case ARMED:
 			setWheelSpeed(Shooter.SHOOT_SPEED);
+			break;
 		case IDLE:
 			desiredCamAngle = 120;
 			setWheelSpeed(0);
