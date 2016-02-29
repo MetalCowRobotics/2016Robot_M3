@@ -10,12 +10,16 @@ import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
+import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
+import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -26,12 +30,16 @@ import edu.wpi.first.wpilibj.IterativeRobot;
  */
 public class Robot extends IterativeRobot {
 
-	//TurretMap turret;
+	TurretMap turret;
+	IntakeMap intake;
 	ShooterMap shooter;
+	
 	AIRFLOController driverController;
 	Xbox360Controller gunnerController;
+	
 	DriveController driveTrain;
-
+	OperatorController ballSystems;
+	
 	// Camera Controller
 	public static CowCamServer camServer;
 	// The Thread Pool / Executor of Tasks to Use
@@ -53,15 +61,18 @@ public class Robot extends IterativeRobot {
 
 		driverController = new AIRFLOController(0);
 		gunnerController = new Xbox360Controller(1);
-
+		
 		camServer = new CowCamServer(1180);
 		executor = Executors.newWorkStealingPool();
 		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
 
 		// TODO: Read-in and Populate the RobotMap from a textFile
-		//turret = new TurretMap();
+		turret = new TurretMap();
 		shooter = new ShooterMap();
+		//intake = new IntakeMap();
+		
 		driveTrain = new DriveController(new DriveMap());
+		ballSystems = new OperatorController(turret,shooter,null);
 
 		camServer.start(shooterCamController, executor);
 
@@ -97,27 +108,29 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
+		ballSystems.drive(gunnerController);
+		
 		//TODO: Move all the OperatorController code to the OperatorController.java... maybe
 		
-		 if (driverController.getButtonTripped(1)) { shooter.intake(); }
-		 
-		 if (driverController.getButtonTripped(2)) { shooter.eject(); }
-		 
-		 if (driverController.getButtonTripped(5)) { shooter.arm(); }
-		 
-		 if (driverController.getButtonTripped(6)) { shooter.shoot(); }
-		 
-		 
-		 if (driverController.getButtonTripped(4)){
-			 shooter.idle();
-		 }
-		 
-		 
-		 if (driverController.getButtonReleased(1) ||
-		 driverController.getButtonReleased(2) ||
-		 driverController.getButtonReleased(5)) { shooter.idle(); }
-		 
-		 shooter.step();
+//		 if (driverController.getButtonTripped(1)) { shooter.intake(); }
+//		 
+//		 if (driverController.getButtonTripped(2)) { shooter.eject(); }
+//		 
+//		 if (driverController.getButtonTripped(5)) { shooter.arm(); }
+//		 
+//		 if (driverController.getButtonTripped(6)) { shooter.shoot(); }
+//		 
+//		 
+//		 if (driverController.getButtonTripped(4)){
+//			 shooter.idle();
+//		 }
+//		 
+//		 
+//		 if (driverController.getButtonReleased(1) ||
+//		 driverController.getButtonReleased(2) ||
+//		 driverController.getButtonReleased(5)) { shooter.idle(); }
+//		 
+//		 shooter.step();
 
 		 
 		 //TODO: Enable the Camera for the gunner and then add the crosshairs
@@ -158,15 +171,9 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		//turret.setPitchSpeed(driverController.getLY());
-		if(driverController.getButtonReleased(1)){
-			DriverStation.reportError("/n Released", false);
-		}
-		if(driverController.getButtonTripped(1)){
-			DriverStation.reportError("/n Pressed", false);
-		}
-
-		
+		DriverStation.reportError("\n Current RT VAL :: " + gunnerController.getLT(), false);
+		gunnerController.setRumble(Joystick.RumbleType.kLeftRumble, (float) gunnerController.getLT());
+		DriverStation.reportError("\n We're still Runnin", false);
 	}
 
 }

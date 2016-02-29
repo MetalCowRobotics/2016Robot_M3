@@ -32,36 +32,36 @@ public class OperatorController {
 	public void drive(Xbox360Controller controller){
 		
 		// INTAKE
-		if(controller.getButtonTripped(2) && getIntakeReady() && state == OperatorState.IDLE){
+		if(controller.getButtonTripped(Xbox360Controller.BTN_B) && getIntakeReady() && state == OperatorState.IDLE){
 			shooter.intake();
-			intake.intake();
+			//intake.intake();
 			turret.idle();
 			state = OperatorState.INTAKE;
-		}else if(controller.getButtonReleased(2) && state == OperatorState.INTAKE){
+		}else if((controller.getButtonReleased(Xbox360Controller.BTN_B) && state == OperatorState.INTAKE) || shooter.getState() == ShooterState.IDLE){
 			idleAll();
 			state = OperatorState.IDLE;
 		}
 		
 		// EJECT
-		if(controller.getButtonTripped(4) && getIntakeReady() && state == OperatorState.IDLE){
+		if(controller.getButtonTripped(Xbox360Controller.BTN_Y) && getIntakeReady() && state == OperatorState.IDLE){
 			shooter.eject();
-			intake.eject();
+			//intake.eject();
 			turret.idle();
 			state = OperatorState.EJECT;
-		}else if(controller.getButtonReleased(4) && state == OperatorState.EJECT){
+		}else if((controller.getButtonReleased(Xbox360Controller.BTN_Y) && state == OperatorState.EJECT) || shooter.getState() == ShooterState.IDLE){
 			idleAll();
 			state = OperatorState.IDLE;
 		}
 		
 		
 		// Shoot the Ball
-		if(controller.getButtonTripped(6) && state == OperatorState.TURRET_ENGAGED){
+		if(controller.getButtonTripped(Xbox360Controller.BTN_RBUMP) && state == OperatorState.TURRET_ENGAGED){
 			shooter.shoot();
 		}
 		
 		// Raise Arm
 		if(controller.getPOV() == 0 && state == OperatorState.IDLE){
-			intake.raise();
+			//intake.raise();
 			state = OperatorState.INTAKE_RAISED;
 		}
 		
@@ -71,19 +71,29 @@ public class OperatorController {
 			state = OperatorState.IDLE;
 		}
 		
-		// Engage Turret
-		if(controller.getButtonTripped(7) && state == OperatorState.IDLE){
+		if(		controller.getButtonTripped(Xbox360Controller.BTN_LBUMP)
+ && state == OperatorState.IDLE){
 			turret.engage();
 			state = OperatorState.TURRET_ENGAGED;
-		}else if(controller.getButtonReleased(7) && state == OperatorState.TURRET_ENGAGED){
+		}else if(		controller.getButtonReleased(Xbox360Controller.BTN_LBUMP)
+ && state == OperatorState.TURRET_ENGAGED){
 			idleAll();
 			state = OperatorState.IDLE;
 		}
+//		
+//		// Engage Turret
+//		if(controller.getLT() > 0 && state == OperatorState.IDLE){
+//			turret.engage();
+//			state = OperatorState.TURRET_ENGAGED;
+//		}else if(controller.getLT() == 0 && state == OperatorState.TURRET_ENGAGED){
+//			idleAll();
+//			state = OperatorState.IDLE;
+//		}
 		
 		// Arm Shooter
-		if(controller.getButtonTripped(8) && state == OperatorState.TURRET_ENGAGED){
+		if(controller.getRT() > 0 && state == OperatorState.TURRET_ENGAGED){
 			shooter.arm();
-		}else if(controller.getButtonReleased(8) && state == OperatorState.TURRET_ENGAGED){
+		}else if(controller.getRT() < 0 && state == OperatorState.TURRET_ENGAGED){
 			shooter.idle();
 		}
 		
@@ -113,13 +123,13 @@ public class OperatorController {
 	
 	public void idleAll(){
 		shooter.idle();
-		intake.idle();
+		//intake.idle();
 		turret.idle();
 	}
 	
 	// Checks if Intake is Ready or is Already Intaking
 	public boolean getIntakeReady(){
-		return intake.getState() == IntakeState.DOWN &&
+		return //intake.getState() == IntakeState.DOWN &&
 				shooter.getState() == ShooterState.IDLE &&
 				turret.getState() == TurretState.IDLE;
 	}

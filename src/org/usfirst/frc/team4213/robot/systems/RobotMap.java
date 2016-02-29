@@ -29,6 +29,7 @@ public final class RobotMap {
 			public static final int MIN_ANGLE = -360;
 			public static final double ABS_TOLERANCE = 3;
 			public static final double BUMP_AMT = 0.5;
+			public static final double MAX_SPEED = 0.6;
 		}
 
 		public final class Pitch_Motor {

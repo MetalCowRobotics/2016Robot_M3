@@ -51,8 +51,14 @@ public class TurretMap { // Replace these with the Constants
 	}
 
 	public void setYawSpeed(double speed) {
-			setRawYawSpeed(speed);
+		// Speed Limits
+		if(speed > Turret.Yaw_Motor.MAX_SPEED){
+			speed = Turret.Yaw_Motor.MAX_SPEED;
+		}else if(speed < -1 * Turret.Yaw_Motor.MAX_SPEED){
+			speed = -Turret.Yaw_Motor.MAX_SPEED;
+		}
 		
+		setRawYawSpeed(speed);
 	}
 	
 
