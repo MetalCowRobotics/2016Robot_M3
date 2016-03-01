@@ -10,6 +10,8 @@ package org.team4213.lib14;
  * Wrapper/convenience class for the Xbox360 gamepads that MetalCow has
  */
 
+// TODO: Unify/make this dropinabble with AIRFLOController
+
 public class Xbox360Controller extends CowGamepad{
 	
 	public static final int		AXIS_LX			= 0;

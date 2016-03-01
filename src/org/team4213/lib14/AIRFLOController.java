@@ -7,7 +7,7 @@
 package org.team4213.lib14;
 
 // TODO: Make a Filter or some sort? I very briefly let light pressure off a trigger, and it caused the robot to change states. So maybe a filteredGetButton would be good. -Thad
-
+// TODO: Map Properly, fake rumble() method. Make an enum of ControllerButton
 public class AIRFLOController extends CowGamepad{
 	
 	public AIRFLOController (int port) {
