@@ -29,7 +29,7 @@ public class PIDController extends ErrorController {
 	public double kp, ki, kd, integralLifespan;
 
 	// Previous position data
-	Vector positionData = new Vector();
+	Vector<PositionDataPoint> positionData = new Vector<PositionDataPoint>();
 
 	// One of the data points for positions
 	private class PositionDataPoint {
@@ -69,25 +69,42 @@ public class PIDController extends ErrorController {
 		this.ki = ki;
 		this.integralLifespan = integralLifespan;
 		this.kd = kd;
+		positionData.add(new PositionDataPoint(0));
+	}
+	
+	public double getTarget(){
+		return target;
+	}
+	
+	public void bumpTarget(double by) {
+		target+=by;
+	}
+	
+	public double getError() {
+		try{
+			return target-positionData.lastElement().value;
+		} catch(Exception e){
+			return 0;
+		}
+		
 	}
 
 	/**
 	 * Resets the past data points to nothing.
 	 */
 	public void reset() {
-		positionData = new Vector();
+		positionData = new Vector<PositionDataPoint>();
 	}
 
 	@Override
 	public double feedAndGetValue(double currentValue) {
 		// Read constants values off of the CowDash
-		/*
-		 * kp = CowDash.getNumber(name+"::kp",kp); ki =
-		 * CowDash.getNumber(name+"::ki",ki); kd =
-		 * CowDash.getNumber(name+"::kd",kd);
-		 * integralLifespan=CowDash.getNumber(name+"::integralLifespan",
-		 * integralLifespan);
-		 */
+		
+		kp = CowDash.getNum(name+"::kp",kp); 
+		ki = CowDash.getNum(name+"::ki",ki);
+		kd = CowDash.getNum(name+"::kd",kd);
+		integralLifespan=CowDash.getNum(name+"::integralLifespan", integralLifespan);
+		
 
 		// Current error is target minus current value
 		PositionDataPoint thisValue = new PositionDataPoint(currentValue);
@@ -98,26 +115,29 @@ public class PIDController extends ErrorController {
 		if (positionData.size() > 0) {
 			// Compute integral by summing up all errors contained within the
 			// positionData, weighted by time inbetween each.
-			Enumeration e = positionData.elements();
-			PositionDataPoint lastElement = (PositionDataPoint) e.nextElement();
+			Enumeration<PositionDataPoint> e = positionData.elements();
+			PositionDataPoint lastElement = e.nextElement();
 			while (e.hasMoreElements()) {
-				PositionDataPoint currentElement = (PositionDataPoint) e.nextElement();
+				PositionDataPoint currentElement = e.nextElement();
 				integral += (target - currentElement.value) * (lastElement.time.get() - currentElement.time.get());
 			}
 
 			// Compute derivative by subtracting current value from last
 			// recorded, divided by time inbetween.
-			PositionDataPoint lastData = ((PositionDataPoint) positionData.lastElement());
+			PositionDataPoint lastData = positionData.lastElement();
 			derivative = (lastData.value - thisValue.value) / lastData.time.get();
 		}
 
 		// Add this data point to the position data history
 		positionData.addElement(thisValue);
 		// Trim old entries from the position data history
-		while (((PositionDataPoint) positionData.firstElement()).time.get() > integralLifespan)
+		while (positionData.firstElement().time.get() > integralLifespan)
 			positionData.removeElementAt(0);
 
 		// Log info about the integral and derivative
+		CowDash.setNum(name+"::target", target);
+		CowDash.setNum(name+"::error", target - thisValue.value);
+		CowDash.setNum(name+"::current", thisValue.value);
 
 		// Return summed terms: Proportional, Integral, Derivative
 		return (target - thisValue.value) * kp / 1000 + integral * ki / 1000 + derivative * kd / 1000;

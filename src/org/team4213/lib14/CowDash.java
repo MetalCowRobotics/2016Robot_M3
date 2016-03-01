@@ -7,6 +7,7 @@ public class CowDash {
 		try{
 			return SmartDashboard.getNumber(key);
 		}catch(Exception e){
+			SmartDashboard.putNumber(key, fallback);
 			return fallback;
 		}
 	}
@@ -15,14 +16,16 @@ public class CowDash {
 		try{
 			return SmartDashboard.getString(key);
 		}catch(Exception e){
+			SmartDashboard.putString(key, fallback);
 			return fallback;
 		}
 	}
 	
-	public static boolean getNum(String key, boolean fallback) {
+	public static boolean getBool(String key, boolean fallback) {
 		try{
 			return SmartDashboard.getBoolean(key);
 		}catch(Exception e){
+			SmartDashboard.putBoolean(key, fallback);
 			return fallback;
 		}
 	}

@@ -17,7 +17,6 @@ import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
 
@@ -108,7 +107,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void teleopPeriodic() {
 		
-		ballSystems.drive(gunnerController);
+		ballSystems.drive(driverController);
+		//turret.setRawYawSpeed(driverController.getRX());
 		
 		//TODO: Move all the OperatorController code to the OperatorController.java... maybe
 		
@@ -137,30 +137,29 @@ public class Robot extends IterativeRobot {
 		 //TODO: We need to calibrate the shooter to the crosshairs overlay
 		 
 		 
-		/*turret.setPitchSpeed(driverController.getRY());
-		if (driverController.getButtonTripped(5)) {
-			turret.engage();
-		}
-
-		
-		if (driverController.getButtonTripped(6)) {
-			turret.idle();
-		}
-
-		if (driverController.getLY() < 0) {
-			turret.bumpTurretUp();
-		}
-
-		if (driverController.getLY() > 0) {
-			turret.bumpTurretDown();
-		}
-		
-		CowDash.setBool("TEST", driverController.getButtonTripped(1));
-		
-
-		driveTrain.drive(driverController, true);
-
-		turret.step();*/
+//		if (driverController.getButtonTripped(5)) {
+//			turret.engage();
+//		}
+//
+//		
+//		if (driverController.getButtonTripped(6)) {
+//			turret.idle();
+//		}
+//
+//		if (driverController.getLY() < 0) {
+//			turret.bumpTurretUp();
+//		}
+//
+//		if (driverController.getLY() > 0) {
+//			turret.bumpTurretDown();
+//		}
+//		
+//		CowDash.setBool("TEST", driverController.getButtonTripped(1));
+//		
+//
+//		driveTrain.drive(driverController, true);
+//
+//		turret.step();
 	}
 
 	/**
@@ -171,9 +170,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		DriverStation.reportError("\n Current RT VAL :: " + gunnerController.getLT(), false);
+		/*DriverStation.reportError("\n Current RT VAL :: " + gunnerController.getLT(), false);
 		gunnerController.setRumble(Joystick.RumbleType.kLeftRumble, (float) gunnerController.getLT());
-		DriverStation.reportError("\n We're still Runnin", false);
+		DriverStation.reportError("\n We're still Runnin", false);*/
+		
+		
 	}
 
 }

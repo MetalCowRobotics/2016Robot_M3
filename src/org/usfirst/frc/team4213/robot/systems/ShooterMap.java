@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4213.robot.systems;
 
+import org.team4213.lib14.CowDash;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
 
 import edu.wpi.first.wpilibj.CounterBase;
@@ -101,36 +102,44 @@ public class ShooterMap {
 	}
 
 	private void runCamPID() {
+		// TODO: Swap to PIDController
 		error = -desiredCamAngle - getEncDist();
 		setCamSpeed(error / 180);
 	}
+	
+	// FIXME: The ball can only be fired once per reboot for some weird reason.
 
 	public void step() {
 		switch (state) {
 		case INTAKE:
-			if (getSwitchHit()) {
+			CowDash.setString("Shooter_state", "INTAKE");
+			/*if (getSwitchHit()) {
 				state = ShooterState.IDLE;
 				break;
-			}
+			}*/ // FIXED: This really doesn't help, we found -Thad
 			desiredCamAngle = 0;
 			setWheelSpeed(Shooter.INTAKE_SPEED);
 			break;
 		case EJECT:
-			desiredCamAngle = 0;
+			// FIXME: "Zoo-ZOO!" intake then eject (would help, we found from testing) -Thad
+			CowDash.setString("Shooter_state", "EJECT");
+			desiredCamAngle = 360;
 			setWheelSpeed(Shooter.EJECT_SPEED);
 			break;
 		case SHOOTING:
+			CowDash.setString("Shooter_state", "SHOOTING");
 			desiredCamAngle = 360;
 			if ( timer.get() > 2) {
 				// 1 Second of Wheel Spinning. ( ADD TO CONFIG )
 				timer.stop();
 				timer.reset();
-				resetEnc();
+				resetEnc(); // TODO: This could (and I think it is) leading to weird things. Consider modulo? Not sure why you're doing this. -Thad
 				idle();
 				desiredCamAngle = 0;
 			}
 			break;
 		case ARMING:
+			CowDash.setString("Shooter_state", "ARMING");
 			setWheelSpeed(Shooter.SHOOT_SPEED);
 			DriverStation.reportError("/n Time:" + (timer.get()), false);
 			if (timer.get() > 2) {
@@ -141,15 +150,19 @@ public class ShooterMap {
 			}
 			break;
 		case ARMED:
+			CowDash.setString("Shooter_state", "ARMED");
 			setWheelSpeed(Shooter.SHOOT_SPEED);
 			break;
 		case IDLE:
+			CowDash.setString("Shooter_state", "IDLE");
 			desiredCamAngle = 120;
 			setWheelSpeed(0);
 			break;
 		default:
 			break;
 		}
+		
+		
 
 		runCamPID();
 	}
