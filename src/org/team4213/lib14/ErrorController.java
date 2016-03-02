@@ -6,7 +6,6 @@
 
 package org.team4213.lib14;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import java.util.Hashtable;
 
 /**
@@ -18,14 +17,14 @@ public abstract class ErrorController {
     // The current target this controller should seek
     public double target;
     // A hashtable (dictionary) that maps named setpoints (I.E. "North"->0, "East"->90) to values
-    Hashtable targetsMap;
+    Hashtable<String, Double> targetsMap;
 
     // Prefix/identifier when logging/tweaking this controller
     protected String name;
     
     public ErrorController(String name) {
         this.name=name;
-        this.targetsMap = new Hashtable();
+        this.targetsMap = new Hashtable<String, Double>();
         this.target=0;
     }
     
@@ -58,7 +57,7 @@ public abstract class ErrorController {
      * @param targetKey the named setpoint to target
      */
     public void setTarget(String targetKey) {
-        Double res = (Double) targetsMap.get(targetKey);
+        Double res = targetsMap.get(targetKey);
         if (res!=null) target = res.doubleValue();
     }
 }

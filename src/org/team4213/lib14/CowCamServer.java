@@ -122,7 +122,6 @@ public class CowCamServer {
 					// Stream Periodically based on FPS
 					long period = (long) (1000 / (1.0 * fps));
 					while (isStreaming && cameraController.isRunning()) {
-						DriverStation.reportError("reading cam", false);
 						long t0 = System.currentTimeMillis();
 						byte[] videoBits = cameraController.getImgAsBytes();
 
