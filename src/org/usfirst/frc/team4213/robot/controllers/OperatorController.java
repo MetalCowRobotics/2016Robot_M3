@@ -1,9 +1,8 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
-import org.team4213.lib14.AIRFLOController;
-import org.team4213.lib14.Xbox360Controller;
+import org.team4213.lib14.CowGamepad;
+import org.team4213.lib14.GamepadButton;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
-import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeState;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
@@ -31,30 +30,33 @@ public class OperatorController {
 	
 	
 	// TODO KEEP TRACK OF THE FANCY TRANSITION STATEEESSSSSSSSSSSSSSSS
-	// TODO MOVE STATIC BUTTON ASSIGNMENTS TO MAP
-	public void drive(AIRFLOController controller){
+	public void drive(CowGamepad controller){
 		
 		// INTAKE
-		if(controller.getButtonTripped(2) && isAllIdle() && state == OperatorState.IDLE){
-			DriverStation.reportError("\n INTAKING", false);
+		if(controller.getButtonTripped(GamepadButton.B) && isAllIdle() && state == OperatorState.IDLE){
+			//DriverStation.reportError("\n INTAKING", false);
 			shooter.intake();
 			//intake.intake();
 			turret.idle();
 			state = OperatorState.INTAKE;
-		}else if((controller.getButtonReleased(2) && state == OperatorState.INTAKE)){
-			DriverStation.reportError("\n STOP INTAKING", false);
+		}else if((controller.getButtonReleased(GamepadButton.B) && state == OperatorState.INTAKE)){
+			//DriverStation.reportError("\n STOP INTAKING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
 		
+		if(shooter.getSwitchHit() && state==OperatorState.INTAKE){
+			controller.rumbleLeft((float) 0.3);
+		}
+		
 		// EJECT
-		if(controller.getButtonTripped(4) && isAllIdle() && state == OperatorState.IDLE){
-			DriverStation.reportError("\n EJECTING", false);
+		if(controller.getButtonTripped(GamepadButton.Y) && isAllIdle() && state == OperatorState.IDLE){
+			//DriverStation.reportError("\n EJECTING", false);
 			shooter.eject();
 			//intake.eject();
 			turret.idle();
 			state = OperatorState.EJECT;
-		}else if((controller.getButtonReleased(4) && state == OperatorState.EJECT)){
+		}else if((controller.getButtonReleased(GamepadButton.Y) && state == OperatorState.EJECT)){
 			DriverStation.reportError("\n STOP EJECTING", false);
 			idleAll();
 			state = OperatorState.IDLE;
@@ -62,34 +64,31 @@ public class OperatorController {
 		
 		
 		// Shoot the Ball
-		if(controller.getButtonTripped(6) && state == OperatorState.TURRET_ENGAGED){
-			DriverStation.reportError("\n SHOOT", false);
-			shooter.shoot();
-		}else if(controller.getButtonReleased(6)){
-			// PROBABLY JUST NEED THIS SO IT RESETS
+		if(controller.getButton(GamepadButton.RB)){ // && state == OperatorState.TURRET_ENGAGED){
+			boolean success = shooter.shoot();
 		}
 		
 		// Raise Arm
 		if(controller.getPOV() == 0 && state == OperatorState.IDLE){
-			DriverStation.reportError("\n RAISING", false);
+			//DriverStation.reportError("\n RAISING", false);
 			//intake.raise();
 			state = OperatorState.INTAKE_RAISED;
 		}
 		
 		// Lower Arm
 		if(controller.getPOV() == 180 && state == OperatorState.INTAKE_RAISED){
-			DriverStation.reportError("\n LOWERING", false);
+			//DriverStation.reportError("\n LOWERING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
 		
 		// ENGAGING TURRET
-		if( controller.getButtonTripped(7) && state == OperatorState.IDLE){
-			DriverStation.reportError("\n ENGAGING", false);
+		if( controller.getButtonTripped(GamepadButton.LT) && state == OperatorState.IDLE){
+			//DriverStation.reportError("\n ENGAGING", false);
 			turret.engage();
 			state = OperatorState.TURRET_ENGAGED;
-		}else if(controller.getButtonReleased(7) && state == OperatorState.TURRET_ENGAGED){
-			DriverStation.reportError("\n DISENGAGING", false);
+		}else if(controller.getButtonReleased(GamepadButton.LT) && state == OperatorState.TURRET_ENGAGED){
+			//DriverStation.reportError("\n DISENGAGING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
@@ -104,31 +103,33 @@ public class OperatorController {
 //		}
 		
 		// Arm Shooter
-		if(controller.getButtonTripped(8) && state == OperatorState.TURRET_ENGAGED){
+		if(controller.getButtonTripped(GamepadButton.RT) && state == OperatorState.TURRET_ENGAGED){
 			shooter.arm();
-			DriverStation.reportError("\n ARMING", false);
-		}else if(controller.getButtonReleased(8) && state == OperatorState.TURRET_ENGAGED){
-			DriverStation.reportError("\n DISARMING", false);
+			//DriverStation.reportError("\n ARMING", false);
+		}else if(controller.getButtonReleased(GamepadButton.RT) && state == OperatorState.TURRET_ENGAGED){
+			//DriverStation.reportError("\n DISARMING", false);
 			shooter.idle();
 		}
+		
+		
 		
 		// Turret Motion
 		if(state == OperatorState.TURRET_ENGAGED){
 			// UP / DOWN
-			if(controller.getLY() < 0){
-				DriverStation.reportError("\n BUMPING UP", false);
+			if(controller.getLY() < -0.2){
+				//DriverStation.reportError("\n BUMPING UP", false);
 				turret.bumpTurretUp();
-			}else if(controller.getLY() > 0){
-				DriverStation.reportError("\n BUMPING DOWN", false);
+			}else if(controller.getLY() > 0.2){
+				//DriverStation.reportError("\n BUMPING DOWN", false);
 				turret.bumpTurretDown();
 			}
 				
 			// RIGHT / LEFT
-			if(controller.getRX() > 0){
-				DriverStation.reportError("\n BUMPING RIGHT", false);
+			if(controller.getRX() > 0.2){
+				//DriverStation.reportError("\n BUMPING RIGHT", false);
 				turret.bumpTurretRight();
-			}else if(controller.getRX() < 0){
-				DriverStation.reportError("\n BUMPING LEFT", false);
+			}else if(controller.getRX() < -0.2){
+				//DriverStation.reportError("\n BUMPING LEFT", false);
 				turret.bumpTurretLeft();
 			}
 		}

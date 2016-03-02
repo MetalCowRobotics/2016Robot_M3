@@ -38,11 +38,11 @@ public class ShooterMap {
 		armTimer = new Timer();
 		shootTimer = new Timer();
 		
-		camPID = new PIDController("Cam PID", 180000, 0, 0, 1);
+		camPID = new PIDController("Cam PID", 75, 0, 1.2, 1);
 		resetEnc();
 		camPID.setTarget(0);
 		CAM_ENCODER.setDistancePerPulse(1/Shooter.COUNT_PER_DEG);
-		FLYWHEEL_MOTOR2.setInverted(true);
+		FLYWHEEL_MOTOR2.setInverted(false);
 	}
 	
 	public ShooterState getState(){
@@ -80,7 +80,7 @@ public class ShooterMap {
 			armTimer.start();
 			state = ShooterState.ARMING;
 		} else {
-			DriverStation.reportError("You cannot Arm unless You're Up and Idle", false);
+			//DriverStation.reportError("You cannot Arm unless You're Up and Idle", false);
 		}
 	}
 
@@ -92,14 +92,16 @@ public class ShooterMap {
 		state = ShooterState.EJECT;
 	}
 
-	public void shoot() {
+	public boolean shoot() {
 		if (state == ShooterState.ARMED) {
 			shootTimer.reset();
 			shootTimer.start();
 			state = ShooterState.SHOOTING;
+			return true;
 		} else {
-			// TODO VIBE CONTROLLER
 			DriverStation.reportError("Shooter is Not Armed : Ball Cannot be Shot", false);
+			return false;
+			
 		}
 	}
 
@@ -132,7 +134,7 @@ public class ShooterMap {
 			CowDash.setString("Shooter_state", "SHOOTING");
 			camPID.setTarget(360);
 			if ( shootTimer.get() > 2) {
-				DriverStation.reportError(shootTimer.get() + "\n", false);
+				//DriverStation.reportError(shootTimer.get() + "\n", false);
 				// 1 Second of Wheel Spinning. ( ADD TO CONFIG )
 				shootTimer.stop();
 				shootTimer.reset();
@@ -143,7 +145,7 @@ public class ShooterMap {
 		case ARMING:
 			CowDash.setString("Shooter_state", "ARMING");
 			setWheelSpeed(Shooter.SHOOT_SPEED);
-			DriverStation.reportError("/n Time:" + (armTimer.get()), false);
+			//DriverStation.reportError("/n Time:" + (armTimer.get()), false);
 			if (armTimer.get() > 2) {
 				// 2 Seconds, Can be changed ( ADD TO CONFIG )
 				armTimer.stop();

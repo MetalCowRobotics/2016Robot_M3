@@ -82,9 +82,10 @@ public final class RobotMap {
 		private static final int PLANETARYGR = 27;
 		private static final int PPR = 7;
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
-		public static final double SHOOT_SPEED = -.8;
-		public static final double INTAKE_SPEED = .5; // TODO ADD TO SMART DASHBOARD
-		public static final double EJECT_SPEED = -1;
+		// TODO ADD THESE TO SMART DASHBOARD
+		public static final double SHOOT_SPEED = 0.9;
+		public static final double INTAKE_SPEED = -.5; 
+		public static final double EJECT_SPEED = 1;
 
 	}
 }

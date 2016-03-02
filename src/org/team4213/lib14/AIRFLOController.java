@@ -26,26 +26,17 @@ public class AIRFLOController extends CowGamepad {
 	public double getRX(){
 		return getRawAxis(3);
 	}
-
-	public double getDPADX() {
-		// TODO: airflo.dpadx
-		return 0;
-	}
-	public double getDPADY() {
-		// TODO: airflo.dpady
-		return 0;
-	}
 	
 	public boolean getButton(int n) {
 		switch(n){
 		case GamepadButton.DPADUP:
-			return getDPADY()>0;
+			return getDpadY()>0;
 		case GamepadButton.DPADDOWN:
-			return getDPADY()<0;
+			return getDpadY()<0;
 		case GamepadButton.DPADLEFT:
-			return getDPADX()<0;
+			return getDpadX()<0;
 		case GamepadButton.DPADRIGHT:
-			return getDPADX()>0;
+			return getDpadX()>0;
 		default:		
 			return getRawButton(n);
 		}

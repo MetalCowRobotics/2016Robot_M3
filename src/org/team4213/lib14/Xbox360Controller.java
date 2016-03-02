@@ -4,6 +4,8 @@ package org.team4213.lib14;
 
 /**
  * Wrapper/convenience class for the Xbox360 gamepads that MetalCow has
+ * 
+ * Drivers through here http://wccftech.com/xbox-controller-pc-drivers-download-courtesy-major-nelson/ to here: mjr.mn/XboxOnePCDriversx64
  */
 
 public class Xbox360Controller extends CowGamepad {
@@ -18,21 +20,25 @@ public class Xbox360Controller extends CowGamepad {
     public double getRT(){
     	return getRawAxis(3);
     }
-	
+
 	public boolean getButton(int n) {
 		switch(n){
 		case GamepadButton.DPADUP:
-			return getDPADY()>0;
+			return getDpadY()>0;
 		case GamepadButton.DPADDOWN:
-			return getDPADY()<0;
+			return getDpadY()<0;
 		case GamepadButton.DPADLEFT:
-			return getDPADX()<0;
+			return getDpadX()<0;
 		case GamepadButton.DPADRIGHT:
-			return getDPADX()>0;
+			return getDpadX()>0;
 		case GamepadButton.RT:
 			return getRT()>0.2;
 		case GamepadButton.LT:
 			return getLT()>0.2;
+		case GamepadButton.BACK:
+			return getRawButton(7);
+		case GamepadButton.START:
+			return getRawButton(8);
 		default:		
 			return getRawButton(n);
 		}
@@ -58,15 +64,10 @@ public class Xbox360Controller extends CowGamepad {
 		return getRawAxis(4);
 	}
 	
-	@Override
-	public double getDPADX() {
-		// TODO xbox.dpadx
-		return 0;
+	public void rumbleLeft(float amt){
+		this.setRumble(RumbleType.kLeftRumble, amt);
 	}
-
-	@Override
-	public double getDPADY() {
-		// TODO xbox.dpady
-		return 0;
+	public void rumbleRight(float amt){
+		this.setRumble(RumbleType.kRightRumble, amt);
 	}
 }

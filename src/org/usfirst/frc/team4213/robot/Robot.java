@@ -8,6 +8,8 @@ import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
+import org.team4213.lib14.CowGamepad;
+import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
@@ -33,8 +35,8 @@ public class Robot extends IterativeRobot {
 	IntakeMap intake;
 	ShooterMap shooter;
 	
-	AIRFLOController driverController;
-	Xbox360Controller gunnerController;
+	CowGamepad driverController;
+	CowGamepad gunnerController;
 	
 	DriveController driveTrain;
 	OperatorController ballSystems;
@@ -58,7 +60,7 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 
-		driverController = new AIRFLOController(0);
+		driverController = new Xbox360Controller(0);
 		gunnerController = new Xbox360Controller(1);
 		
 		camServer = new CowCamServer(1180);
@@ -106,8 +108,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		driverController.prestep();
+		gunnerController.prestep();
 		
-		ballSystems.drive(driverController);
+		ballSystems.drive(gunnerController);
+		
+		driverController.endstep();
+		gunnerController.endstep();
+		
+		
 		//turret.setRawYawSpeed(driverController.getRX());
 		
 		
@@ -166,9 +175,16 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		/*DriverStation.reportError("\n Current RT VAL :: " + gunnerController.getLT(), false);
-		gunnerController.setRumble(Joystick.RumbleType.kLeftRumble, (float) gunnerController.getLT());
-		DriverStation.reportError("\n We're still Runnin", false);*/
+		turret.setRawPitchSpeed(gunnerController.getLY());
+		turret.setRawYawSpeed(gunnerController.getRX());
+		
+		if(gunnerController.getButton(GamepadButton.A)) shooter.setWheelSpeed(1);
+		else if(gunnerController.getButton(GamepadButton.B)) shooter.setWheelSpeed(-1);
+		else shooter.setWheelSpeed(0);
+		
+		if(gunnerController.getButton(GamepadButton.X)) shooter.setCamSpeed(1);
+		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);
+		else shooter.setCamSpeed(0);
 		
 		
 	}

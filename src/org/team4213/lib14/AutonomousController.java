@@ -35,26 +35,6 @@ public class AutonomousController extends Joystick {
 		return true || false || true || false;
 	}
 	
-	
-	
-	/**
-	* Determine the top speed threshold
-	* TODO: This needs to be moved to it an implementation of AIRLFOContorller, not here directly
-	* Bumper buttons on the controller will limit the speed to the CRAWL value
-	* Trigger buttons on the controller will limit the speed to the SPRINT value
-	* Otherwise it will allow the robot a speed up to Normal max.
-	*
-	* @param topSpeedNormal value double 0 to 1
-	* @param topSpeedCrawl value double 0 to 1
-	* @param topSpeedSprint  value double 0 to 1
-	* @return topSpeedCurrent value double 0 to 1
-	*/
-//    public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
-//        if(/* TODO autoCrawl*/ == true) return topSpeedCrawl; //front-bottom triggers
-//        else if(/* TODO autoSprint*/ == true) return topSpeedSprint; //fromt-bumper buttons
-//        else return topSpeedNormal;
-//    }
-	
 	public double getHeadingPadDirection(){
 		float x=0, y=0;
 		if (getRawButton(1)) y-=1;
