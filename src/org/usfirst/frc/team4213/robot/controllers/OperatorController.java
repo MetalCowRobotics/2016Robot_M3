@@ -65,6 +65,8 @@ public class OperatorController {
 		if(controller.getButtonTripped(6) && state == OperatorState.TURRET_ENGAGED){
 			DriverStation.reportError("\n SHOOT", false);
 			shooter.shoot();
+		}else if(controller.getButtonReleased(6)){
+			// PROBABLY JUST NEED THIS SO IT RESETS
 		}
 		
 		// Raise Arm

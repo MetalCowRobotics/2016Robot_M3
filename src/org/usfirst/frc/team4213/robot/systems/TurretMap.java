@@ -19,6 +19,9 @@ public class TurretMap { // Replace these with the Constants
 	private static final PIDController PITCH_PID = new PIDController("Turret_Pitch", 10000, 0,0,1);
 	private static final PIDController YAW_PID = new PIDController("Turret_Yaw", 10000, 0,0,1);
 
+	private boolean overrideYawPID;
+	private boolean overridePitchPID;
+	
 	private TurretState state;
 
 	public enum TurretState {
@@ -32,6 +35,8 @@ public class TurretMap { // Replace these with the Constants
 		PITCH_ENC.reset();
 		PITCH_ENC.setDistancePerPulse(1/Turret.Pitch_Motor.COUNT_PER_DEG);
 		PITCH_MOTOR.setInverted(true);
+		overridePitchPID = false;
+		overrideYawPID = false;
 	}
 	
 	public TurretState getState(){
@@ -136,13 +141,36 @@ public class TurretMap { // Replace these with the Constants
 			DriverStation.reportError("\n At Min Yaw Angle", false);
 		}
 	}
+	
+	public void manualPitchBump(double speed){
+		if(state == TurretState.ENGAGED){
+			overridePitchPID = true;
+			setPitchSpeed(speed * 0.5); // TODO MOVE THESE INTO MAP
+		}
+	}
+	
+	public void manualYawBump(double speed){
+		if(state == TurretState.ENGAGED){
+			overrideYawPID = true;
+			setYawSpeed(speed * 0.5);
+			
+		}
+	}
 
 	private void runPitchPID() {
-		setPitchSpeed(PITCH_PID.feedAndGetValue(getPitchEncDistance())); // NOTE: This works
+		if(overridePitchPID){
+			PITCH_PID.setTarget(getPitchEncDistance());
+		}
+		setPitchSpeed(PITCH_PID.feedAndGetValue(getPitchEncDistance()));
+		overridePitchPID = false;
 	}
 
 	private void runYawPID() {
+		if(overrideYawPID){
+			YAW_PID.setTarget(getYawEncDistance());
+		}
 		setYawSpeed(YAW_PID.feedAndGetValue(getYawEncDistance()));
+		overrideYawPID = false;
 	}
 
 	public void step() {

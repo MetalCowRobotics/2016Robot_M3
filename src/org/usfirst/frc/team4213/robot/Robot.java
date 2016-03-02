@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot {
 		executor = Executors.newWorkStealingPool();
 		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
 
-		// TODO: Read-in and Populate the RobotMap from a textFile
+		// TODO-LO: Read-in and Populate the RobotMap from a textFile
 		turret = new TurretMap();
 		shooter = new ShooterMap();
 		//intake = new IntakeMap();
@@ -110,7 +110,6 @@ public class Robot extends IterativeRobot {
 		ballSystems.drive(driverController);
 		//turret.setRawYawSpeed(driverController.getRX());
 		
-		//TODO: Move all the OperatorController code to the OperatorController.java... maybe
 		
 //		 if (driverController.getButtonTripped(1)) { shooter.intake(); }
 //		 
@@ -132,9 +131,6 @@ public class Robot extends IterativeRobot {
 //		 
 //		 shooter.step();
 
-		 
-		 //TODO: Enable the Camera for the gunner and then add the crosshairs
-		 //TODO: We need to calibrate the shooter to the crosshairs overlay
 		 
 		 
 //		if (driverController.getButtonTripped(5)) {

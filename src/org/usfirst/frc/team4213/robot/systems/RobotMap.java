@@ -2,7 +2,7 @@ package org.usfirst.frc.team4213.robot.systems;
 
 public final class RobotMap {
 
-	// TODO - to extrapolate to a .txt file
+	// TODO-LO - to extrapolate to a .txt file
 	// make these into private variables with public getters() and setters()
 	// Then in robotInit() read in the text file and use all the setter() to
 	// build the robotMap
@@ -82,8 +82,8 @@ public final class RobotMap {
 		private static final int PLANETARYGR = 27;
 		private static final int PPR = 7;
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
-		public static final double SHOOT_SPEED = -1;
-		public static final double INTAKE_SPEED = .6; // TODO ADD TO SMART DASHBOARD
+		public static final double SHOOT_SPEED = -.8;
+		public static final double INTAKE_SPEED = .5; // TODO ADD TO SMART DASHBOARD
 		public static final double EJECT_SPEED = -1;
 
 	}
