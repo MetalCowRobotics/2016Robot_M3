@@ -112,59 +112,11 @@ public class Robot extends IterativeRobot {
 		gunnerController.prestep();
 		
 		ballSystems.drive(gunnerController);
+
+		driveTrain.drive(driverController, true);
 		
 		driverController.endstep();
 		gunnerController.endstep();
-		
-		
-		//turret.setRawYawSpeed(driverController.getRX());
-		
-		
-//		 if (driverController.getButtonTripped(1)) { shooter.intake(); }
-//		 
-//		 if (driverController.getButtonTripped(2)) { shooter.eject(); }
-//		 
-//		 if (driverController.getButtonTripped(5)) { shooter.arm(); }
-//		 
-//		 if (driverController.getButtonTripped(6)) { shooter.shoot(); }
-//		 
-//		 
-//		 if (driverController.getButtonTripped(4)){
-//			 shooter.idle();
-//		 }
-//		 
-//		 
-//		 if (driverController.getButtonReleased(1) ||
-//		 driverController.getButtonReleased(2) ||
-//		 driverController.getButtonReleased(5)) { shooter.idle(); }
-//		 
-//		 shooter.step();
-
-		 
-		 
-//		if (driverController.getButtonTripped(5)) {
-//			turret.engage();
-//		}
-//
-//		
-//		if (driverController.getButtonTripped(6)) {
-//			turret.idle();
-//		}
-//
-//		if (driverController.getLY() < 0) {
-//			turret.bumpTurretUp();
-//		}
-//
-//		if (driverController.getLY() > 0) {
-//			turret.bumpTurretDown();
-//		}
-//		
-//		CowDash.setBool("TEST", driverController.getButtonTripped(1));
-//		
-//
-//		driveTrain.drive(driverController, true);
-//
-//		turret.step();
 	}
 
 	/**
@@ -186,6 +138,7 @@ public class Robot extends IterativeRobot {
 		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);
 		else shooter.setCamSpeed(0);
 		
+		driveTrain.drive(driverController, true);
 		
 	}
 
