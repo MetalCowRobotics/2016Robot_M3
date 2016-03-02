@@ -6,12 +6,10 @@
 
 package org.team4213.lib14;
 
-
 public class AIRFLOController extends CowGamepad {
 	
 	public AIRFLOController (int port) {
 		super(port);
-		
 	}
 	
 	public double getLY(){
@@ -28,6 +26,7 @@ public class AIRFLOController extends CowGamepad {
 	public double getRX(){
 		return getRawAxis(3);
 	}
+
 	public double getDPADX() {
 		// TODO: airflo.dpadx
 		return 0;

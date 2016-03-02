@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 
 package org.team4213.lib14;
 
@@ -61,7 +57,7 @@ public class Xbox360Controller extends CowGamepad {
 	public double getRX() {
 		return getRawAxis(4);
 	}
-
+	
 	@Override
 	public double getDPADX() {
 		// TODO xbox.dpadx

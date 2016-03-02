@@ -22,24 +22,29 @@ public final class RobotMap {
 			public static final int STRING_POT = 0;
 			public static final int LIMIT_SWITCH = 8;
 			public static final int OFFSET = 0;
-			public static final int COUNT_PER_DEG = 12; // TODO UPDATE THIS LINE
-			public static final int ENC_CH_A = 5;
-			public static final int ENC_CH_B = 6;
-			public static final int MAX_ANGLE = 360;
-			public static final int MIN_ANGLE = -360;
+			public static final double PPR = 1024;
+			public static final double GR = 10;
+			public static final double COUNT_PER_DEG = (PPR * GR) / 360;
+			public static final int ENC_CH_A = 6;
+			public static final int ENC_CH_B = 7;
+			public static final int MAX_ANGLE = 10;
+			public static final int MIN_ANGLE = -300;
 			public static final double ABS_TOLERANCE = 3;
+			public static final double BUMP_AMT = 3;
+			public static final double MAX_SPEED = 0.45;
 		}
 
 		public final class Pitch_Motor {
 			public static final int MOTOR_CHANNEL = 3;
 			private static final int GEARSGR = 3;
-			private static final int PLANETARYGR = 71;
-			private static final int PPR = 5; // TODO UPDATE THIS
-			public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
+			private static final int PLANETARYGR = 188;
+			private static final int PPR = 7;
+			public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 			private static final int START_ANGLE = -38;
 			public static final int MAX_ANGLE = 80 - START_ANGLE;
 			public static final int MIN_ANGLE = 20 - START_ANGLE;
 			public static final double ABS_TOLERANCE = 3;
+			public static final double BUMP_AMT = 1;
 		}
 
 	}
@@ -69,17 +74,17 @@ public final class RobotMap {
 
 	public final class Shooter {
 		public static final int FLYWHEEL_CHANNEL = 3;
-		public static final int CAM_CHANNEL = 0;
-		public static final int ENC_CH_A = 4;
-		public static final int ENC_CH_B = 5;
-		public static final int LIMIT_SWITCH = 3;
+		public static final int CAM_CHANNEL = 5;
+		public static final int ENC_CH_A = 0;
+		public static final int ENC_CH_B = 1;
+		public static final int LIMIT_SWITCH = 4;
 		private static final int GEARSGR = 3;
 		private static final int PLANETARYGR = 27;
-		private static final int PPR = 5; // TODO Potentially need to Change
+		private static final int PPR = 7;
 		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 		public static final double SHOOT_SPEED = -1;
-		public static final double INTAKE_SPEED = .6;
-		public static final double EJECT_SPEED = -.3;
+		public static final double INTAKE_SPEED = .6; // TODO ADD TO SMART DASHBOARD
+		public static final double EJECT_SPEED = -1;
 
 	}
 }
