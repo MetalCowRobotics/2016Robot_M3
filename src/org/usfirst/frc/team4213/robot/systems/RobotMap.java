@@ -2,7 +2,7 @@ package org.usfirst.frc.team4213.robot.systems;
 
 public final class RobotMap {
 
-	// TODO-LO - to extrapolate to a .txt file
+	// IDEA: - to extrapolate to a .txt file
 	// make these into private variables with public getters() and setters()
 	// Then in robotInit() read in the text file and use all the setter() to
 	// build the robotMap

@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
 import org.team4213.lib14.AIRFLOController;
+import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Drivetrain;
@@ -23,7 +24,7 @@ public class DriveController {
 	 *            - should units be squared, provides more fine control at lower
 	 *            speeds
 	 */
-	public void drive(AIRFLOController driverController, boolean squareUnits) {
+	public void drive(CowGamepad driverController, boolean squareUnits) {
 
 		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
 				Drivetrain.SPRINT_SPEED);

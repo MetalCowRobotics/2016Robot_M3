@@ -28,8 +28,6 @@ public class OperatorController {
 		state = OperatorState.IDLE;
 	}
 	
-	
-	// TODO KEEP TRACK OF THE FANCY TRANSITION STATEEESSSSSSSSSSSSSSSS
 	public void drive(CowGamepad controller){
 		
 		// INTAKE
