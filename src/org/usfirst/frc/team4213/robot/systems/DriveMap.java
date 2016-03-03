@@ -19,8 +19,12 @@ public class DriveMap extends RobotDrive{
 	 * @param throttle - Modifier for speed of direction/rotation [0-1]
 	 * @param squareUnits - True, finer values at lower speeds
 	 */
-	public void drive(double direction, double rotation, double throttle, boolean squareUnits){	
+	public void arcDrive(double direction, double rotation, double throttle, boolean squareUnits){	
 		arcadeDrive(direction*throttle, rotation*throttle, squareUnits); //ArcadeMode
+	}
+	
+	public void tDrive(double leftStick, double rightStick, double throttle, boolean squareUnits){
+		tankDrive(leftStick*throttle, rightStick * throttle, squareUnits); // TankDrive
 	}
 	
 }

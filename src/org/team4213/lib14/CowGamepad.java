@@ -1,5 +1,6 @@
 package org.team4213.lib14;
 
+
 import edu.wpi.first.wpilibj.Joystick;
 
 public abstract class CowGamepad extends Joystick {
@@ -17,61 +18,59 @@ public abstract class CowGamepad extends Joystick {
 		}
 	}
 	
-	public boolean getHeadingPadPressed(){
-		return getRawButton(1) || getRawButton(2) || getRawButton(3) || getRawButton(4);
+	public abstract boolean getButton(int n);
+	public abstract double getLY();
+	public abstract double getLX();
+	public abstract double getRY();
+	public abstract double getRX();
+	
+	public double getDpadX() {
+		switch(getPOV()) {
+		case -1:
+			return 0;
+		case 0:
+		case 360:
+			return 0;
+		case 45:
+		case 90:
+		case 135:
+			return 1;
+		case 180:
+			return 0;
+		case 225:
+		case 270:
+		case 315:
+			return -1;
+		}
+		return 0;
 	}
 
-	public double getHeadingPadDirection(){
-		float x=0, y=0;
-		if (getRawButton(1)) y-=1;
-		if (getRawButton(2)) x+=1;
-		if (getRawButton(3)) x-=1;
-		if (getRawButton(4)) y+=1;
-		return Math.toDegrees(Math.atan2(x, y));
-	}
-        
-    public String getHeadingPadCardinal(){
-        if (getRawButton(1)) return "south";
-        if (getRawButton(2)) return "east";
-        if (getRawButton(3)) return "west";
-        if (getRawButton(4)) return "north";
-        return null;
-    }
-	
-	public boolean getButton(int n) {
-		//previousStates[n] = getRawButton(n);
-		//return previousStates[n];
-		return getRawButton(n);
-	}
-	
-	public boolean getButtonTripped(int n) {
-		if (getRawButton(n) && previousStates[n]==false) {
-			previousStates[n]=true;
-			return true; //return TRUE this changed 
-		} else {
-			return false;
+	public double getDpadY() {
+		switch(getPOV()) {
+		case -1:
+			return 0;
+		case 315:
+		case 0:
+		case 45:
+			return 1;
+		case 90:
+			return 0;
+		case 135:
+		case 180:
+		case 225:
+			return -1;		
+		case 270:
+			return 0;
 		}
+		return 0;
 	}
 	
-	public boolean getButtonReleased(int n) {
-		if (!getRawButton(n) && previousStates[n]==true) {
-			previousStates[n]=false;
-			return true; //return TRUE this changed
-		} else {
-			return false;
-		}
+	public double getTankY(){
+		return (getLY()+getRY())/2;
 	}
 	
-	public boolean getButtonToggled(int n) {
-		if (!getRawButton(n)) {
-			previousStates[n] = false;
-		}else if(previousStates[n]){
-			previousStates[n] = true;
-		}else{
-			previousStates[n] = true;
-			toggleStates[n] = !toggleStates[n];
-		}
-		return toggleStates[n];
+	public double getTankOmega(){
+		return (getLX()-getRY())/2;
 	}
 	
 	/**
@@ -85,9 +84,61 @@ public abstract class CowGamepad extends Joystick {
 	* @param topSpeedSprint  value double 0 to 1
 	* @return topSpeedCurrent value double 0 to 1
 	*/
-    public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
-        if(getRawButton(8) || getRawButton(7)) return topSpeedCrawl; //front-bottom triggers
-        else if(getRawButton(6) || getRawButton(9)) return topSpeedSprint; //fromt-bumper buttons
+	public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
+        if(getButton(GamepadButton.RT) || getButton(GamepadButton.LT)) return topSpeedCrawl; //front-bottom triggers
+        else if(getButton(GamepadButton.RB) || getButton(GamepadButton.LB)) return topSpeedSprint; //fromt-bumper buttons
         else return topSpeedNormal;
     }
+	public void prestep() {
+		this.rumbleLeft(0);
+		this.rumbleRight(0);
+	}
+	public void endstep() {
+		for(int i=1;i<previousStates.length;i++){
+			try{
+				previousStates[i]=getButton(i);
+			}catch(Exception e){
+				
+			}
+		}
+	}
+	
+	public boolean getButtonTripped(int n) {
+		if (getButton(n)) {
+			if (previousStates[n]){
+				return false;
+			} else {
+				return true;
+			}
+			
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean getButtonReleased(int n) {
+		if (!getButton(n)) {
+			if (previousStates[n]){
+				return true;
+			} else {
+				return false;
+			}
+			
+		} else {
+			return false;
+		}
+	}
+	
+	public boolean getButtonToggled(int n) {
+		if (!getButton(n)) {
+		}else if(previousStates[n]){
+		}else{
+			toggleStates[n] = !toggleStates[n];
+		}
+		return toggleStates[n];
+	}
+	
+	// IDEA: Timeout on the rumble
+	public void rumbleLeft(float amt){}
+	public void rumbleRight(float amt){}
 }

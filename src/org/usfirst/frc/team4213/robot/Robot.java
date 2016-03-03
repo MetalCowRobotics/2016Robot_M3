@@ -8,6 +8,8 @@ import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
+import org.team4213.lib14.CowGamepad;
+import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
@@ -33,8 +35,8 @@ public class Robot extends IterativeRobot {
 	IntakeMap intake;
 	ShooterMap shooter;
 	
-	AIRFLOController driverController;
-	Xbox360Controller gunnerController;
+	CowGamepad driverController;
+	CowGamepad gunnerController;
 	
 	DriveController driveTrain;
 	OperatorController ballSystems;
@@ -45,6 +47,7 @@ public class Robot extends IterativeRobot {
 	public ExecutorService executor;
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController;
+	boolean allowedToSave = false;
 
 	static {
 		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
@@ -57,15 +60,16 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
+		CowDash.load();
 
-		driverController = new AIRFLOController(0);
+		driverController = new Xbox360Controller(0);
 		gunnerController = new Xbox360Controller(1);
 		
 		camServer = new CowCamServer(1180);
 		executor = Executors.newWorkStealingPool();
 		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
 
-		// TODO: Read-in and Populate the RobotMap from a textFile
 		turret = new TurretMap();
 		shooter = new ShooterMap();
 		//intake = new IntakeMap();
@@ -75,6 +79,15 @@ public class Robot extends IterativeRobot {
 
 		camServer.start(shooterCamController, executor);
 
+	}
+	
+	public void disabledInit() {
+		if(allowedToSave) {
+			CowDash.save();
+		}
+		
+		
+		allowedToSave=true;
 	}
 
 	/**
@@ -106,60 +119,15 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		driverController.prestep();
+		gunnerController.prestep();
 		
-		ballSystems.drive(driverController);
-		//turret.setRawYawSpeed(driverController.getRX());
-		
-		//TODO: Move all the OperatorController code to the OperatorController.java... maybe
-		
-//		 if (driverController.getButtonTripped(1)) { shooter.intake(); }
-//		 
-//		 if (driverController.getButtonTripped(2)) { shooter.eject(); }
-//		 
-//		 if (driverController.getButtonTripped(5)) { shooter.arm(); }
-//		 
-//		 if (driverController.getButtonTripped(6)) { shooter.shoot(); }
-//		 
-//		 
-//		 if (driverController.getButtonTripped(4)){
-//			 shooter.idle();
-//		 }
-//		 
-//		 
-//		 if (driverController.getButtonReleased(1) ||
-//		 driverController.getButtonReleased(2) ||
-//		 driverController.getButtonReleased(5)) { shooter.idle(); }
-//		 
-//		 shooter.step();
+		ballSystems.drive(gunnerController);
 
-		 
-		 //TODO: Enable the Camera for the gunner and then add the crosshairs
-		 //TODO: We need to calibrate the shooter to the crosshairs overlay
-		 
-		 
-//		if (driverController.getButtonTripped(5)) {
-//			turret.engage();
-//		}
-//
-//		
-//		if (driverController.getButtonTripped(6)) {
-//			turret.idle();
-//		}
-//
-//		if (driverController.getLY() < 0) {
-//			turret.bumpTurretUp();
-//		}
-//
-//		if (driverController.getLY() > 0) {
-//			turret.bumpTurretDown();
-//		}
-//		
-//		CowDash.setBool("TEST", driverController.getButtonTripped(1));
-//		
-//
-//		driveTrain.drive(driverController, true);
-//
-//		turret.step();
+		driveTrain.drive(driverController, true);
+		
+		driverController.endstep();
+		gunnerController.endstep();
 	}
 
 	/**
@@ -170,10 +138,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		/*DriverStation.reportError("\n Current RT VAL :: " + gunnerController.getLT(), false);
-		gunnerController.setRumble(Joystick.RumbleType.kLeftRumble, (float) gunnerController.getLT());
-		DriverStation.reportError("\n We're still Runnin", false);*/
+		turret.setRawPitchSpeed(gunnerController.getLY());
+		turret.setRawYawSpeed(gunnerController.getRX());
 		
+		if(gunnerController.getButton(GamepadButton.A)) shooter.setWheelSpeed(1);
+		else if(gunnerController.getButton(GamepadButton.B)) shooter.setWheelSpeed(-1);
+		else shooter.setWheelSpeed(0);
+		
+		if(gunnerController.getButton(GamepadButton.X)) shooter.setCamSpeed(1);
+		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);
+		else shooter.setCamSpeed(0);
+		
+		driveTrain.drive(driverController, true);
 		
 	}
 

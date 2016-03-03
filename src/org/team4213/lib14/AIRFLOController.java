@@ -6,9 +6,7 @@
 
 package org.team4213.lib14;
 
-// TODO: Make a Filter or some sort? I very briefly let light pressure off a trigger, and it caused the robot to change states. So maybe a filteredGetButton would be good. -Thad
-// TODO: Map Properly, fake rumble() method. Make an enum of ControllerButton
-public class AIRFLOController extends CowGamepad{
+public class AIRFLOController extends CowGamepad {
 	
 	public AIRFLOController (int port) {
 		super(port);
@@ -19,7 +17,7 @@ public class AIRFLOController extends CowGamepad{
 	}
 	
 	public double getLX(){
-		return -getRawAxis(0);
+		return getRawAxis(0);
 	}
 	
 	public double getRY() {
@@ -29,4 +27,18 @@ public class AIRFLOController extends CowGamepad{
 		return getRawAxis(3);
 	}
 	
+	public boolean getButton(int n) {
+		switch(n){
+		case GamepadButton.DPADUP:
+			return getDpadY()>0;
+		case GamepadButton.DPADDOWN:
+			return getDpadY()<0;
+		case GamepadButton.DPADLEFT:
+			return getDpadX()<0;
+		case GamepadButton.DPADRIGHT:
+			return getDpadX()>0;
+		default:		
+			return getRawButton(n);
+		}
+	}
 }

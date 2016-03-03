@@ -2,6 +2,7 @@ package org.usfirst.frc.team4213.robot.systems;
 
 import org.team4213.lib14.CowDash;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
+import org.team4213.lib14.PIDController;
 
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -20,10 +21,10 @@ public class ShooterMap {
 			CounterBase.EncodingType.k4X);
 	private static final DigitalInput BALL_LIM_SWITCH = new DigitalInput(Shooter.LIMIT_SWITCH);
 
-	private int desiredCamAngle;
 	private ShooterState state;
-	private double error;
-	private Timer timer;
+	private Timer armTimer;
+	private Timer shootTimer;
+	private PIDController camPID;
 	
 
 	public enum ShooterState {
@@ -32,13 +33,16 @@ public class ShooterMap {
 
 	public ShooterMap() {
 		state = ShooterState.IDLE;
-		// shooter.camMotor.enableBrakeMode(true); // DOES THIS WORK ????
-		//CAM_ENCODER.setReverseDirection(true);
-		//CAM_MOTOR.setInverted(true);
-		timer = new Timer();
+		CAM_ENCODER.setReverseDirection(true);
+		CAM_MOTOR.setInverted(true);
+		armTimer = new Timer();
+		shootTimer = new Timer();
+		
+		camPID = new PIDController("Shooter_Cam", 75, 0, 1.2, 1);
 		resetEnc();
-		desiredCamAngle = 0;
-		CAM_ENCODER.setDistancePerPulse(1 / Shooter.COUNT_PER_DEG);
+		camPID.setTarget(0);
+		CAM_ENCODER.setDistancePerPulse(1/Shooter.COUNT_PER_DEG);
+		FLYWHEEL_MOTOR2.setInverted(false);
 	}
 	
 	public ShooterState getState(){
@@ -46,12 +50,14 @@ public class ShooterMap {
 	}
 
 	public void setCamSpeed(double speed) {
+		CowDash.setNum("Shooter_camSpeed", speed);
 		CAM_MOTOR.set(speed);
 	}
 
 	public void setWheelSpeed(double speed) {
+		CowDash.setNum("Shooter_wheelSpeed", speed);
 		FLYWHEEL_MOTOR.set(speed);
-		FLYWHEEL_MOTOR2.set(-speed);
+		FLYWHEEL_MOTOR2.set(speed);
 	}
 
 	public boolean getSwitchHit() {
@@ -72,10 +78,11 @@ public class ShooterMap {
 
 	public void arm() {
 		if (state == ShooterState.IDLE || state == ShooterState.EJECT) {
-			timer.start();
+			armTimer.reset();
+			armTimer.start();
 			state = ShooterState.ARMING;
 		} else {
-			DriverStation.reportError("You cannot Arm unless You're Up and Idle", false);
+			//DriverStation.reportError("You cannot Arm unless You're Up and Idle", false);
 		}
 	}
 
@@ -87,13 +94,16 @@ public class ShooterMap {
 		state = ShooterState.EJECT;
 	}
 
-	public void shoot() {
+	public boolean shoot() {
 		if (state == ShooterState.ARMED) {
-			timer.start();
+			shootTimer.reset();
+			shootTimer.start();
 			state = ShooterState.SHOOTING;
+			return true;
 		} else {
-			// TODO VIBE CONTROLLER
 			DriverStation.reportError("Shooter is Not Armed : Ball Cannot be Shot", false);
+			return false;
+			
 		}
 	}
 
@@ -101,61 +111,58 @@ public class ShooterMap {
 		state = ShooterState.IDLE;
 	}
 
-	private void runCamPID() {
-		// TODO: Swap to PIDController
-		error = -desiredCamAngle - getEncDist();
-		setCamSpeed(error / 180);
+	private void runCamPID() {		
+		setCamSpeed(camPID.feedAndGetValue(-getEncDist()));
 	}
 	
-	// FIXME: The ball can only be fired once per reboot for some weird reason.
 
 	public void step() {
 		switch (state) {
 		case INTAKE:
 			CowDash.setString("Shooter_state", "INTAKE");
-			/*if (getSwitchHit()) {
-				state = ShooterState.IDLE;
-				break;
-			}*/ // FIXED: This really doesn't help, we found -Thad
-			desiredCamAngle = 0;
-			setWheelSpeed(Shooter.INTAKE_SPEED);
+//			if (getSwitchHit()) {
+//				state = ShooterState.IDLE;
+//				break;
+//			} // FIXED: This really doesn't help, we found -Thad
+			camPID.setTarget(0);
+			setWheelSpeed(-1*CowDash.getNum("Shooter_intakePower", 0.5));
 			break;
 		case EJECT:
-			// FIXME: "Zoo-ZOO!" intake then eject (would help, we found from testing) -Thad
 			CowDash.setString("Shooter_state", "EJECT");
-			desiredCamAngle = 360;
-			setWheelSpeed(Shooter.EJECT_SPEED);
+			camPID.setTarget(360);
+			setWheelSpeed(+CowDash.getNum("Shooter_ejectPower", 1.0));
 			break;
 		case SHOOTING:
 			CowDash.setString("Shooter_state", "SHOOTING");
-			desiredCamAngle = 360;
-			if ( timer.get() > 2) {
+			camPID.setTarget(360);
+			if ( shootTimer.get() > 2) {
+				//DriverStation.reportError(shootTimer.get() + "\n", false);
 				// 1 Second of Wheel Spinning. ( ADD TO CONFIG )
-				timer.stop();
-				timer.reset();
-				resetEnc(); // TODO: This could (and I think it is) leading to weird things. Consider modulo? Not sure why you're doing this. -Thad
+				shootTimer.stop();
+				shootTimer.reset();
 				idle();
-				desiredCamAngle = 0;
+				camPID.setTarget(0);
 			}
 			break;
 		case ARMING:
+			// FIXME: Need to intake a little bit before shooting
 			CowDash.setString("Shooter_state", "ARMING");
-			setWheelSpeed(Shooter.SHOOT_SPEED);
-			DriverStation.reportError("/n Time:" + (timer.get()), false);
-			if (timer.get() > 2) {
+			setWheelSpeed(+CowDash.getNum("Shooter_shootPower", 1.0));
+			//DriverStation.reportError("/n Time:" + (armTimer.get()), false);
+			if (armTimer.get() > CowDash.getNum("Shooter_armTime", 2.0)) {
 				// 2 Seconds, Can be changed ( ADD TO CONFIG )
-				timer.stop();
-				timer.reset();
+				armTimer.stop();
+				armTimer.reset();
 				state = ShooterState.ARMED;
 			}
 			break;
 		case ARMED:
 			CowDash.setString("Shooter_state", "ARMED");
-			setWheelSpeed(Shooter.SHOOT_SPEED);
+			setWheelSpeed(+CowDash.getNum("Shooter_shootPower", 1.0));
 			break;
 		case IDLE:
 			CowDash.setString("Shooter_state", "IDLE");
-			desiredCamAngle = 120;
+			camPID.setTarget(180);
 			setWheelSpeed(0);
 			break;
 		default:
