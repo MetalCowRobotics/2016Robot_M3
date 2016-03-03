@@ -1,5 +1,29 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Shooter_ejectPower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="774" y="111"/>
+	</widget>
+	<widget field="Shooter_intakePower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="769" y="137"/>
+	</widget>
+	<widget field="Shooter_armTime" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="788" y="167"/>
+	</widget>
+	<widget field="Shooter_shootPower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="773" y="82"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="1010" y="3"/>
+		<width>905</width>
+		<height>675</height>
+		<property name="FPS" value="10"/>
+	</static-widget>
+	<widget field="Shooter_camSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="190"/>
+	</widget>
+	<widget field="Shooter_wheelSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="72"/>
+	</widget>
 	<widget field="Turret_state" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="89" y="7"/>
 		<width>249</width>
@@ -37,13 +61,8 @@
 		<property name="Background" value="0.0.0.255"/>
 		<property name="Font Size" value="48"/>
 	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="1127" y="6"/>
-		<width>782</width>
-		<height>577</height>
-	</static-widget>
 	<widget field="Turret_Yaw::integralLifespan" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="-44" y="287"/>
+		<location x="-27" y="287"/>
 	</widget>
 	<widget field="Turret_pitchSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="253" y="98"/>

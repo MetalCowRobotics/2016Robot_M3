@@ -55,12 +55,32 @@ public class TurretMap { // Replace these with the Constants
 	}
 
 	public void setYawSpeed(double speed) {
-		// Speed Limits
+		
+		// STATE CHECKING
+		if(state == TurretState.IDLE){
+			setRawYawSpeed(0);
+		}
+		
+		
+		// MAX / MIN ANGLE CHECKING
+		if(speed > 0 && getYawEncDistance() > Turret.Yaw_Motor.MAX_ANGLE){
+			setRawYawSpeed(0);
+			return;
+		}
+		
+		if(speed < 0 && getYawEncDistance() < Turret.Yaw_Motor.MIN_ANGLE){
+			setRawYawSpeed(0);
+			return;
+		}
+		
+		// SPEED LIMITS
 		if(speed > Turret.Yaw_Motor.MAX_SPEED){
 			speed = Turret.Yaw_Motor.MAX_SPEED;
 		}else if(speed < -1 * Turret.Yaw_Motor.MAX_SPEED){
 			speed = -Turret.Yaw_Motor.MAX_SPEED;
 		}
+		
+		
 		
 		setRawYawSpeed(speed);
 	}
@@ -163,15 +183,17 @@ public class TurretMap { // Replace these with the Constants
 	private void runPitchPID() {
 		if(overridePitchPID){
 			PITCH_PID.setTarget(getPitchEncDistance());
+		} else {
+			setPitchSpeed(PITCH_PID.feedAndGetValue(getPitchEncDistance()));
 		}
-		setPitchSpeed(PITCH_PID.feedAndGetValue(getPitchEncDistance()));
 	}
 
 	private void runYawPID() {
 		if(overrideYawPID){
 			YAW_PID.setTarget(getYawEncDistance());
+		} else {
+			setYawSpeed(YAW_PID.feedAndGetValue(getYawEncDistance()));
 		}
-		setYawSpeed(YAW_PID.feedAndGetValue(getYawEncDistance()));
 	}
 	
 	public void prestep() {
@@ -210,13 +232,8 @@ public class TurretMap { // Replace these with the Constants
 			CowDash.setString("Turret_state", "I_AM_ERROR");
 			break;
 		}
-		
-		if(!overrideYawPID){
-			runYawPID();
-		}
-		if(!overridePitchPID){
-			runPitchPID();
-		}
+		runYawPID();
+		runPitchPID();
 			
 	}
 

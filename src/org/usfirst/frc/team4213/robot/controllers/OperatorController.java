@@ -119,10 +119,10 @@ public class OperatorController {
 		// Turret Motion
 		if(state == OperatorState.TURRET_ENGAGED){
 			if(Math.abs(controller.getLY()) > 0.15) {
-				turret.manualPitchOverride(controller.getLY()*0.5);
+				turret.manualPitchOverride(-controller.getLY()*0.8);
 			}
 			if(Math.abs(controller.getRX()) > 0.15) {
-				turret.manualYawOverride(controller.getRX()*0.5);
+				turret.manualYawOverride(controller.getRX()*0.8);
 			}
 			
 //			// UP / DOWN
