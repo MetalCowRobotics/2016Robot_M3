@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
+import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.GamepadButton;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
@@ -29,6 +30,7 @@ public class OperatorController {
 	}
 	
 	public void drive(CowGamepad controller){
+		turret.prestep();
 		
 		// INTAKE
 		if(controller.getButtonTripped(GamepadButton.B) && isAllIdle() && state == OperatorState.IDLE){
@@ -44,7 +46,7 @@ public class OperatorController {
 		}
 		
 		if(shooter.getSwitchHit() && state==OperatorState.INTAKE){
-			controller.rumbleLeft((float) 0.3);
+			controller.rumbleLeft((float) 1.0);
 		}
 		
 		// EJECT
@@ -108,31 +110,41 @@ public class OperatorController {
 			//DriverStation.reportError("\n DISARMING", false);
 			shooter.idle();
 		}
+		if (shooter.getState()==ShooterState.ARMED) {
+			controller.rumbleRight((float) 0.5);
+		}
 		
 		
 		
 		// Turret Motion
 		if(state == OperatorState.TURRET_ENGAGED){
-			// UP / DOWN
-			if(controller.getLY() < -0.2){
-				//DriverStation.reportError("\n BUMPING UP", false);
-				turret.bumpTurretUp();
-			}else if(controller.getLY() > 0.2){
-				//DriverStation.reportError("\n BUMPING DOWN", false);
-				turret.bumpTurretDown();
+			if(Math.abs(controller.getLY()) > 0.15) {
+				turret.manualPitchOverride(controller.getLY()*0.5);
 			}
-				
-			// RIGHT / LEFT
-			if(controller.getRX() > 0.2){
-				//DriverStation.reportError("\n BUMPING RIGHT", false);
-				turret.bumpTurretRight();
-			}else if(controller.getRX() < -0.2){
-				//DriverStation.reportError("\n BUMPING LEFT", false);
-				turret.bumpTurretLeft();
+			if(Math.abs(controller.getRX()) > 0.15) {
+				turret.manualYawOverride(controller.getRX()*0.5);
 			}
+			
+//			// UP / DOWN
+//			if(controller.getLY() < -0.2){
+//				//DriverStation.reportError("\n BUMPING UP", false);
+//				turret.bumpTurretUp();
+//			}else if(controller.getLY() > 0.2){
+//				//DriverStation.reportError("\n BUMPING DOWN", false);
+//				turret.bumpTurretDown();
+//			}
+//				
+//			// RIGHT / LEFT
+//			if(controller.getRX() > 0.2){
+//				//DriverStation.reportError("\n BUMPING RIGHT", false);
+//				turret.bumpTurretRight();
+//			}else if(controller.getRX() < -0.2){
+//				//DriverStation.reportError("\n BUMPING LEFT", false);
+//				turret.bumpTurretLeft();
+//			}
 		}
 		
-		turret.step();
+		turret.endstep();
 		shooter.step();
 		//intake.step();
 		

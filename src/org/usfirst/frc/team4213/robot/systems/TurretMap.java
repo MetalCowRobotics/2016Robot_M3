@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TurretMap { // Replace these with the Constants
 	private static final SpeedController YAW_MOTOR = new Jaguar(6);
@@ -142,17 +143,19 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 	
-	public void manualPitchBump(double speed){
+	public void manualPitchOverride(double speed){
+		overridePitchPID = true;
 		if(state == TurretState.ENGAGED){
 			overridePitchPID = true;
-			setPitchSpeed(speed * 0.5); // TODO MOVE THESE INTO MAP
+			setPitchSpeed(speed);
 		}
 	}
 	
-	public void manualYawBump(double speed){
+	public void manualYawOverride(double speed){
+		overrideYawPID = true;
 		if(state == TurretState.ENGAGED){
 			overrideYawPID = true;
-			setYawSpeed(speed * 0.5);
+			setYawSpeed(speed);
 			
 		}
 	}
@@ -162,7 +165,6 @@ public class TurretMap { // Replace these with the Constants
 			PITCH_PID.setTarget(getPitchEncDistance());
 		}
 		setPitchSpeed(PITCH_PID.feedAndGetValue(getPitchEncDistance()));
-		overridePitchPID = false;
 	}
 
 	private void runYawPID() {
@@ -170,10 +172,14 @@ public class TurretMap { // Replace these with the Constants
 			YAW_PID.setTarget(getYawEncDistance());
 		}
 		setYawSpeed(YAW_PID.feedAndGetValue(getYawEncDistance()));
-		overrideYawPID = false;
+	}
+	
+	public void prestep() {
+		overrideYawPID=false;
+		overridePitchPID=false;
 	}
 
-	public void step() {
+	public void endstep() {
 		switch (state) {
 		case IDLING:
 			CowDash.setString("Turret_state", "IDLING");
@@ -204,8 +210,14 @@ public class TurretMap { // Replace these with the Constants
 			CowDash.setString("Turret_state", "I_AM_ERROR");
 			break;
 		}
-		runPitchPID();
-		runYawPID();
+		
+		if(!overrideYawPID){
+			runYawPID();
+		}
+		if(!overridePitchPID){
+			runPitchPID();
+		}
+			
 	}
 
 }
