@@ -12,10 +12,8 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class CowDash {
-	// TODO: Save to disk and read from disk; see 2015
-	
-	private static final String savefileName = "./dashboardvalues";
+public class CowDash {	
+	private static final String savefileName = "/home/lvuser/dashboardvalues.json";
 	
 	public static void save() {
 		NetworkTable table = NetworkTable.getTable("SmartDashboard");
@@ -23,8 +21,9 @@ public class CowDash {
 		JSONObject jsobj = new JSONObject();
 		
 		for(String key:table.getKeys()) {
-			Object thing = table.getValue(key, null);
+			
 			try{
+				Object thing = table.getValue(key, null);
 				jsobj.put(key, thing);
 			}catch(Exception e){
 				
@@ -60,7 +59,9 @@ public class CowDash {
 			Object val = savefile.get(key);
 			if (val instanceof Double) {
 				CowDash.setNum(key, ((Double) val).doubleValue());
-			} else if (val instanceof Boolean) {
+			} else if (val instanceof Integer) {
+				CowDash.setNum(key, ((Integer) val).intValue());
+			}else if (val instanceof Boolean) {
 				CowDash.setBool(key, ((Boolean) val).booleanValue());
 			} else if (val instanceof String) {
 				CowDash.setString(key, val.toString());

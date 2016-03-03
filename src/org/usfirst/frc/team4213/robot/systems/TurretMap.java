@@ -176,7 +176,7 @@ public class TurretMap { // Replace these with the Constants
 	public void step() {
 		switch (state) {
 		case IDLING:
-			CowDash.setString("Turret_state", "Idling");
+			CowDash.setString("Turret_state", "IDLING");
 			YAW_PID.setTarget(0);
 			if (Math.abs(YAW_PID.getError()) < Turret.Yaw_Motor.ABS_TOLERANCE) {
 				PITCH_PID.setTarget(0);
@@ -186,22 +186,22 @@ public class TurretMap { // Replace these with the Constants
 			}
 			break;
 		case ENGAGING:
-			CowDash.setString("Turret_state", "Engaging");
+			CowDash.setString("Turret_state", "ENGAGING");
 			PITCH_PID.setTarget(Turret.Pitch_Motor.MIN_ANGLE);
 			if (Math.abs(PITCH_PID.getError()) < Turret.Pitch_Motor.ABS_TOLERANCE) {
 				state = TurretState.ENGAGED;
 			}
 			break;
 		case ENGAGED:
-			CowDash.setString("Turret_state", "Engaged");
+			CowDash.setString("Turret_state", "ENGAGED");
 			break;
 		case IDLE:
-			CowDash.setString("Turret_state", "Idle");
+			CowDash.setString("Turret_state", "IDLE");
 			setPitchSpeed(0);
 			setYawSpeed(0);
 			break;
 		default:
-			CowDash.setString("Turret_state", "SOMETHINGELSE");
+			CowDash.setString("Turret_state", "I_AM_ERROR");
 			break;
 		}
 		runPitchPID();

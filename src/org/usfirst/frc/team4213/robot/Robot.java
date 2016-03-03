@@ -47,6 +47,7 @@ public class Robot extends IterativeRobot {
 	public ExecutorService executor;
 	// A new Camera Controller for the Shooter
 	public CowCamController shooterCamController;
+	boolean allowedToSave = false;
 
 	static {
 		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
@@ -59,6 +60,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
+		
+		CowDash.load();
 
 		driverController = new Xbox360Controller(0);
 		gunnerController = new Xbox360Controller(1);
@@ -67,7 +70,6 @@ public class Robot extends IterativeRobot {
 		executor = Executors.newWorkStealingPool();
 		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
 
-		// TODO-LO: Read-in and Populate the RobotMap from a textFile
 		turret = new TurretMap();
 		shooter = new ShooterMap();
 		//intake = new IntakeMap();
@@ -77,6 +79,15 @@ public class Robot extends IterativeRobot {
 
 		camServer.start(shooterCamController, executor);
 
+	}
+	
+	public void disabledInit() {
+		if(allowedToSave) {
+			CowDash.save();
+		}
+		
+		
+		allowedToSave=true;
 	}
 
 	/**

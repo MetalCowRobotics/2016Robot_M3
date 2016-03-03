@@ -38,7 +38,7 @@ public class ShooterMap {
 		armTimer = new Timer();
 		shootTimer = new Timer();
 		
-		camPID = new PIDController("Cam PID", 75, 0, 1.2, 1);
+		camPID = new PIDController("Shooter_Cam", 75, 0, 1.2, 1);
 		resetEnc();
 		camPID.setTarget(0);
 		CAM_ENCODER.setDistancePerPulse(1/Shooter.COUNT_PER_DEG);
@@ -50,10 +50,12 @@ public class ShooterMap {
 	}
 
 	public void setCamSpeed(double speed) {
+		CowDash.setNum("Shooter_camSpeed", speed);
 		CAM_MOTOR.set(speed);
 	}
 
 	public void setWheelSpeed(double speed) {
+		CowDash.setNum("Shooter_wheelSpeed", speed);
 		FLYWHEEL_MOTOR.set(speed);
 		FLYWHEEL_MOTOR2.set(speed);
 	}
