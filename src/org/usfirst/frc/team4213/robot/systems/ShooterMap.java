@@ -145,11 +145,17 @@ public class ShooterMap {
 			}
 			break;
 		case ARMING:
-			// FIXME: Need to intake a little bit before shooting
 			CowDash.setString("Shooter_state", "ARMING");
-			setWheelSpeed(+CowDash.getNum("Shooter_shootPower", 1.0));
+			
+			// Intake for armIntakeTime, then go out
+			if (armTimer.get() > CowDash.getNum("Shooter_armIntakeTime", 0.5)) {
+				setWheelSpeed(+CowDash.getNum("Shooter_shootPower", 1.0));
+			} else {
+				setWheelSpeed(-CowDash.getNum("Shooter_shootIntakePower", 0.4));
+			}
+			
 			//DriverStation.reportError("/n Time:" + (armTimer.get()), false);
-			if (armTimer.get() > CowDash.getNum("Shooter_armTime", 2.0)) {
+			if (armTimer.get() > CowDash.getNum("Shooter_armTime", 2.0)+CowDash.getNum("Shooter_armIntakeTime", 0.5)) {
 				// 2 Seconds, Can be changed ( ADD TO CONFIG )
 				armTimer.stop();
 				armTimer.reset();
@@ -162,7 +168,7 @@ public class ShooterMap {
 			break;
 		case IDLE:
 			CowDash.setString("Shooter_state", "IDLE");
-			camPID.setTarget(180);
+			camPID.setTarget(0);
 			setWheelSpeed(0);
 			break;
 		default:

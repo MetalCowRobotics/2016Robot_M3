@@ -22,7 +22,7 @@
 		<location x="0" y="190"/>
 	</widget>
 	<widget field="Shooter_wheelSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="0" y="72"/>
+		<location x="768" y="248"/>
 	</widget>
 	<widget field="Turret_state" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="89" y="7"/>
@@ -112,23 +112,4 @@
 </dashboard>
 <live-window>
 </live-window>
-	<hidden field="A"/>
-	<hidden field="B"/>
-	<hidden field="RX"/>
-	<hidden field="Cam PID::kd"/>
-	<hidden field="RY"/>
-	<hidden field="LT"/>
-	<hidden field="Cam PID::kp"/>
-	<hidden field="LX"/>
-	<hidden field="LY"/>
-	<hidden field="Cam PID::ki"/>
-	<hidden field="Turret Up Speed"/>
-	<hidden field="Cam PID::current"/>
-	<hidden field="LB"/>
-	<hidden field="Cam PID::integralLifespan"/>
-	<hidden field="Cam PID::error"/>
-	<hidden field="X"/>
-	<hidden field="Y"/>
-	<hidden field="Turret_pitchError"/>
-	<hidden field="Cam PID::target"/>
 </xml>
