@@ -1,5 +1,18 @@
 <xml version="1.0">
 <dashboard>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.Label">
+		<location x="988" y="713"/>
+		<width>137</width>
+		<property name="Text" value="Vision_debug"/>
+	</static-widget>
+	<widget field="Vision_debug" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.CheckBox">
+		<location x="964" y="709"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
+		<location x="968" y="5"/>
+		<width>943</width>
+		<height>702</height>
+	</static-widget>
 	<widget field="Shooter_ejectPower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="774" y="111"/>
 	</widget>
@@ -12,12 +25,6 @@
 	<widget field="Shooter_shootPower" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="773" y="82"/>
 	</widget>
-	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
-		<location x="1010" y="3"/>
-		<width>905</width>
-		<height>675</height>
-		<property name="FPS" value="10"/>
-	</static-widget>
 	<widget field="Shooter_camSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="0" y="190"/>
 	</widget>
@@ -112,4 +119,25 @@
 </dashboard>
 <live-window>
 </live-window>
+	<hidden field="A"/>
+	<hidden field="B"/>
+	<hidden field="Cam PID::kd"/>
+	<hidden field="RX"/>
+	<hidden field="RY"/>
+	<hidden field="LT"/>
+	<hidden field="Cam PID::kp"/>
+	<hidden field="LX"/>
+	<hidden field="LY"/>
+	<hidden field="Cam PID::ki"/>
+	<hidden field="Turret Up Speed"/>
+	<hidden field="Shooter_armIntakeTime"/>
+	<hidden field="Cam PID::current"/>
+	<hidden field="Cam PID::integralLifespan"/>
+	<hidden field="LB"/>
+	<hidden field="Cam PID::error"/>
+	<hidden field="X"/>
+	<hidden field="Y"/>
+	<hidden field="Turret_pitchError"/>
+	<hidden field="Cam PID::target"/>
+	<hidden field="Shooter_shootIntakePower"/>
 </xml>

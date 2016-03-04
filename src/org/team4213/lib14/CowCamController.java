@@ -1,27 +1,17 @@
 package org.team4213.lib14;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
+import java.util.TimerTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfInt;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.Scalar;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
-
-
-import org.opencv.imgproc.Imgproc;
 
 //Import WPILib's Driver Station Item
 import edu.wpi.first.wpilibj.DriverStation;
@@ -45,25 +35,15 @@ import edu.wpi.first.wpilibj.DriverStation;
  * @author KrithikR
  */
 
-public class CowCamController {
+public class CowCamController extends TimerTask{
 
 	// The Video Stream from which we Get the Images
 	private VideoCapture videoCapture = new VideoCapture();;
 	// The Image Being Streamed from the Camera
 	private Mat camImage = new Mat();
-	// Future for the Executed Image Processing
-	//private Optional<Future<T>> processFuture;
-	// Output from the Image Process Task
-	private Optional<Target> dataOutput;
-	// Task Given to Execute
-	private Optional<ImageProcessingTask> task;
 	// Boolean to Handle Running State
-	private volatile boolean isRunning = false;
+	private volatile boolean isRunning = true;
 	// The Locks for the Two Cross Thread Accessed Variables
-	//private ReadWriteLock imageLock = new ReentrantReadWriteLock();
-	//private ReadWriteLock dataOutputLock = new ReentrantReadWriteLock();
-	
-	//public ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	
 
@@ -80,45 +60,12 @@ public class CowCamController {
 	 * @param fps
 	 *            the integer to specify the frames per second of the Camera
 	 *            Read
-	 * @param imgProcess
-	 *            <code>Optional Callable T</code> that runs on each Camera
-	 *            Read, which the output of can be retrieved by the
-	 *            <code>getDataOutput</code> method
 	 * 
 	 * @see DriverStation
 	 * @see VideoCapture
 	 * @see Optional
 	 * @see Callable
 	 */
-	public CowCamController(int cameraPort, int fps, ImageTask tsk) {
-
-		// Reports that a Camera is Being Started to the Driver Station
-		DriverStation.reportError("Starting a camera at : " + cameraPort, false);
-		// Attempts to Open the Camera
-		while (true) {
-			try {
-				videoCapture.open(cameraPort, 320, 240, fps);
-			} catch (Exception ex) {
-				continue;
-			}
-			break;
-		}
-
-		// Set the Camera's Settings
-		setCameraOptions();
-
-		// Sets the Task to The Task being passed In
-		switch (tsk){
-		case SHOOTER:
-			task = Optional.of(new ShooterImageProcessor());
-			break;
-		default:
-			task = Optional.empty();
-		}
-		// Reads first Image
-		videoCapture.read(camImage);
-
-	}
 	public CowCamController(int cameraPort, int fps) {
 
 		// Reports that a Camera is Being Started to the Driver Station
@@ -171,7 +118,7 @@ public class CowCamController {
 	 * @see Highgui
 	 * @see ReadWriteLock
 	 */
-	public byte[] getImgAsBytes() {
+	public byte[] getImgAsBytes( Mat img ) {
 
 		// Sets JPEG Quality to 10*50
 		MatOfInt params = new MatOfInt(Highgui.IMWRITE_JPEG_QUALITY, 10 * 50);
@@ -181,7 +128,7 @@ public class CowCamController {
 
 		// Encoded the Image into JPEG and Stores it in the Mat of Bytes
 		//imageLock.readLock().lock();
-		Highgui.imencode(".jpg", camImage.clone(), matByte, params);
+		Highgui.imencode(".jpg", img, matByte, params);
 		//imageLock.readLock().unlock();
 
 		// Returns the Mat of Bytes as an Array
@@ -205,27 +152,6 @@ public class CowCamController {
 		//imageLock.readLock().unlock();
 
 		return img;
-	}
-
-	/**
-	 * Returns the Output of the Image Processing Task. It's implementation is
-	 * meant to be thread safe. Upon return the Optional must be unwrapped and
-	 * checked for existence when reading the data inside.
-	 * 
-	 * @return Object of type <code>Optional T</code> that contains periodic
-	 *         output of the image processing task
-	 * 
-	 * @see ReadWriteLock
-	 * @see #task
-	 */
-	public Optional<Target> getDataOutput() {
-
-		//dataOutputLock.readLock().lock();
-		Optional<Target> output = dataOutput;
-		//dataOutputLock.readLock().unlock();
-
-		return output;
-
 	}
 
 	/**
@@ -254,14 +180,11 @@ public class CowCamController {
 	 * @see ExecutorService
 	 * @see #readCamera(ExecutorService)
 	 */
-	public void start(ExecutorService executor) {
-		// Stops old Execution
-		stop();
+	public void start() {
 		// Sets Current Running State to True
 		isRunning = true;
 		
 		// Then We run the Infinite Camera Read Loop
-		executor.submit(readCamera(executor));
 	}
 
 	/**
@@ -295,165 +218,11 @@ public class CowCamController {
 	 * @see ReadWriteLock
 	 * @see Runnable
 	 */
-	private Runnable readCamera(ExecutorService executor) {
-		// Returns a Runnable Instance and Returns it
-		return () -> {
-			// Runs Task for the First Time
-			/*if(task.isPresent()){
-				task.get().setImage(getImg());
-				processFuture = Optional.of(executor.submit(task.get()));
-			}else{
-				processFuture = Optional.empty();
-			}*/
-			DriverStation.reportError("Camera Started", false);
-			while (isRunning) {
-				// Reads Camera to an Image Variable
-				//imageLock.writeLock().lock();
-				videoCapture.read(camImage);
-				//imageLock.writeLock().unlock();
-
-				// Submits Task to Run Async + Get its future if The Process
-				// Finished.
-				/*if (task.isPresent() && processFuture.isPresent() && processFuture.get().isDone()) {
-					// Updates Data from the Future
-					//dataOutputLock.writeLock().lock();
-					task.get().setImage(getImg());
-					try {
-						dataOutput = Optional.of(processFuture.get().get());
-					} catch (InterruptedException e) {
-						DriverStation.reportError(e.getMessage(), true);
-					} catch (ExecutionException e) {
-						DriverStation.reportError(e.getMessage(), true);
-					}
-					//dataOutputLock.writeLock().unlock();
-					// Replaces the Old Future with a New One
-					processFuture = Optional.of(executor.submit(task.get()));
-					
-				}*/
-				task.get().setImage(getImg());
-				dataOutput = task.get().call();
-				Thread.yield();
-			}
-		};
-	}
-
-	private static class ShooterImageProcessor implements ImageProcessingTask{
-		public final static int THRESH = 100;
-		public final static int THRESH_MAX = 255;
-		public final static int FRAME_WIDTH = 320;
-		public final static int FRAME_HEIGHT = 240;
-		public final static double CAM_FOV_DIAG = 68.5;
-		public final static double DEG_PER_PX = CAM_FOV_DIAG
-				/ Math.sqrt(Math.pow(FRAME_WIDTH, 2) + Math.pow(FRAME_HEIGHT, 2));
-		Mat camImage;
-		/**
-		 * Runs the Image Processing for the Shooter Image and outputs a
-		 * ShooterTarget The ShooterTarget object contains X/Y angles to move,
-		 * Distance from Target, and Feasability of Shot
-		 * 
-		 * @return <code>Optional ShooterTarget</code> object that represents a
-		 *         target of the shooter
-		 * 
-		 * @see Callable
-		 */
-		
-		public Optional<Target> call() {
-			
-			List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-			// Filters for Correct Color
-			filterImage();
-			// Finds Contours :D
-			Imgproc.findContours(camImage, contours, new Mat(), Imgproc.RETR_TREE,
-					2, new Point(0, 0)); // 2 is Chain_Approx_Simple
-
-			// Lots of Arrays to Hold Various Things
-			MatOfPoint2f[] contours_poly = new MatOfPoint2f[contours.size()];
-			Rect[] boundingRects = new Rect[contours.size()];
-			Point[] center = new Point[contours.size()];
-
-			int biggestRectIndex = -1;
-			double biggestRectArea = 0;
-
-			// A Temporary MatOfPoint(s) to use to convert between types in Loop
-			MatOfPoint contour_point = new MatOfPoint();
-			MatOfPoint2f contour = new MatOfPoint2f();
-
-			// Loops through Contours in the List
-			for (int i = 0; i < contours.size(); i++) {
-				// Initializes a New MatOfPoint2f
-				contours_poly[i] = new MatOfPoint2f();
-				// Converts to MatOfPoint2f
-				contour.fromList(contours.get(i).toList());
-				// Approximate a Polygon Curve
-				Imgproc.approxPolyDP(contour, contours_poly[i], 3, true);
-				// Converts to MatOfPoint
-				contour_point.fromList(contours_poly[i].toList());
-				// Finds Rectangles that Surround Contours
-				boundingRects[i] = Imgproc.boundingRect(contour_point);
-				// Gets the Centers of the Rectangles
-				center[i] = new Point(boundingRects[i].x + boundingRects[i].width
-						/ 2, boundingRects[i].y + boundingRects[i].height / 2);
-				// Finds the Biggest Rectangle
-				if (boundingRects[i].area() > biggestRectArea) {
-					biggestRectArea = boundingRects[i].area();
-					biggestRectIndex = i;
-				}
-			}
-
-			// Write to File Code if Needed For Testing Later
-			/*
-			 * Scalar color = new Scalar(Math.random() * 255, Math.random() * 255,
-			 * Math.random() * 255); Mat drawing = new Mat(camImage.size(),
-			 * CvType.CV_8UC3); Imgproc.drawContours(drawing, contours,
-			 * biggestRectIndex, color); Imgproc.rectangle(drawing, new
-			 * Point(boundingRects[biggestRectIndex].x,
-			 * boundingRects[biggestRectIndex].y), new Point(
-			 * boundingRects[biggestRectIndex].x +
-			 * boundingRects[biggestRectIndex].width,
-			 * boundingRects[biggestRectIndex].y +
-			 * boundingRects[biggestRectIndex].height), color);
-			 * 
-			 * Imgcodecs.imwrite("C:\\Users\\MetalCow\\Downloads\\testimgout2.jpg",
-			 * drawing);
-			 */
-
-			Optional<Target> target;
-
-			if (/* threshold Conditions go here ... need to test */boundingRects.length > 0) {
-				final double angleX = DEG_PER_PX
-						* (center[biggestRectIndex].x - FRAME_WIDTH / 2);
-				final double angleY = DEG_PER_PX
-						* (center[biggestRectIndex].y - FRAME_HEIGHT / 2);
-				final double distance = 0; // x = angle of Shooter (FROM ENCODER);
-											// (77.5/12)/Math.atan(x+angleY);
-				target = Optional.of(new Target(angleX, angleY, distance, true));
-			} else {
-				target = Optional.empty();
-			}
-			return target;
+	@Override
+	public void run() {
+		if (isRunning) {
+			videoCapture.read(camImage);
 		}
-
-		/**
-		 * Blurs the Image a bit, Converts it to HSV, Applies an RGB Filter, and
-		 * Then a Threshold
-		 */
-		private void filterImage() {
-			Imgproc.medianBlur(camImage, camImage, 3);
-			Imgproc.cvtColor(camImage, camImage, Imgproc.COLOR_BGR2HSV);
-			Core.inRange(camImage, new Scalar(0, 0, 0), new Scalar(100, 100, 100),
-					camImage);
-			Imgproc.threshold(camImage, camImage, THRESH, THRESH_MAX,
-					Imgproc.THRESH_BINARY);
-		}
-
-		@Override
-		public void setImage(Mat img) {
-			camImage = img;
-		}
-	}
-	
-	public enum ImageTask{
-		SHOOTER,BALL;
 	}
 	
 }

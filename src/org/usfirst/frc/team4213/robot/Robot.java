@@ -1,8 +1,12 @@
 
 package org.usfirst.frc.team4213.robot;
 
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
@@ -15,8 +19,10 @@ import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
+import org.usfirst.frc.team4213.image_processor.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -41,12 +47,17 @@ public class Robot extends IterativeRobot {
 	DriveController driveTrain;
 	OperatorController ballSystems;
 	
+	Timer timer;
+	
 	// Camera Controller
 	public static CowCamServer camServer;
+	// The Camera Server
+	public CowCamController shooterCameraController;
+	// The Camera Image Processor
+	public ShooterImageProcessor shooterProcessingTask;
 	// The Thread Pool / Executor of Tasks to Use
-	public ExecutorService executor;
+	public ScheduledExecutorService executor;
 	// A new Camera Controller for the Shooter
-	public CowCamController shooterCamController;
 	boolean allowedToSave = false;
 
 	static {
@@ -66,10 +77,20 @@ public class Robot extends IterativeRobot {
 		driverController = new Xbox360Controller(0);
 		gunnerController = new Xbox360Controller(1);
 		
-		camServer = new CowCamServer(1180);
-		executor = Executors.newWorkStealingPool();
-		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
+		executor = Executors.newScheduledThreadPool(1);
+		
+		timer = new Timer();
 
+		shooterCameraController = new CowCamController(0, 25);
+		shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
+		camServer = new CowCamServer(1180, shooterCameraController,shooterProcessingTask);
+		
+		executor.scheduleAtFixedRate(shooterCameraController, 0, 30,TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(shooterProcessingTask, 0, 30, TimeUnit.MILLISECONDS);
+		executor.scheduleAtFixedRate(camServer,0,30,TimeUnit.MILLISECONDS);
+		
+		
+		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
 		//intake = new IntakeMap();
@@ -77,7 +98,6 @@ public class Robot extends IterativeRobot {
 		driveTrain = new DriveController(new DriveMap());
 		ballSystems = new OperatorController(turret,shooter,null);
 
-		camServer.start(shooterCamController, executor);
 
 	}
 	
@@ -123,7 +143,6 @@ public class Robot extends IterativeRobot {
 		gunnerController.prestep();
 		
 		ballSystems.drive(gunnerController);
-
 		driveTrain.drive(driverController, true);
 		
 		driverController.endstep();
