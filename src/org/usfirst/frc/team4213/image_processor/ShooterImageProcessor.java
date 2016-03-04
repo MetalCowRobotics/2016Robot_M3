@@ -49,7 +49,8 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	@Override
 	public void run() {
 		Mat editImage = camera.getImg();
-		//DriverStation.reportError("ShooterImageProcessor.run\n", false);
+		
+		//TODO: Scrap this and/or make something new to make this work
 		
 		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
 		// Filters for Correct Color
@@ -104,6 +105,10 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			latestTarget = null;
 		}
 		
+		
+		
+		// End of vision processing
+		
 		latestImage = editImage;
 
 	}
@@ -113,6 +118,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	 * Then a Threshold
 	 */
 	private void filterImage(Mat image) {
+		// TODO: GREEN
 		Imgproc.medianBlur(image, image, 3);
 		Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2HSV);
 		Core.inRange(image, new Scalar(0, 0, 0), new Scalar(100, 100, 100),

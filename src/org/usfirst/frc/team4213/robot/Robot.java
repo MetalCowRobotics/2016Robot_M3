@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot extends IterativeRobot {
 
 	TurretMap turret;
-	IntakeMap intake;
+	IntakeMap intake; // TODO: Stitch in and test intake
 	ShooterMap shooter;
 	
 	CowGamepad driverController;

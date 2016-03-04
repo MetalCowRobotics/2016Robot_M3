@@ -101,7 +101,6 @@ public class ShooterMap {
 			state = ShooterState.SHOOTING;
 			return true;
 		} else {
-			DriverStation.reportError("Shooter is Not Armed : Ball Cannot be Shot", false);
 			return false;
 			
 		}
@@ -136,8 +135,6 @@ public class ShooterMap {
 			CowDash.setString("Shooter_state", "SHOOTING");
 			camPID.setTarget(360);
 			if ( shootTimer.get() > 2) {
-				//DriverStation.reportError(shootTimer.get() + "\n", false);
-				// 1 Second of Wheel Spinning. ( ADD TO CONFIG )
 				shootTimer.stop();
 				shootTimer.reset();
 				idle();
@@ -154,7 +151,6 @@ public class ShooterMap {
 				setWheelSpeed(-CowDash.getNum("Shooter_shootIntakePower", 0.4));
 			}
 			
-			//DriverStation.reportError("/n Time:" + (armTimer.get()), false);
 			if (armTimer.get() > CowDash.getNum("Shooter_armTime", 2.0)+CowDash.getNum("Shooter_armIntakeTime", 0.5)) {
 				// 2 Seconds, Can be changed ( ADD TO CONFIG )
 				armTimer.stop();

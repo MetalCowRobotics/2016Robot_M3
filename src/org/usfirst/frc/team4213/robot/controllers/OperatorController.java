@@ -34,13 +34,11 @@ public class OperatorController {
 		
 		// INTAKE
 		if(controller.getButtonTripped(GamepadButton.B) && isAllIdle() && state == OperatorState.IDLE){
-			//DriverStation.reportError("\n INTAKING", false);
 			shooter.intake();
 			//intake.intake();
 			turret.idle();
 			state = OperatorState.INTAKE;
 		}else if((controller.getButtonReleased(GamepadButton.B) && state == OperatorState.INTAKE)){
-			//DriverStation.reportError("\n STOP INTAKING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
@@ -51,13 +49,11 @@ public class OperatorController {
 		
 		// EJECT
 		if(controller.getButtonTripped(GamepadButton.Y) && isAllIdle() && state == OperatorState.IDLE){
-			//DriverStation.reportError("\n EJECTING", false);
 			shooter.eject();
 			//intake.eject();
 			turret.idle();
 			state = OperatorState.EJECT;
 		}else if((controller.getButtonReleased(GamepadButton.Y) && state == OperatorState.EJECT)){
-			DriverStation.reportError("\n STOP EJECTING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
@@ -92,15 +88,6 @@ public class OperatorController {
 			idleAll();
 			state = OperatorState.IDLE;
 		}
-//		
-//		// Engage Turret
-//		if(controller.getLT() > 0 && state == OperatorState.IDLE){
-//			turret.engage();
-//			state = OperatorState.TURRET_ENGAGED;
-//		}else if(controller.getLT() == 0 && state == OperatorState.TURRET_ENGAGED){
-//			idleAll();
-//			state = OperatorState.IDLE;
-//		}
 		
 		// Arm Shooter
 		if(controller.getButtonTripped(GamepadButton.RT) && state == OperatorState.TURRET_ENGAGED){
@@ -124,31 +111,13 @@ public class OperatorController {
 			if(Math.abs(controller.getRX()) > 0.15) {
 				turret.manualYawOverride(controller.getRX()*0.8);
 			}
-			
-//			// UP / DOWN
-//			if(controller.getLY() < -0.2){
-//				//DriverStation.reportError("\n BUMPING UP", false);
-//				turret.bumpTurretUp();
-//			}else if(controller.getLY() > 0.2){
-//				//DriverStation.reportError("\n BUMPING DOWN", false);
-//				turret.bumpTurretDown();
-//			}
-//				
-//			// RIGHT / LEFT
-//			if(controller.getRX() > 0.2){
-//				//DriverStation.reportError("\n BUMPING RIGHT", false);
-//				turret.bumpTurretRight();
-//			}else if(controller.getRX() < -0.2){
-//				//DriverStation.reportError("\n BUMPING LEFT", false);
-//				turret.bumpTurretLeft();
-//			}
 		}
 		
 		turret.endstep();
 		shooter.step();
 		//intake.step();
 		
-		// TODO VISION
+		// TODO Stitch in vision
 		
 		
 		
@@ -166,8 +135,6 @@ public class OperatorController {
 				shooter.getState() == ShooterState.IDLE &&
 				turret.getState() == TurretState.IDLE;
 	}
-	
-	// Checks if Raising is Ready or Is Already Raising
 	
 	
 	
