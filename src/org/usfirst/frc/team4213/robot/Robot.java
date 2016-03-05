@@ -61,8 +61,10 @@ public class Robot extends IterativeRobot {
 	boolean allowedToSave = false;
 
 	static {
+		DriverStation.reportError("\n Loading OpenCV...", false);
 		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+		DriverStation.reportError("\n Loaded OpenCV.", false);
 	}
 
 	/**
@@ -80,15 +82,19 @@ public class Robot extends IterativeRobot {
 		executor = Executors.newScheduledThreadPool(1);
 		
 		timer = new Timer();
+		
+		try{
 
 		shooterCameraController = new CowCamController(0, 25);
 		shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
 		camServer = new CowCamServer(1180, shooterCameraController,shooterProcessingTask);
 		
-		executor.scheduleAtFixedRate(shooterCameraController, 0, 30,TimeUnit.MILLISECONDS);
-		executor.scheduleAtFixedRate(shooterProcessingTask, 0, 30, TimeUnit.MILLISECONDS);
-		executor.scheduleAtFixedRate(camServer,0,30,TimeUnit.MILLISECONDS);
-		
+		executor.scheduleWithFixedDelay(shooterCameraController, 0, 20,TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(camServer,0,35,TimeUnit.MILLISECONDS);
+		}catch(Exception e){
+			DriverStation.reportError("Failed vision start", true);
+		}
 		
 		// Systems
 		turret = new TurretMap();
@@ -96,7 +102,7 @@ public class Robot extends IterativeRobot {
 		//intake = new IntakeMap();
 		
 		driveTrain = new DriveController(new DriveMap());
-		ballSystems = new OperatorController(turret,shooter,null);
+		ballSystems = new OperatorController(turret,shooter,null,shooterProcessingTask,shooterCameraController);
 
 
 	}
@@ -110,6 +116,10 @@ public class Robot extends IterativeRobot {
 		allowedToSave=true;
 	}
 
+	public void disabledPeriodic() {
+		System.gc();
+	}
+	
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -131,6 +141,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		System.gc();
 	}
 
 	/**
@@ -147,6 +158,7 @@ public class Robot extends IterativeRobot {
 		
 		driverController.endstep();
 		gunnerController.endstep();
+		System.gc();
 	}
 
 	/**
@@ -169,7 +181,7 @@ public class Robot extends IterativeRobot {
 		else shooter.setCamSpeed(0);
 		
 		driveTrain.drive(driverController, true);
-		
+		System.gc();
 	}
 
 }

@@ -1,7 +1,5 @@
 package org.team4213.lib14;
 
-// Import Various Java Network Classes
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -28,12 +26,12 @@ public class CowCamServer extends TimerTask{
 	private static final byte[] kMagicNumber = { 0x01, 0x00, 0x00, 0x00 };
 	
 	private Socket s;
-	private DataInputStream inputStream;
+	//private DataInputStream inputStream;
 	private DataOutputStream outputStream;
 	private boolean reconnectNeeded;
-	private int fps;
+	//private int fps;
 	// NOT USED ATM >>> COULD BE ? 
-	private int compression;
+	//private int compression;
 
 
 	/*
@@ -42,9 +40,6 @@ public class CowCamServer extends TimerTask{
 	public CowCamServer(int port, CowCamController cam, ImageProcessingTask task) {
 		setupSocket(port);
 		reconnectNeeded = true;
-		while(reconnectNeeded){
-			reconnectSocket();
-		}
 		this.cameraController = cam;
 		this.task = task;
 		isStreaming = true;
@@ -73,12 +68,12 @@ public class CowCamServer extends TimerTask{
 			s = socket.accept();
 
 			// Acquires the Data Streams
-			inputStream = new DataInputStream(s.getInputStream());
+			//inputStream = new DataInputStream(s.getInputStream());
 			outputStream = new DataOutputStream(s.getOutputStream());
 
 			// Reads the Data Input Stream
-			fps = inputStream.readInt();
-			compression = inputStream.readInt();
+			// fps = inputStream.readInt();
+			// compression = inputStream.readInt();
 			// Resolution Setting that Could be Implemented Later
 			// int size = is.readInt();
 			
@@ -118,16 +113,19 @@ public class CowCamServer extends TimerTask{
 	@Override
 	public void run() {
 		//DriverStation.reportError("CowCamServer.run\n", false);
-		
-		while (reconnectNeeded){
+		//DriverStation.reportError("CamServer.run", false);
+		if (reconnectNeeded){
+			DriverStation.reportError("We need Reconnection", false);
 			reconnectSocket();
+			return;
 		}
 		
-		if (isStreaming) {
+		if (isStreaming && cameraController.getImg() != null) {
+			//DriverStation.reportError("we are streaming", false);
 			// Stream Periodically based on FPS
-			long period = (long) (1000 / (1.0 * fps));
+			// long period = (long) (1000 / (1.0 * fps));
 			if (isStreaming && cameraController.isRunning()) {
-				long t0 = System.currentTimeMillis();
+				//long t0 = System.currentTimeMillis();
 				
 				Mat img;
 				// FIGURE OUT STREAMING
@@ -139,8 +137,10 @@ public class CowCamServer extends TimerTask{
 				} else {
 					img = cameraController.getImg();
 				}
+				
 				byte[] videoBits = cameraController.getImgAsBytes(img);
-
+				img.release();
+				
 				// Streams data to Client
 				try {
 					outputStream.write(kMagicNumber);
@@ -148,14 +148,14 @@ public class CowCamServer extends TimerTask{
 					outputStream.write(videoBits);
 					outputStream.flush();
 					Thread.yield();
-					long dt = System.currentTimeMillis() - t0;
+					//long dt = System.currentTimeMillis() - t0;
 
 					// Sleeps to Delay for FPS Setting
-					if (dt < period) {
-						Thread.sleep(period - dt);
-					}
+//					if (dt < period) {
+//						Thread.sleep(period - dt);
+//					}
 
-				} catch (IOException | UnsupportedOperationException | InterruptedException ex) {
+				} catch (IOException | UnsupportedOperationException ex) {
 					DriverStation.reportError(ex.getMessage(), true);
 					reconnectNeeded = true;
 					return;

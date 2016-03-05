@@ -1,5 +1,6 @@
 package org.team4213.lib14;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.TimerTask;
 import java.util.concurrent.Callable;
@@ -12,6 +13,10 @@ import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfInt;
 import org.opencv.highgui.Highgui;
 import org.opencv.highgui.VideoCapture;
+
+
+
+
 
 //Import WPILib's Driver Station Item
 import edu.wpi.first.wpilibj.DriverStation;
@@ -44,7 +49,14 @@ public class CowCamController extends TimerTask{
 	// Boolean to Handle Running State
 	private volatile boolean isRunning = true;
 	// The Locks for the Two Cross Thread Accessed Variables
-
+	
+	private boolean opened = false;
+	private int fps;
+	private int cameraPort;
+	
+	private static final MatOfInt ENC_PARAMS = new MatOfInt(Highgui.IMWRITE_JPEG_QUALITY, 10 * 50);
+	
+	private static final MatOfByte TMP_MAT_BYTE = new MatOfByte();
 	
 
 	/**
@@ -67,24 +79,18 @@ public class CowCamController extends TimerTask{
 	 * @see Callable
 	 */
 	public CowCamController(int cameraPort, int fps) {
+		this.cameraPort = cameraPort;
+		this.fps = fps;
 
 		// Reports that a Camera is Being Started to the Driver Station
-		DriverStation.reportError("Starting a camera at : " + cameraPort, false);
+		
 		// Attempts to Open the Camera
-		while (true) {
-			try {
-				videoCapture.open(cameraPort, 320, 240, fps);
-			} catch (Exception ex) {
-				continue;
-			}
-			break;
-		}
-
+		
 		// Set the Camera's Settings
-		setCameraOptions();
+		
 
 		// Reads first Image
-		videoCapture.read(camImage);
+		// videoCapture.read(camImage);
 
 	}
 	
@@ -102,8 +108,37 @@ public class CowCamController extends TimerTask{
 		videoCapture.set(Highgui.CV_CAP_PROP_FRAME_WIDTH, 320);
 		// Sets Frame Height to 240px
 		videoCapture.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 240);
+		
+		String[] auto_exp_cmd = {"v4l2-ctl","--set-ctrl=exposure_auto=1"};
+		
+		try {
+			Runtime.getRuntime().exec(auto_exp_cmd);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		setTrackingSettings();
+		
+	}
+	
+	public void setTrackingSettings() {
+		setExposure((int)CowDash.getNum("Vision_Tracking_Exposure", 25));
+	}
+	
+	public void setHumanFriendlySettings() {
+		setExposure((int)CowDash.getNum("Vision_Human_Exposure", 500));
 	}
 
+	private void setExposure(int exposure){
+		DriverStation.reportError("CamController.setExposure call", true);
+		String[] set_exp_cmd = {"v4l2-ctl","--set-ctrl=exposure_absolute=" + exposure};
+		try {
+			Runtime.getRuntime().exec(set_exp_cmd);
+		} catch (IOException e) {
+			DriverStation.reportError("CamController.setExposure error", true);
+			e.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Returns a <code>byte[]</code> from the Camera's Image. This method is
 	 * safe for usage by multiple threads. This should only be used if you want
@@ -119,20 +154,13 @@ public class CowCamController extends TimerTask{
 	 * @see ReadWriteLock
 	 */
 	public byte[] getImgAsBytes( Mat img ) {
-
-		// Sets JPEG Quality to 10*50
-		MatOfInt params = new MatOfInt(Highgui.IMWRITE_JPEG_QUALITY, 10 * 50);
-
-		// Creates a Mat of Bytes
-		MatOfByte matByte = new MatOfByte();
-
 		// Encoded the Image into JPEG and Stores it in the Mat of Bytes
 		//imageLock.readLock().lock();
-		Highgui.imencode(".jpg", img, matByte, params);
+		Highgui.imencode(".jpg", img, TMP_MAT_BYTE, ENC_PARAMS);
 		//imageLock.readLock().unlock();
 
 		// Returns the Mat of Bytes as an Array
-		return matByte.toArray();
+		return TMP_MAT_BYTE.toArray();
 	}
 
 	/**
@@ -148,10 +176,10 @@ public class CowCamController extends TimerTask{
 	public Mat getImg() {
 
 		//imageLock.readLock().lock();
-		Mat img = camImage.clone();
+		// Mat img = camImage.clone();
 		//imageLock.readLock().unlock();
-
-		return img;
+		
+		return camImage.clone();
 	}
 
 	/**
@@ -220,8 +248,20 @@ public class CowCamController extends TimerTask{
 	 */
 	@Override
 	public void run() {
+		if (!opened) {
+			try {
+				videoCapture.open(cameraPort, 320, 240, fps);
+				setCameraOptions();
+				
+			} catch (Exception ex) {
+				return;
+			}
+			opened=true;
+			DriverStation.reportError("Started camera at: " + cameraPort, false);
+		}
 		if (isRunning) {
 			videoCapture.read(camImage);
+			
 		}
 	}
 	

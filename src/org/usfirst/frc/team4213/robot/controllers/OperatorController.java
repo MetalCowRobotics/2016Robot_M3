@@ -1,8 +1,11 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
+import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.GamepadButton;
+import org.team4213.lib14.Target;
+import org.usfirst.frc.team4213.image_processor.ShooterImageProcessor;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
@@ -15,18 +18,28 @@ public class OperatorController {
 	private TurretMap turret;
 	private ShooterMap shooter;
 	private IntakeMap intake; 
+	private ShooterImageProcessor imageProcessor;
+	private CowCamController cameraController;
 	
 	private enum OperatorState {
 		IDLE,INTAKE_RAISED,TURRET_ENGAGED,INTAKE,EJECT;
 	}
 	
-	private OperatorState state;
+	private enum VisionState {
+		OFF,LONG
+	}
 	
-	public OperatorController(TurretMap turret, ShooterMap shooter, IntakeMap intake){
+	private OperatorState state;
+	private VisionState visionState;
+	
+	public OperatorController(TurretMap turret, ShooterMap shooter, IntakeMap intake, ShooterImageProcessor processor, CowCamController cameraController){
 		this.turret = turret;
 		this.shooter = shooter;
 		this.intake = intake;
+		this.imageProcessor = processor;
+		this.cameraController = cameraController;
 		state = OperatorState.IDLE;
+		visionState = VisionState.OFF;
 	}
 	
 	public void drive(CowGamepad controller){
@@ -101,15 +114,40 @@ public class OperatorController {
 			controller.rumbleRight((float) 0.5);
 		}
 		
-		
-		
-		// Turret Motion
-		if(state == OperatorState.TURRET_ENGAGED){
-			if(Math.abs(controller.getLY()) > 0.15) {
-				turret.manualPitchOverride(-controller.getLY()*0.8);
+		// Cycle state
+		if(controller.getButtonTripped(GamepadButton.BACK)) {
+			if(visionState==VisionState.LONG){
+				cameraController.setHumanFriendlySettings();
+				visionState=VisionState.OFF;
+			} else {
+				cameraController.setTrackingSettings();
+				visionState=VisionState.LONG;
 			}
-			if(Math.abs(controller.getRX()) > 0.15) {
-				turret.manualYawOverride(controller.getRX()*0.8);
+		}
+		
+		if(state == OperatorState.TURRET_ENGAGED){
+			switch(visionState) {
+			case OFF:
+				
+				// Turret Motion by Operator Directly
+				
+					if(Math.abs(controller.getLY()) > 0.15) {
+						turret.manualPitchOverride(-controller.getLY()*0.8);
+					}
+					if(Math.abs(controller.getRX()) > 0.15) {
+						turret.manualYawOverride(controller.getRX()*0.8);
+					}
+				
+				break;
+			case LONG:
+				Target curTarget = imageProcessor.getTarget();
+				try{
+					turret.manualPitchOverride(-curTarget.center.y*0.01);
+					turret.manualYawOverride(curTarget.center.x*0.01);
+				}catch(NullPointerException npe){
+					
+				}
+				break;
 			}
 		}
 		

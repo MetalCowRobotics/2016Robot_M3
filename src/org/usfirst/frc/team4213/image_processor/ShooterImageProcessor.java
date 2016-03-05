@@ -1,9 +1,12 @@
 package org.usfirst.frc.team4213.image_processor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -14,6 +17,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.team4213.lib14.CowCamController;
+import org.team4213.lib14.CowDash;
 import org.team4213.lib14.ImageProcessingTask;
 import org.team4213.lib14.Target;
 
@@ -24,13 +28,29 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	public final static int THRESH_MAX = 255;
 	public final static int FRAME_WIDTH = 320;
 	public final static int FRAME_HEIGHT = 240;
-	public final static double CAM_FOV_DIAG = 68.5;
+	public final static double CAM_FOV_DIAG = 60;
 	public final static double DEG_PER_PX = CAM_FOV_DIAG
 			/ Math.sqrt(Math.pow(FRAME_WIDTH, 2) + Math.pow(FRAME_HEIGHT, 2));
+	
+	public final static Scalar BLUE = new Scalar(255,0,0);
+	public final static Scalar GREEN = new Scalar(0,255,0);
+	public final static Scalar ORANGE = new Scalar(0,160,255);
+	
+	private final static List<MatOfPoint> CONTOURS = new ArrayList<MatOfPoint>();
+	private final static List<Rect> BOUNDING_RECTS = new ArrayList<Rect>();
+	private final static ExecutorService exec =  Executors.newWorkStealingPool();
+	
+	int hue_lo;
+	int sat_lo;
+	int lum_lo;
+	int hue_hi;
+	int sat_hi;
+	int lum_hi;
 	
 	private Mat latestImage;
 	private Target latestTarget;
 	private CowCamController camera;
+	private int dashCounter = 0;
 	
 	/**
 	 * Runs the Image Processing for the Shooter Image and outputs a
@@ -44,73 +64,103 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	 */
 	public ShooterImageProcessor(CowCamController camera){
 		this.camera = camera;
+		hue_lo = (int)CowDash.getNum("Vision_Hue_Lo", 50);
+		sat_lo = (int)CowDash.getNum("Vision_Sat_Lo", 150);
+		lum_lo = (int)CowDash.getNum("Vision_Lum_Lo", 115);
+		hue_hi = (int)CowDash.getNum("Vision_Hue_Hi", 100);
+		sat_hi = (int)CowDash.getNum("Vision_Sat_Hi", 255);
+		lum_hi = (int)CowDash.getNum("Vision_Lum_Hi", 255);
+		
 	}
 	
 	@Override
 	public void run() {
-		Mat editImage = camera.getImg();
-		
-		//TODO: Scrap this and/or make something new to make this work
-		
-		List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-		// Filters for Correct Color
-		filterImage(editImage);
-		// Finds Contours :D
-		Imgproc.findContours(editImage, contours, new Mat(), Imgproc.RETR_TREE,
-				2, new Point(0, 0)); // 2 is Chain_Approx_Simple
-		
-		// Lots of Arrays to Hold Various Things
-		MatOfPoint2f[] contours_poly = new MatOfPoint2f[contours.size()];
-		Rect[] boundingRects = new Rect[contours.size()];
-		Point[] center = new Point[contours.size()];
-
-		int biggestRectIndex = -1;
-		double biggestRectArea = 0;
-
-		// A Temporary MatOfPoint(s) to use to convert between types in Loop
-		MatOfPoint contour_point = new MatOfPoint();
-		MatOfPoint2f contour = new MatOfPoint2f();
-
-		// Loops through Contours in the List
-		for (int i = 0; i < contours.size(); i++) {
-			// Initializes a New MatOfPoint2f
-			contours_poly[i] = new MatOfPoint2f();
-			// Converts to MatOfPoint2f
-			contour.fromList(contours.get(i).toList());
-			// Approximate a Polygon Curve
-			Imgproc.approxPolyDP(contour, contours_poly[i], 3, true);
-			// Converts to MatOfPoint
-			contour_point.fromList(contours_poly[i].toList());
-			// Finds Rectangles that Surround Contours
-			boundingRects[i] = Imgproc.boundingRect(contour_point);
-			// Gets the Centers of the Rectangles
-			center[i] = new Point(boundingRects[i].x + boundingRects[i].width
-					/ 2, boundingRects[i].y + boundingRects[i].height / 2);
-			// Finds the Biggest Rectangle
-			if (boundingRects[i].area() > biggestRectArea) {
-				biggestRectArea = boundingRects[i].area();
-				biggestRectIndex = i;
+		try{
+			if(camera.getImg() == null){
+				return;
 			}
+			Mat editImage = camera.getImg();
+			Mat debugImage = editImage.clone();
+			
+			//TODO: Scrap this and/or make something new to make this work
+			
+			// Filters for Correct Color
+			filterImage(editImage);
+			// Finds Contours :D
+			Imgproc.findContours(editImage.clone(), CONTOURS, new Mat(), Imgproc.RETR_LIST,
+					2, new Point(0, 0)); // 2 is Chain_Approx_Simple
+			
+			editImage.release();
+			
+			for (int i=0;i<CONTOURS.size();i++) {
+				Rect bbox= Imgproc.boundingRect(CONTOURS.get(i));
+				BOUNDING_RECTS.add(bbox);
+				final int x = i;
+				exec.submit(()->{
+					if (CowDash.getBool("Vision_debug", true)) Imgproc.drawContours(debugImage, CONTOURS, x, ORANGE, 2);
+					if (CowDash.getBool("Vision_debug", true)) Core.rectangle(debugImage, new Point(bbox.x,bbox.y), new Point(bbox.x+bbox.width, bbox.y+bbox.height), BLUE, 2);
+				});
+			}
+			
+			CONTOURS.clear();
+	
+			
+			BOUNDING_RECTS.sort(new Comparator<Rect>() {
+				@Override
+				public int compare(Rect lhs, Rect rhs) {
+					if(lhs.area() < rhs.area()){
+						return 1;
+					}else if(lhs.area() > rhs.area()){
+						return -1;
+					}else if(lhs.area() == rhs.area()){
+						return 0;
+					}else{
+						return 0;
+					}
+				}
+			});
+			
+	
+			if (/* threshold Conditions go here ... need to test */BOUNDING_RECTS.size() > 0) {
+				
+				Rect biggestRect = null;
+				
+				for (int i=0;i<BOUNDING_RECTS.size();i++) {
+					Rect thisRect = BOUNDING_RECTS.get(i);
+					double AR = ((double)thisRect.width)/((double)thisRect.height);
+					if (AR > CowDash.getNum("Vision_min_ratio", 1) &&  AR < CowDash.getNum("Vision_max_ratio", 2)){
+						biggestRect = thisRect;
+						break;
+					}
+				}	
+				BOUNDING_RECTS.clear();
+				
+				if (biggestRect != null) {
+					Point center = new Point(biggestRect.x + biggestRect.width/2, biggestRect.y + biggestRect.height/2);
+					CowDash.setNum("Vision_target_x", center.x);
+					CowDash.setNum("Vision_target_y", center.y);
+					if (CowDash.getBool("Vision_debug", true)) Core.circle(debugImage, center, 2, GREEN, -1);
+					final double angleX = DEG_PER_PX * (center.x - FRAME_WIDTH / 2);
+					final double angleY = DEG_PER_PX * (center.y - FRAME_HEIGHT / 2);
+					DriverStation.reportError("Angle X :" + angleX + " (Angle Y) :" + angleY , false);
+					final double distance = 0; // x = angle of Shooter (FROM ENCODER);
+												// (77.5/12)/Math.atan(x+angleY);
+					latestTarget = new Target(angleX, angleY, distance, biggestRect, debugImage);
+				} else {
+					latestTarget = null;
+				}
+				
+			} else {
+				latestTarget = null;
+			}
+			
+			latestImage = debugImage;
+		
+		}catch(NullPointerException e){
+			DriverStation.reportError("ShooterImageProcessor.run error", true);
+			BOUNDING_RECTS.clear();
+			CONTOURS.clear();
 		}
-
-		if (/* threshold Conditions go here ... need to test */boundingRects.length > 0) {
-			final double angleX = DEG_PER_PX
-					* (center[biggestRectIndex].x - FRAME_WIDTH / 2);
-			final double angleY = DEG_PER_PX
-					* (center[biggestRectIndex].y - FRAME_HEIGHT / 2);
-			final double distance = 0; // x = angle of Shooter (FROM ENCODER);
-										// (77.5/12)/Math.atan(x+angleY);
-			latestTarget = new Target(angleX, angleY, distance, boundingRects[biggestRectIndex], editImage);
-		} else {
-			latestTarget = null;
-		}
-		
-		
-		
-		// End of vision processing
-		
-		latestImage = editImage;
-
 	}
 
 	/**
@@ -118,13 +168,27 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	 * Then a Threshold
 	 */
 	private void filterImage(Mat image) {
+		
+		if(dashCounter == 6){
+			hue_lo = (int)CowDash.getNum("Vision_Hue_Lo", 50);
+			sat_lo = (int)CowDash.getNum("Vision_Sat_Lo", 150);
+			lum_lo = (int)CowDash.getNum("Vision_Lum_Lo", 115);
+			hue_hi = (int)CowDash.getNum("Vision_Hue_Hi", 100);
+			sat_hi = (int)CowDash.getNum("Vision_Sat_Hi", 255);
+			lum_hi = (int)CowDash.getNum("Vision_Lum_Hi", 255);
+		}
+		
+		dashCounter++;
 		// TODO: GREEN
 		Imgproc.medianBlur(image, image, 3);
 		Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2HSV);
-		Core.inRange(image, new Scalar(0, 0, 0), new Scalar(100, 100, 100),
+		Core.inRange(image, new Scalar(hue_lo, sat_lo, lum_lo), new Scalar(hue_hi, sat_hi, lum_hi),
 				image);
-		Imgproc.threshold(image, image, THRESH, THRESH_MAX,
-				Imgproc.THRESH_BINARY);
+		
+		//int thresh = (int) CowDash.getNum("thresh_lo", 100);
+		//int thresh_max = (int) CowDash.getNum("thresh_hi", 200);
+//		Imgproc.threshold(image, image, thresh, thresh_max,
+//				Imgproc.THRESH_BINARY);
 	}
 
 	@Override
