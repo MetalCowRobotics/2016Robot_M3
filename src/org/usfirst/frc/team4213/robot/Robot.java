@@ -89,9 +89,10 @@ public class Robot extends IterativeRobot {
 		shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
 		camServer = new CowCamServer(1180, shooterCameraController,shooterProcessingTask);
 		
-		executor.scheduleWithFixedDelay(shooterCameraController, 0, 20,TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(shooterCameraController, 0, 15,TimeUnit.MILLISECONDS);
 		executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
 		executor.scheduleWithFixedDelay(camServer,0,35,TimeUnit.MILLISECONDS);
+		//executor.scheduleAtFixedRate(()->{System.gc();}, 45, 45, TimeUnit.SECONDS);
 		}catch(Exception e){
 			DriverStation.reportError("Failed vision start", true);
 		}
@@ -117,7 +118,7 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void disabledPeriodic() {
-		System.gc();
+//		System.gc();
 	}
 	
 	/**
@@ -141,7 +142,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		System.gc();
+//		System.gc();
 	}
 
 	/**
@@ -158,7 +159,7 @@ public class Robot extends IterativeRobot {
 		
 		driverController.endstep();
 		gunnerController.endstep();
-		System.gc();
+//		System.gc();
 	}
 
 	/**
@@ -180,8 +181,10 @@ public class Robot extends IterativeRobot {
 		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);
 		else shooter.setCamSpeed(0);
 		
+		
+		
 		driveTrain.drive(driverController, true);
-		System.gc();
+//		System.gc();
 	}
 
 }

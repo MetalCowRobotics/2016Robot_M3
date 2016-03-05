@@ -158,9 +158,11 @@ public class CowCamController extends TimerTask{
 		//imageLock.readLock().lock();
 		Highgui.imencode(".jpg", img, TMP_MAT_BYTE, ENC_PARAMS);
 		//imageLock.readLock().unlock();
-
+		
 		// Returns the Mat of Bytes as an Array
-		return TMP_MAT_BYTE.toArray();
+		byte[] imgArray = TMP_MAT_BYTE.toArray();
+		TMP_MAT_BYTE.release();
+		return imgArray;
 	}
 
 	/**

@@ -19,6 +19,6 @@ public class Target {
 		this.goal = goal;
 		this.img = img;
 		
-		center = new Point((goal.x+goal.width/2.0)-img.width()/2.0, (goal.y+goal.height/2.0)-img.height()/2.0);
+		center = new Point((goal.x+goal.width/2.0)-img.width()/2.0, (-1*(goal.y+goal.height/2.0))+(img.height()/2.0));
 	}
 }

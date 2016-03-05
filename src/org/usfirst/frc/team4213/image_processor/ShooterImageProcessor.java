@@ -141,10 +141,10 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 					CowDash.setNum("Vision_target_y", center.y);
 					if (CowDash.getBool("Vision_debug", true)) Core.circle(debugImage, center, 2, GREEN, -1);
 					final double angleX = DEG_PER_PX * (center.x - FRAME_WIDTH / 2);
-					final double angleY = DEG_PER_PX * (center.y - FRAME_HEIGHT / 2);
+					final double angleY = DEG_PER_PX * ((center.y) - FRAME_HEIGHT / 2);
 					DriverStation.reportError("Angle X :" + angleX + " (Angle Y) :" + angleY , false);
 					final double distance = 0; // x = angle of Shooter (FROM ENCODER);
-												// (77.5/12)/Math.atan(x+angleY);
+												// (77.5/12)/Math.tan(x+angleY);
 					latestTarget = new Target(angleX, angleY, distance, biggestRect, debugImage);
 				} else {
 					latestTarget = null;
@@ -153,7 +153,6 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			} else {
 				latestTarget = null;
 			}
-			
 			latestImage = debugImage;
 		
 		}catch(NullPointerException e){
@@ -169,16 +168,13 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	 */
 	private void filterImage(Mat image) {
 		
-		if(dashCounter == 6){
-			hue_lo = (int)CowDash.getNum("Vision_Hue_Lo", 50);
-			sat_lo = (int)CowDash.getNum("Vision_Sat_Lo", 150);
-			lum_lo = (int)CowDash.getNum("Vision_Lum_Lo", 115);
-			hue_hi = (int)CowDash.getNum("Vision_Hue_Hi", 100);
-			sat_hi = (int)CowDash.getNum("Vision_Sat_Hi", 255);
-			lum_hi = (int)CowDash.getNum("Vision_Lum_Hi", 255);
-		}
+		hue_lo = (int)CowDash.getNum("Vision_Hue_Lo", 50);
+		sat_lo = (int)CowDash.getNum("Vision_Sat_Lo", 150);
+		lum_lo = (int)CowDash.getNum("Vision_Lum_Lo", 115);
+		hue_hi = (int)CowDash.getNum("Vision_Hue_Hi", 100);
+		sat_hi = (int)CowDash.getNum("Vision_Sat_Hi", 255);
+		lum_hi = (int)CowDash.getNum("Vision_Lum_Hi", 255);
 		
-		dashCounter++;
 		// TODO: GREEN
 		Imgproc.medianBlur(image, image, 3);
 		Imgproc.cvtColor(image, image, Imgproc.COLOR_BGR2HSV);

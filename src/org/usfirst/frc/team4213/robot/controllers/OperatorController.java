@@ -4,9 +4,11 @@ import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.GamepadButton;
+import org.team4213.lib14.PIDController;
 import org.team4213.lib14.Target;
 import org.usfirst.frc.team4213.image_processor.ShooterImageProcessor;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
@@ -20,13 +22,15 @@ public class OperatorController {
 	private IntakeMap intake; 
 	private ShooterImageProcessor imageProcessor;
 	private CowCamController cameraController;
-	
+	private PIDController visionPIDX;
+	private PIDController visionPIDY;
+
 	private enum OperatorState {
 		IDLE,INTAKE_RAISED,TURRET_ENGAGED,INTAKE,EJECT;
 	}
 	
 	private enum VisionState {
-		OFF,LONG
+		OFF,LONG;
 	}
 	
 	private OperatorState state;
@@ -40,6 +44,11 @@ public class OperatorController {
 		this.cameraController = cameraController;
 		state = OperatorState.IDLE;
 		visionState = VisionState.OFF;
+		visionPIDX = new PIDController("Vision_PID_X", 10, 0, 0, 1);
+		visionPIDY = new PIDController("Vision_PID_Y", 10, 0, 0, 1);
+		visionPIDY.setTarget(0);
+		visionPIDX.setTarget(0);
+
 	}
 	
 	public void drive(CowGamepad controller){
@@ -128,22 +137,19 @@ public class OperatorController {
 		if(state == OperatorState.TURRET_ENGAGED){
 			switch(visionState) {
 			case OFF:
-				
 				// Turret Motion by Operator Directly
-				
-					if(Math.abs(controller.getLY()) > 0.15) {
-						turret.manualPitchOverride(-controller.getLY()*0.8);
-					}
-					if(Math.abs(controller.getRX()) > 0.15) {
-						turret.manualYawOverride(controller.getRX()*0.8);
-					}
-				
+				if(Math.abs(controller.getLY()) > 0.15) {
+					turret.manualPitchOverride(-controller.getLY()*0.8);
+				}
+				if(Math.abs(controller.getRX()) > 0.15) {
+					turret.manualYawOverride(controller.getRX()*0.8);
+				}
 				break;
 			case LONG:
 				Target curTarget = imageProcessor.getTarget();
 				try{
-					turret.manualPitchOverride(-curTarget.center.y*0.01);
-					turret.manualYawOverride(curTarget.center.x*0.01);
+					turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
+					turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
 				}catch(NullPointerException npe){
 					
 				}
