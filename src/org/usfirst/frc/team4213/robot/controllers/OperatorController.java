@@ -1,9 +1,14 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
+import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.GamepadButton;
+import org.team4213.lib14.PIDController;
+import org.team4213.lib14.Target;
+import org.usfirst.frc.team4213.image_processor.ShooterImageProcessor;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
@@ -15,18 +20,35 @@ public class OperatorController {
 	private TurretMap turret;
 	private ShooterMap shooter;
 	private IntakeMap intake; 
-	
+	private ShooterImageProcessor imageProcessor;
+	private CowCamController cameraController;
+	private PIDController visionPIDX;
+	private PIDController visionPIDY;
+
 	private enum OperatorState {
 		IDLE,INTAKE_RAISED,TURRET_ENGAGED,INTAKE,EJECT;
 	}
 	
-	private OperatorState state;
+	private enum VisionState {
+		OFF,LONG;
+	}
 	
-	public OperatorController(TurretMap turret, ShooterMap shooter, IntakeMap intake){
+	private OperatorState state;
+	private VisionState visionState;
+	
+	public OperatorController(TurretMap turret, ShooterMap shooter, IntakeMap intake, ShooterImageProcessor processor, CowCamController cameraController){
 		this.turret = turret;
 		this.shooter = shooter;
 		this.intake = intake;
+		this.imageProcessor = processor;
+		this.cameraController = cameraController;
 		state = OperatorState.IDLE;
+		visionState = VisionState.OFF;
+		visionPIDX = new PIDController("Vision_PID_X", 10, 0, 0, 1);
+		visionPIDY = new PIDController("Vision_PID_Y", 10, 0, 0, 1);
+		visionPIDY.setTarget(0);
+		visionPIDX.setTarget(0);
+
 	}
 	
 	public void drive(CowGamepad controller){
@@ -34,13 +56,11 @@ public class OperatorController {
 		
 		// INTAKE
 		if(controller.getButtonTripped(GamepadButton.B) && isAllIdle() && state == OperatorState.IDLE){
-			//DriverStation.reportError("\n INTAKING", false);
 			shooter.intake();
 			//intake.intake();
 			turret.idle();
 			state = OperatorState.INTAKE;
 		}else if((controller.getButtonReleased(GamepadButton.B) && state == OperatorState.INTAKE)){
-			//DriverStation.reportError("\n STOP INTAKING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
@@ -51,13 +71,11 @@ public class OperatorController {
 		
 		// EJECT
 		if(controller.getButtonTripped(GamepadButton.Y) && isAllIdle() && state == OperatorState.IDLE){
-			//DriverStation.reportError("\n EJECTING", false);
 			shooter.eject();
 			//intake.eject();
 			turret.idle();
 			state = OperatorState.EJECT;
 		}else if((controller.getButtonReleased(GamepadButton.Y) && state == OperatorState.EJECT)){
-			DriverStation.reportError("\n STOP EJECTING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
@@ -92,15 +110,6 @@ public class OperatorController {
 			idleAll();
 			state = OperatorState.IDLE;
 		}
-//		
-//		// Engage Turret
-//		if(controller.getLT() > 0 && state == OperatorState.IDLE){
-//			turret.engage();
-//			state = OperatorState.TURRET_ENGAGED;
-//		}else if(controller.getLT() == 0 && state == OperatorState.TURRET_ENGAGED){
-//			idleAll();
-//			state = OperatorState.IDLE;
-//		}
 		
 		// Arm Shooter
 		if(controller.getButtonTripped(GamepadButton.RT) && state == OperatorState.TURRET_ENGAGED){
@@ -114,41 +123,45 @@ public class OperatorController {
 			controller.rumbleRight((float) 0.5);
 		}
 		
+		// Cycle state
+		if(controller.getButtonTripped(GamepadButton.BACK)) {
+			if(visionState==VisionState.LONG){
+				cameraController.setHumanFriendlySettings();
+				visionState=VisionState.OFF;
+			} else {
+				cameraController.setTrackingSettings();
+				visionState=VisionState.LONG;
+			}
+		}
 		
-		
-		// Turret Motion
 		if(state == OperatorState.TURRET_ENGAGED){
-			if(Math.abs(controller.getLY()) > 0.15) {
-				turret.manualPitchOverride(-controller.getLY()*0.8);
+			switch(visionState) {
+			case OFF:
+				// Turret Motion by Operator Directly
+				if(Math.abs(controller.getLY()) > 0.15) {
+					turret.manualPitchOverride(-controller.getLY()*0.8);
+				}
+				if(Math.abs(controller.getRX()) > 0.15) {
+					turret.manualYawOverride(controller.getRX()*0.8);
+				}
+				break;
+			case LONG:
+				Target curTarget = imageProcessor.getTarget();
+				try{
+					turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
+					turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
+				}catch(NullPointerException npe){
+					
+				}
+				break;
 			}
-			if(Math.abs(controller.getRX()) > 0.15) {
-				turret.manualYawOverride(controller.getRX()*0.8);
-			}
-			
-//			// UP / DOWN
-//			if(controller.getLY() < -0.2){
-//				//DriverStation.reportError("\n BUMPING UP", false);
-//				turret.bumpTurretUp();
-//			}else if(controller.getLY() > 0.2){
-//				//DriverStation.reportError("\n BUMPING DOWN", false);
-//				turret.bumpTurretDown();
-//			}
-//				
-//			// RIGHT / LEFT
-//			if(controller.getRX() > 0.2){
-//				//DriverStation.reportError("\n BUMPING RIGHT", false);
-//				turret.bumpTurretRight();
-//			}else if(controller.getRX() < -0.2){
-//				//DriverStation.reportError("\n BUMPING LEFT", false);
-//				turret.bumpTurretLeft();
-//			}
 		}
 		
 		turret.endstep();
 		shooter.step();
 		//intake.step();
 		
-		// TODO VISION
+		// TODO Stitch in vision
 		
 		
 		
@@ -166,8 +179,6 @@ public class OperatorController {
 				shooter.getState() == ShooterState.IDLE &&
 				turret.getState() == TurretState.IDLE;
 	}
-	
-	// Checks if Raising is Ready or Is Already Raising
 	
 	
 	

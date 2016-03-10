@@ -1,8 +1,12 @@
 
 package org.usfirst.frc.team4213.robot;
 
+import java.util.Timer;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
@@ -15,8 +19,10 @@ import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
+import org.usfirst.frc.team4213.image_processor.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -32,7 +38,7 @@ import edu.wpi.first.wpilibj.Joystick;
 public class Robot extends IterativeRobot {
 
 	TurretMap turret;
-	IntakeMap intake;
+	IntakeMap intake; // TODO: Stitch in and test intake
 	ShooterMap shooter;
 	
 	CowGamepad driverController;
@@ -41,17 +47,24 @@ public class Robot extends IterativeRobot {
 	DriveController driveTrain;
 	OperatorController ballSystems;
 	
+	Timer timer;
+	
 	// Camera Controller
 	public static CowCamServer camServer;
+	// The Camera Server
+	public CowCamController shooterCameraController;
+	// The Camera Image Processor
+	public ShooterImageProcessor shooterProcessingTask;
 	// The Thread Pool / Executor of Tasks to Use
-	public ExecutorService executor;
+	public ScheduledExecutorService executor;
 	// A new Camera Controller for the Shooter
-	public CowCamController shooterCamController;
 	boolean allowedToSave = false;
 
 	static {
+		DriverStation.reportError("\n Loading OpenCV...", false);
 		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
 		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+		DriverStation.reportError("\n Loaded OpenCV.", false);
 	}
 
 	/**
@@ -66,18 +79,32 @@ public class Robot extends IterativeRobot {
 		driverController = new Xbox360Controller(0);
 		gunnerController = new Xbox360Controller(1);
 		
-		camServer = new CowCamServer(1180);
-		executor = Executors.newWorkStealingPool();
-		shooterCamController = new CowCamController(0, 20, CowCamController.ImageTask.SHOOTER);
+		executor = Executors.newScheduledThreadPool(1);
+		
+		timer = new Timer();
+		
+		try{
 
+		shooterCameraController = new CowCamController(0, 25);
+		shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
+		camServer = new CowCamServer(1180, shooterCameraController,shooterProcessingTask);
+		
+		executor.scheduleWithFixedDelay(shooterCameraController, 0, 15,TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
+		executor.scheduleWithFixedDelay(camServer,0,35,TimeUnit.MILLISECONDS);
+		//executor.scheduleAtFixedRate(()->{System.gc();}, 45, 45, TimeUnit.SECONDS);
+		}catch(Exception e){
+			DriverStation.reportError("Failed vision start", true);
+		}
+		
+		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
 		//intake = new IntakeMap();
 		
 		driveTrain = new DriveController(new DriveMap());
-		ballSystems = new OperatorController(turret,shooter,null);
+		ballSystems = new OperatorController(turret,shooter,null,shooterProcessingTask,shooterCameraController);
 
-		camServer.start(shooterCamController, executor);
 
 	}
 	
@@ -90,6 +117,10 @@ public class Robot extends IterativeRobot {
 		allowedToSave=true;
 	}
 
+	public void disabledPeriodic() {
+//		System.gc();
+	}
+	
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -111,6 +142,7 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+//		System.gc();
 	}
 
 	/**
@@ -123,11 +155,11 @@ public class Robot extends IterativeRobot {
 		gunnerController.prestep();
 		
 		ballSystems.drive(gunnerController);
-
 		driveTrain.drive(driverController, true);
 		
 		driverController.endstep();
 		gunnerController.endstep();
+//		System.gc();
 	}
 
 	/**
@@ -149,8 +181,10 @@ public class Robot extends IterativeRobot {
 		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);
 		else shooter.setCamSpeed(0);
 		
-		driveTrain.drive(driverController, true);
 		
+		
+		driveTrain.drive(driverController, true);
+//		System.gc();
 	}
 
 }

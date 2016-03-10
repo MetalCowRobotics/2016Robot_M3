@@ -73,15 +73,25 @@ public final class RobotMap {
 	}
 
 	public final class Shooter {
-		public static final int FLYWHEEL_CHANNEL = 3;
 		public static final int CAM_CHANNEL = 5;
-		public static final int ENC_CH_A = 0;
-		public static final int ENC_CH_B = 1;
-		public static final int LIMIT_SWITCH = 4;
-		private static final int GEARSGR = 3;
-		private static final int PLANETARYGR = 27;
-		private static final int PPR = 7;
-		public static final int COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
+		public static final int CAM_ENC_CH_A = 0;
+		public static final int CAM_ENC_CH_B = 1;
+		private static final int CAM_GEARSGR = 3;
+		private static final double CAM_PLANETARYGR = 27.0;
+		private static final double CAM_PPR = 7.0;
+		public static final double CAM_PPD = (CAM_GEARSGR * CAM_PLANETARYGR * CAM_PPR) / 360.0;
+		
+		public static final int BALL_LIMIT_SWITCH = 4;
 
+		public static final int FLYWHEEL_CHANNEL = 3;
+		public static final int FLYWHEEL_ENC_CH_A = 8;
+		public static final int FLYWHEEL_ENC_CH_B = 9;
+		public static final double FLYWHEEL_PPR = 100;
+
+	}
+	
+	public final class Camera {
+		public static final int FRAME_WIDTH = 320;
+		public static final int FRAME_HEIGHT = 240;
 	}
 }
