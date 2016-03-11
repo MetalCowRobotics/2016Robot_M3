@@ -3,6 +3,7 @@ package org.usfirst.frc.team4213.robot.controllers;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
+import org.team4213.lib14.CowMath;
 import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.PIDController;
 import org.team4213.lib14.Target;
@@ -65,7 +66,7 @@ public class OperatorController {
 			state = OperatorState.IDLE;
 		}
 		
-		if(shooter.getSwitchHit() && state==OperatorState.INTAKE){
+		if(shooter.getSwitchHit() && state == OperatorState.INTAKE){
 			controller.rumbleLeft((float) 1.0);
 		}
 		
@@ -119,7 +120,7 @@ public class OperatorController {
 			//DriverStation.reportError("\n DISARMING", false);
 			shooter.idle();
 		}
-		if (shooter.getState()==ShooterState.ARMED) {
+		if (shooter.readyToFire()) {
 			controller.rumbleRight((float) 0.5);
 		}
 		
@@ -148,8 +149,16 @@ public class OperatorController {
 			case LONG:
 				Target curTarget = imageProcessor.getTarget();
 				try{
-					turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
-					turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
+					if(Math.abs(curTarget.angleX) > 14 ){
+						DriverStation.reportError("Running fast", false);
+						turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Hi", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
+					}else{
+						turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2", .6))))*CowDash.getNum("Vision_Tracking_X_Kp1", .6)));
+					}
+					turret.manualPitchBumpOverride(CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
+
+//					turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
+//					turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
 				}catch(NullPointerException npe){
 					
 				}

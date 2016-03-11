@@ -179,6 +179,18 @@ public class TurretMap { // Replace these with the Constants
 			
 		}
 	}
+	
+	public void manualYawBumpOverride(double angle){
+		if(state == TurretState.ENGAGED){
+			YAW_PID.setTarget(getYawEncDistance()+angle);
+		}
+	}
+	
+	public void manualPitchBumpOverride(double angle){
+		if(state == TurretState.ENGAGED){
+			PITCH_PID.setTarget(getPitchEncDistance()+angle);
+		}
+	}
 
 	private void runPitchPID() {
 		if(overridePitchPID){

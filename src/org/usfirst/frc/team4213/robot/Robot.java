@@ -92,7 +92,7 @@ public class Robot extends IterativeRobot {
 		executor.scheduleWithFixedDelay(shooterCameraController, 0, 15,TimeUnit.MILLISECONDS);
 		executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
 		executor.scheduleWithFixedDelay(camServer,0,35,TimeUnit.MILLISECONDS);
-		//executor.scheduleAtFixedRate(()->{System.gc();}, 45, 45, TimeUnit.SECONDS);
+		executor.scheduleAtFixedRate(()->{System.gc();}, 45, 45, TimeUnit.SECONDS);
 		}catch(Exception e){
 			DriverStation.reportError("Failed vision start", true);
 		}

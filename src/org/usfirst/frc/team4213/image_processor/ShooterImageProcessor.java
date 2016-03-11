@@ -92,6 +92,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			
 			editImage.release();
 			
+			
 			for (int i=0;i<CONTOURS.size();i++) {
 				Rect bbox= Imgproc.boundingRect(CONTOURS.get(i));
 				BOUNDING_RECTS.add(bbox);
@@ -140,8 +141,8 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 					CowDash.setNum("Vision_target_x", center.x);
 					CowDash.setNum("Vision_target_y", center.y);
 					if (CowDash.getBool("Vision_debug", true)) Core.circle(debugImage, center, 2, GREEN, -1);
-					final double angleX = DEG_PER_PX * (center.x - FRAME_WIDTH / 2);
-					final double angleY = DEG_PER_PX * ((center.y) - FRAME_HEIGHT / 2);
+					final double angleX = DEG_PER_PX * (center.x - (FRAME_WIDTH / 2));
+					final double angleY = -DEG_PER_PX * (center.y - (FRAME_HEIGHT / 2));
 					DriverStation.reportError("Angle X :" + angleX + " (Angle Y) :" + angleY , false);
 					final double distance = 0; // x = angle of Shooter (FROM ENCODER);
 												// (77.5/12)/Math.tan(x+angleY);
@@ -153,6 +154,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			} else {
 				latestTarget = null;
 			}
+			drawCrosshairs(debugImage);
 			latestImage = debugImage;
 		
 		}catch(NullPointerException e){
@@ -162,6 +164,23 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 		}
 	}
 
+	private void drawCrosshairs(Mat img){
+		int radius = (int)CowDash.getNum("Vision_Crosshair_Rad", 5);
+		int x_offset = (int)CowDash.getNum("Vision_Crosshair_X", 0);
+		int y_offset = (int)CowDash.getNum("Vision_Crosshair_Y", 0);
+		// Horizontal Line
+		Core.line(img, 
+				new Point(FRAME_WIDTH/2 - radius + x_offset, FRAME_HEIGHT/2 - y_offset),  
+				new Point(FRAME_WIDTH/2 + radius + x_offset, FRAME_HEIGHT/2 - y_offset)
+		, ORANGE, 1);
+		// Vertical Line
+		Core.line(img, 
+				new Point(FRAME_WIDTH/2 + x_offset, FRAME_HEIGHT/2 - radius - y_offset),  
+				new Point(FRAME_WIDTH/2 + x_offset, FRAME_HEIGHT/2 + radius - y_offset)
+		, ORANGE, 1);
+		// Circle
+//		Core.circle(img, new Point(FRAME_WIDTH/2 + (int)CowDash.getNum("Vision_Crosshair_X", 0),FRAME_HEIGHT/2 - (int)CowDash.getNum("Vision_Crosshair_Y", 0)), radius, ORANGE);
+	}
 	/**
 	 * Blurs the Image a bit, Converts it to HSV, Applies an RGB Filter, and
 	 * Then a Threshold
