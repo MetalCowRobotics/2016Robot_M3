@@ -1,7 +1,65 @@
 <xml version="1.0">
 <dashboard>
+	<widget field="Vision_Yaw_Slowdown" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="21"/>
+	</widget>
+	<widget field="Vision_Pitch_Slowdown" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="0"/>
+	</widget>
+	<widget field="Vision_Pitch_Setting" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="1200" y="672"/>
+		<width>176</width>
+		<property name="Foreground" value="51.255.51.255"/>
+		<property name="Background" value="51.51.51.255"/>
+	</widget>
+	<widget field="Vision_Yaw_Setting" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
+		<location x="992" y="672"/>
+		<width>176</width>
+		<property name="Foreground" value="0.255.0.255"/>
+		<property name="Background" value="51.51.51.255"/>
+	</widget>
+	<widget field="Vision_Tracking_Y_Kp1_Med" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1200" y="752"/>
+		<width>176</width>
+	</widget>
+	<widget field="Vision_Tracking_Y_Kp2_Med" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1200" y="768"/>
+		<width>176</width>
+	</widget>
+	<widget field="Vision_Y_Med_Limit" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1200" y="864"/>
+		<width>176</width>
+	</widget>
+	<widget field="Vision_Tracking_X_Kp1_Med" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="992" y="752"/>
+		<width>176</width>
+	</widget>
+	<widget field="Vision_Tracking_X_Kp2_Med" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="992" y="768"/>
+		<width>176</width>
+	</widget>
+	<widget field="Vision_X_Med_Limit" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="990" y="864"/>
+	</widget>
+	<widget field="Vision_Tracking_Y_Kp1_Hi" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1198" y="800"/>
+		<width>178</width>
+	</widget>
+	<widget field="Vision_Tracking_Y_Kp2_Hi" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1198" y="816"/>
+		<width>178</width>
+	</widget>
+	<widget field="Vision_Y_Hi_Limit" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1200" y="848"/>
+		<width>176</width>
+	</widget>
+	<widget field="Vision_X_Hi_Limit" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="992" y="848"/>
+		<width>176</width>
+	</widget>
 	<widget field="Min Rect Area" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="992" y="656"/>
+		<location x="1552" y="608"/>
+		<width>160</width>
 	</widget>
 	<widget field="Shooter_camSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
 		<location x="288" y="112"/>
@@ -9,7 +67,7 @@
 	</widget>
 	<widget field="Turret_state" type="String" class="edu.wpi.first.smartdashboard.gui.elements.FormattedField">
 		<location x="528" y="32"/>
-		<width>208</width>
+		<width>217</width>
 		<height>48</height>
 		<property name="Foreground" value="0.255.0.255"/>
 		<property name="Background" value="51.51.51.255"/>
@@ -99,11 +157,11 @@
 		<width>176</width>
 	</widget>
 	<widget field="Vision_Tracking_X_Kp1_Hi" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="992" y="764"/>
+		<location x="992" y="800"/>
 		<width>176</width>
 	</widget>
 	<widget field="Vision_Tracking_X_Kp2_Hi" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="992" y="748"/>
+		<location x="992" y="816"/>
 		<width>176</width>
 	</widget>
 	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.WebcamViewerExtension">
@@ -128,274 +186,4 @@
 		<location x="288" y="460"/>
 		<width>176</width>
 	</widget>
-	<widget field="Vision_target_y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1551" y="576"/>
-	</widget>
-	<widget field="Vision_target_x" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1376" y="576"/>
-	</widget>
-	<widget field="Turret_Yaw::error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="396"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_Pitch::kp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="332"/>
-		<width>192</width>
-	</widget>
-	<widget field="Turret_Pitch::ki" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="348"/>
-		<width>192</width>
-	</widget>
-	<widget field="Turret_Pitch::kd" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="364"/>
-		<width>192</width>
-	</widget>
-	<widget field="Vision_Crosshair_Y" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1408" y="944"/>
-		<width>208</width>
-	</widget>
-	<widget field="Vision_Crosshair_X" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1168" y="940"/>
-		<width>208</width>
-	</widget>
-	<widget field="Vision_max_ratio" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1200" y="764"/>
-		<width>176</width>
-	</widget>
-	<widget field="Cam_Idle_Angle" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="192"/>
-		<width>176</width>
-	</widget>
-	<widget field="Shooter_wheelSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="300"/>
-		<width>192</width>
-	</widget>
-	<widget field="Turret_Yaw::kp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="348"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_Yaw::ki" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="364"/>
-		<width>176</width>
-	</widget>
-	<widget field="Shooter_Cam::error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="284"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_Pitch::error" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="527" y="380"/>
-		<width>193</width>
-	</widget>
-	<widget field="Turret_Yaw::kd" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="380"/>
-		<width>176</width>
-	</widget>
-	<widget field="Vision_Lum_Hi" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="992" y="608"/>
-		<width>176</width>
-	</widget>
-	<widget field="Vision_Hue_Lo" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1184" y="576"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_Yaw::integralLifespan" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="428"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_Yaw::target" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="412"/>
-		<width>176</width>
-	</widget>
-	<widget field="Shooter_Cam::integralLifespan" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="268"/>
-		<width>176</width>
-	</widget>
-	<widget field="Vision_Sat_Hi" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="992" y="592"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_pitchSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="460"/>
-		<width>192</width>
-	</widget>
-	<widget field="Turret_yawSpeed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="476"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_Pitch::current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="444"/>
-		<width>192</width>
-	</widget>
-	<widget field="Shooter_Flywheel_RPS::" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="236"/>
-		<width>192</width>
-		<height>20</height>
-	</widget>
-	<widget field="Vision_Crosshair_Rad" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="992" y="940"/>
-		<width>144</width>
-	</widget>
-	<widget field="Vision_Human_Exposure" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1408" y="960"/>
-		<width>208</width>
-	</widget>
-	<widget field="Vision_Tracking_Exposure" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1168" y="956"/>
-		<width>208</width>
-	</widget>
-	<widget field="Turret Up Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="476"/>
-		<width>192</width>
-	</widget>
-	<widget field="Vision_min_ratio" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1200" y="748"/>
-		<width>176</width>
-	</widget>
-	<widget field="Turret_Pitch::target" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="396"/>
-		<width>192</width>
-	</widget>
-	<widget field="Shooter_Cam::current" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="316"/>
-		<width>176</width>
-	</widget>
-	<widget field="Shooter_Flywheel::ki" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="528" y="204"/>
-		<width>192</width>
-	</widget>
-	<widget field="Shooter_Cam::kp" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="252"/>
-		<width>176</width>
-	</widget>
-	<widget field="Vision_Lum_Lo" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1184" y="608"/>
-		<width>176</width>
-	</widget>
-	<widget field="Shooter_Cam::ki" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="236"/>
-		<width>176</width>
-		<height>20</height>
-	</widget>
-	<widget field="Vision_Sat_Lo" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="1184" y="592"/>
-		<width>176</width>
-	</widget>
-	<widget field="Shooter_Cam::kd" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
-		<location x="288" y="220"/>
-		<width>176</width>
-		<height>20</height>
-	</widget>
-</dashboard>
-<live-window>
-	<widget field="Ungrouped" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
-		<widget field="Talon[8]" type="Table" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="0" y="0"/>
-			<height>0</height>
-			<width>0</width>
-		</widget>
-		<widget field="Talon[8]" type="Table" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="0" y="0"/>
-			<height>0</height>
-			<width>0</width>
-		</widget>
-		<widget field="DigitalInput[6]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="16"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Jaguar[5]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="6" y="36"/>
-			<height>46</height>
-			<width>293</width>
-		</widget>
-		<widget field="Talon[9]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="6" y="82"/>
-			<height>46</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[8]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="128"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Encoder[0]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
-			<location x="6" y="148"/>
-			<height>98</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[7]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="246"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Encoder[8]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
-			<location x="6" y="266"/>
-			<height>98</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[0]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="364"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Jaguar[3]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="6" y="384"/>
-			<height>46</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[1]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="430"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Encoder[2]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
-			<location x="6" y="450"/>
-			<height>98</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[9]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="548"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Jaguar[4]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="6" y="568"/>
-			<height>46</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[2]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="614"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Jaguar[6]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="6" y="634"/>
-			<height>46</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[4]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="680"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Jaguar[2]" type="Speed Controller" class="edu.wpi.first.smartdashboard.livewindow.elements.SpeedController">
-			<location x="6" y="700"/>
-			<height>46</height>
-			<width>293</width>
-		</widget>
-		<widget field="DigitalInput[3]" type="Digital Input" class="edu.wpi.first.smartdashboard.livewindow.elements.DigitalInputDisplay">
-			<location x="6" y="746"/>
-			<height>20</height>
-			<width>293</width>
-		</widget>
-		<widget field="Encoder[6]" type="Quadrature Encoder" class="edu.wpi.first.smartdashboard.livewindow.elements.EncoderDisplay">
-			<location x="6" y="766"/>
-			<height>98</height>
-			<width>293</width>
-		</widget>
-		<location x="0" y="0"/>
-		<width>305</width>
-		<height>871</height>
-	</widget>
-</live-window>
-</xml>
+	<widget field="Vision_targ
