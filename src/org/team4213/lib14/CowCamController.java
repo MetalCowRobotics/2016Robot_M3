@@ -58,7 +58,7 @@ public class CowCamController extends TimerTask{
 	
 	private static final MatOfByte TMP_MAT_BYTE = new MatOfByte();
 	
-	private static final String[] auto_exp_cmd = {"v4l2-ctl","--set-ctrl=exposure_auto=1"};
+	private static final String[] AUTO_EXP_CMD = {"v4l2-ctl","--set-ctrl=exposure_auto=1"};
 
 
 	/**
@@ -111,8 +111,8 @@ public class CowCamController extends TimerTask{
 		// Sets Frame Height to 240px
 		videoCapture.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 240);
 		
-		setExposureAuto();
-		setTrackingSettings();
+		//setExposureAuto();
+		//setTrackingSettings();
 		
 	}
 	
@@ -123,7 +123,7 @@ public class CowCamController extends TimerTask{
 	
 	public void setExposureAuto(){		
 		try {
-			Runtime.getRuntime().exec(auto_exp_cmd);
+			Runtime.getRuntime().exec(AUTO_EXP_CMD);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -261,8 +261,9 @@ public class CowCamController extends TimerTask{
 			try {
 				videoCapture.open(cameraPort, 320, 240, fps);
 				setCameraOptions();
-				
+				DriverStation.reportError("We aren't getting Camera Yet", false);
 			} catch (Exception ex) {
+				DriverStation.reportError(ex.getMessage(), false);
 				return;
 			}
 			opened=true;

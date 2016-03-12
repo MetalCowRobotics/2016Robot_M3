@@ -53,7 +53,7 @@ public class Robot extends IterativeRobot {
 	public static CowCamServer camServer;
 	// The Camera Server
 	public CowCamController shooterCameraController;
-	public CowCamController frontCameraController;
+	//public CowCamController frontCameraController;
 
 	// The Camera Image Processor
 	public ShooterImageProcessor shooterProcessingTask;
@@ -88,7 +88,7 @@ public class Robot extends IterativeRobot {
 		try{
 
 		shooterCameraController = new CowCamController(0, 25);
-		frontCameraController = new CowCamController(1, 25);
+		//frontCameraController = new CowCamController(1, 25);
 
 		shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
 		camServer = new CowCamServer(1180, shooterCameraController,shooterProcessingTask);
