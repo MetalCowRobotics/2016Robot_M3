@@ -53,6 +53,8 @@ public class Robot extends IterativeRobot {
 	public static CowCamServer camServer;
 	// The Camera Server
 	public CowCamController shooterCameraController;
+	public CowCamController frontCameraController;
+
 	// The Camera Image Processor
 	public ShooterImageProcessor shooterProcessingTask;
 	// The Thread Pool / Executor of Tasks to Use
@@ -86,10 +88,14 @@ public class Robot extends IterativeRobot {
 		try{
 
 		shooterCameraController = new CowCamController(0, 25);
+		frontCameraController = new CowCamController(1, 25);
+
 		shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
 		camServer = new CowCamServer(1180, shooterCameraController,shooterProcessingTask);
 		
 		executor.scheduleWithFixedDelay(shooterCameraController, 0, 15,TimeUnit.MILLISECONDS);
+//		executor.scheduleWithFixedDelay(frontCameraController, 0, 35,TimeUnit.MILLISECONDS);
+
 		executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
 		executor.scheduleWithFixedDelay(camServer,0,35,TimeUnit.MILLISECONDS);
 		executor.scheduleAtFixedRate(()->{System.gc();}, 45, 45, TimeUnit.SECONDS);
@@ -118,7 +124,6 @@ public class Robot extends IterativeRobot {
 	}
 
 	public void disabledPeriodic() {
-//		System.gc();
 	}
 	
 	/**
@@ -142,7 +147,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-//		System.gc();
 	}
 
 	/**
@@ -157,9 +161,15 @@ public class Robot extends IterativeRobot {
 		ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
 		
+//		if(gunnerController.getButtonTripped(GamepadButton.START)){
+//			DriverStation.reportError("There is an Error", false);
+//			camServer.setCam(frontCameraController);
+//		}else if(gunnerController.getButtonReleased(GamepadButton.START)){
+//			camServer.setCam(shooterCameraController);
+//		}
+		
 		driverController.endstep();
 		gunnerController.endstep();
-//		System.gc();
 	}
 
 	/**
@@ -182,9 +192,7 @@ public class Robot extends IterativeRobot {
 		else shooter.setCamSpeed(0);
 		
 		
-		
 		driveTrain.drive(driverController, true);
-//		System.gc();
 	}
 
 }

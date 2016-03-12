@@ -98,7 +98,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 				BOUNDING_RECTS.add(bbox);
 				final int x = i;
 				exec.submit(()->{
-					if (CowDash.getBool("Vision_debug", true)) Imgproc.drawContours(debugImage, CONTOURS, x, ORANGE, 2);
+					//if (CowDash.getBool("Vision_debug", true)) Imgproc.drawContours(debugImage, CONTOURS, x, ORANGE, 2);
 					if (CowDash.getBool("Vision_debug", true)) Core.rectangle(debugImage, new Point(bbox.x,bbox.y), new Point(bbox.x+bbox.width, bbox.y+bbox.height), BLUE, 2);
 				});
 			}
@@ -136,7 +136,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 				}	
 				BOUNDING_RECTS.clear();
 				
-				if (biggestRect != null) {
+				if (biggestRect != null && biggestRect.area() > 10) {
 					Point center = new Point(biggestRect.x + biggestRect.width/2, biggestRect.y + biggestRect.height/2);
 					CowDash.setNum("Vision_target_x", center.x);
 					CowDash.setNum("Vision_target_y", center.y);
