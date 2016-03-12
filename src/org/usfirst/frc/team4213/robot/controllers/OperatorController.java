@@ -148,16 +148,7 @@ public class OperatorController {
 			case LONG:
 				Target curTarget = imageProcessor.getTarget();
 				if(curTarget != null){
-					if(Math.abs(curTarget.angleX) > 14 ){
-						DriverStation.reportError("Running fast", false);
-						turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Hi", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
-					}else{
-						turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2", .6))))*CowDash.getNum("Vision_Tracking_X_Kp1", .6)));
-					}
-					turret.manualPitchBumpOverride(CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
-
-//					turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
-//					turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
+					visionDrive(curTarget);
 				}else{
 					manualTurretDrive(controller,speedMod);
 				}
@@ -182,6 +173,25 @@ public class OperatorController {
 		if(Math.abs(controller.getRX()) > 0.15) {
 			turret.manualYawOverride(controller.getRX()*speedMod);
 		}
+	}
+	
+	public void visionDrive(Target curTarget){
+		
+		// Turret Yaw Movement
+		if(Math.abs(curTarget.angleX) > CowDash.getNum("Vision_X_Hi_Limit", 15) ){
+			turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Hi", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
+		}else{
+			turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2", .6))))*CowDash.getNum("Vision_Tracking_X_Kp1", .6)));
+		}
+		
+		// Turret Pitch Movement
+		if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Hi_Limit", 15)){
+			turret.manualPitchBumpOverride(CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Hi", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Hi", .6)));
+		}else{
+			turret.manualPitchBumpOverride(CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
+		}
+//		turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
+//		turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
 	}
 	
 	public void idleAll(){

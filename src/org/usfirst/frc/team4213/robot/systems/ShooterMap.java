@@ -26,6 +26,7 @@ public class ShooterMap {
 	private ShooterState state;
 	private Timer armTimer;
 	private Timer shootTimer;
+	private Timer ejectTimer;
 	private PIDController camPID;
 	private TBHController flywheelTBH;
 	
@@ -39,6 +40,7 @@ public class ShooterMap {
 		CAM_MOTOR.setInverted(true);
 		armTimer = new Timer();
 		shootTimer = new Timer();
+		ejectTimer = new Timer();
 		
 		camPID = new PIDController("Shooter_Cam", 75, 0, 1.2, 1);
 		flywheelTBH = new TBHController("Shooter_Flywheel");
@@ -113,6 +115,8 @@ public class ShooterMap {
 	}
 
 	public void eject() {
+		ejectTimer.reset();
+		ejectTimer.start();
 		state = ShooterState.EJECT;
 	}
 
@@ -151,11 +155,20 @@ public class ShooterMap {
 			break;
 		case EJECT:
 			CowDash.setString("Shooter_state", "EJECT");
+			
+			if(ejectTimer.get() < 0.4){
+				setWheelSpeed(-CowDash.getNum("Shooter_shootIntakePower", 0.4));
+			}else{
+				setWheelSpeed(+CowDash.getNum("Shooter_ejectPower", 1.0));
+			}
+			
+			if(ejectTimer.get() > .75){
 			camPID.setTarget(CowDash.getNum("Cam_Eject_Angle", -180));
-			setWheelSpeed(+CowDash.getNum("Shooter_ejectPower", 1.0));
+			}
 			break;
 		case SHOOTING:
 			CowDash.setString("Shooter_state", "SHOOTING");
+			setWheelSpeed(flywheelTBH.feedAndGetValue(getFlyEncRate(), FLYWHEEL_MOTOR.get()));
 			camPID.setTarget(CowDash.getNum("Cam_Shoot_Angle", -180));
 			if ( shootTimer.get() > 2) {
 				shootTimer.stop();
