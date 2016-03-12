@@ -146,11 +146,15 @@ public class OperatorController {
 				manualTurretDrive(controller,speedMod);
 				break;
 			case LONG:
-				Target curTarget = imageProcessor.getTarget();
-				if(curTarget != null){
-					visionDrive(curTarget);
-				}else{
-					manualTurretDrive(controller,speedMod);
+				try{
+					Target curTarget = imageProcessor.getTarget();
+					if(curTarget != null){
+						visionDrive(curTarget);
+					}else{
+						manualTurretDrive(controller,speedMod);
+					}
+				}catch(Exception ex){
+					
 				}
 				break;
 			}
@@ -177,19 +181,42 @@ public class OperatorController {
 	
 	public void visionDrive(Target curTarget){
 		
+		double yawSpeedMod = 1;
+		if(shooter.getState() == ShooterState.ARMING || shooter.getState() == ShooterState.ARMED){
+			yawSpeedMod = CowDash.getNum("Vision_Yaw_Slowdown", 0.75);
+		}
+		String visionYawState;
 		// Turret Yaw Movement
 		if(Math.abs(curTarget.angleX) > CowDash.getNum("Vision_X_Hi_Limit", 15) ){
-			turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Hi", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
+			visionYawState="HIGH";
+			turret.manualYawBumpOverride(yawSpeedMod * CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Hi", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
+		}else if(Math.abs(curTarget.angleX) > CowDash.getNum("Vision_X_Med_Limit", 10) ){
+			visionYawState="MED";
+			turret.manualYawBumpOverride(yawSpeedMod * CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Med", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Med", 1.5)));
 		}else{
-			turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2", .6))))*CowDash.getNum("Vision_Tracking_X_Kp1", .6)));
+			visionYawState="LOW";
+			turret.manualYawBumpOverride(yawSpeedMod * CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2", .6))))*CowDash.getNum("Vision_Tracking_X_Kp1", .6)));
 		}
+		CowDash.setString("Vision_Yaw_Setting", visionYawState);
+
 		
+		double pitchSpeedMod = 1;
 		// Turret Pitch Movement
-		if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Hi_Limit", 15)){
-			turret.manualPitchBumpOverride(CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Hi", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Hi", .6)));
-		}else{
-			turret.manualPitchBumpOverride(CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
+		if(curTarget.angleY < 0){
+			pitchSpeedMod = CowDash.getNum("Vision_Pitch_Slowdown", 0.5);
 		}
+		String visionPitchState;
+		if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Hi_Limit", 15)){
+			visionPitchState="HIGH";
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Hi", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Hi", .6)));
+		}else if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Med_Limit", 7)){
+			visionPitchState="MED";
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Med", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Med", .6)));
+		}else{
+			visionPitchState="LOW";
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
+		}
+		CowDash.setString("Vision_Pitch_Setting", visionPitchState);
 //		turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
 //		turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
 	}

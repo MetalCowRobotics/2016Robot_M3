@@ -3,7 +3,6 @@ package org.usfirst.frc.team4213.image_processor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,7 +10,6 @@ import java.util.concurrent.Executors;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -50,7 +48,6 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	private Mat latestImage;
 	private Target latestTarget;
 	private CowCamController camera;
-	private int dashCounter = 0;
 	
 	/**
 	 * Runs the Image Processing for the Shooter Image and outputs a
@@ -96,7 +93,6 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			for (int i=0;i<CONTOURS.size();i++) {
 				Rect bbox= Imgproc.boundingRect(CONTOURS.get(i));
 				BOUNDING_RECTS.add(bbox);
-				final int x = i;
 				exec.submit(()->{
 					//if (CowDash.getBool("Vision_debug", true)) Imgproc.drawContours(debugImage, CONTOURS, x, ORANGE, 2);
 					if (CowDash.getBool("Vision_debug", true)) Core.rectangle(debugImage, new Point(bbox.x,bbox.y), new Point(bbox.x+bbox.width, bbox.y+bbox.height), BLUE, 2);
@@ -122,21 +118,38 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			});
 			
 	
-			if (/* threshold Conditions go here ... need to test */BOUNDING_RECTS.size() > 0) {
+			if (BOUNDING_RECTS.size() > 0) {
 				
-				Rect biggestRect = null;
-				
-				for (int i=0;i<BOUNDING_RECTS.size();i++) {
+//				Rect biggestRect = null;
+				List<Rect> possibleRects = new ArrayList<Rect>();
+				for (int i=0; i<BOUNDING_RECTS.size(); i++) {
 					Rect thisRect = BOUNDING_RECTS.get(i);
 					double AR = ((double)thisRect.width)/((double)thisRect.height);
-					if (AR > CowDash.getNum("Vision_min_ratio", 1) &&  AR < CowDash.getNum("Vision_max_ratio", 2)){
-						biggestRect = thisRect;
-						break;
+					if (AR > CowDash.getNum("Vision_min_ratio", 1) &&  AR < CowDash.getNum("Vision_max_ratio", 2) && thisRect.area() > CowDash.getNum("Min Rect Area", 500)){
+						possibleRects.add(thisRect);
+//						biggestRect = thisRect;
 					}
 				}	
 				BOUNDING_RECTS.clear();
 				
-				if (biggestRect != null && biggestRect.area() > CowDash.getNum("Min Rect Area", 500)) {
+				if (!possibleRects.isEmpty()) {
+					possibleRects.sort(new Comparator<Rect>() {
+						@Override
+						public int compare(Rect lhs, Rect rhs) {
+							if(lhs.tl().x < rhs.tl().x){
+								return -1;
+							}else if(lhs.tl().x > rhs.tl().x){
+								return 1;
+							}else if(lhs.tl().x == rhs.tl().x){
+								return 0;
+							}else{
+								return 0;
+							}
+						}
+					});
+					
+					Rect biggestRect = possibleRects.get(0);
+					
 					Point center = new Point(biggestRect.x + biggestRect.width/2, biggestRect.y + biggestRect.height/2);
 					CowDash.setNum("Vision_target_x", center.x);
 					CowDash.setNum("Vision_target_y", center.y);
