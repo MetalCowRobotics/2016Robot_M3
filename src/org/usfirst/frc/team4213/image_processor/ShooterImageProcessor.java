@@ -136,7 +136,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 				}	
 				BOUNDING_RECTS.clear();
 				
-				if (biggestRect != null && biggestRect.area() > 10) {
+				if (biggestRect != null && biggestRect.area() > CowDash.getNum("Min Rect Area", 500)) {
 					Point center = new Point(biggestRect.x + biggestRect.width/2, biggestRect.y + biggestRect.height/2);
 					CowDash.setNum("Vision_target_x", center.x);
 					CowDash.setNum("Vision_target_y", center.y);
@@ -146,6 +146,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 					DriverStation.reportError("Angle X :" + angleX + " (Angle Y) :" + angleY , false);
 					final double distance = 0; // x = angle of Shooter (FROM ENCODER);
 												// (77.5/12)/Math.tan(x+angleY);
+					DriverStation.reportError("\n Area : " + biggestRect.area() , false);
 					latestTarget = new Target(angleX, angleY, distance, biggestRect, debugImage);
 				} else {
 					latestTarget = null;

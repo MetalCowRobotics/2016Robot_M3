@@ -41,7 +41,7 @@ public class ShooterMap {
 		shootTimer = new Timer();
 		
 		camPID = new PIDController("Shooter_Cam", 75, 0, 1.2, 1);
-		flywheelTBH = new TBHController("Shooter_Flywheel",0.1);
+		flywheelTBH = new TBHController("Shooter_Flywheel");
 		resetEnc();
 		camPID.setTarget(0);
 		CAM_ENCODER.setDistancePerPulse(1/Shooter.CAM_PPD);

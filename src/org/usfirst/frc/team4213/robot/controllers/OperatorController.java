@@ -136,19 +136,18 @@ public class OperatorController {
 		}
 		
 		if(state == OperatorState.TURRET_ENGAGED){
+			double speedMod = 0.8;
 			switch(visionState) {
 			case OFF:
+				if(imageProcessor.getTarget() != null){
+					speedMod = 0.5;
+				}
 				// Turret Motion by Operator Directly
-				if(Math.abs(controller.getLY()) > 0.15) {
-					turret.manualPitchOverride(-controller.getLY()*0.8);
-				}
-				if(Math.abs(controller.getRX()) > 0.15) {
-					turret.manualYawOverride(controller.getRX()*0.8);
-				}
+				manualTurretDrive(controller,speedMod);
 				break;
 			case LONG:
 				Target curTarget = imageProcessor.getTarget();
-				try{
+				if(curTarget != null){
 					if(Math.abs(curTarget.angleX) > 14 ){
 						DriverStation.reportError("Running fast", false);
 						turret.manualYawBumpOverride(CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Hi", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
@@ -159,8 +158,8 @@ public class OperatorController {
 
 //					turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
 //					turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
-				}catch(NullPointerException npe){
-					
+				}else{
+					manualTurretDrive(controller,speedMod);
 				}
 				break;
 			}
@@ -174,6 +173,15 @@ public class OperatorController {
 		
 		
 		
+	}
+	
+	public void manualTurretDrive(CowGamepad controller ,double speedMod){
+		if(Math.abs(controller.getLY()) > 0.15) {
+			turret.manualPitchOverride(-controller.getLY()*speedMod);
+		}
+		if(Math.abs(controller.getRX()) > 0.15) {
+			turret.manualYawOverride(controller.getRX()*speedMod);
+		}
 	}
 	
 	public void idleAll(){

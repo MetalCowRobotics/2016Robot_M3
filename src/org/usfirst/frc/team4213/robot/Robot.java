@@ -191,7 +191,8 @@ public class Robot extends IterativeRobot {
 		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);
 		else shooter.setCamSpeed(0);
 		
-		
+		DriverStation.reportError("\n Enc 1 Position:"+shooter.getFlyEncDist(), false);
+		DriverStation.reportError("\n Enc 2 Revolutions:"+turret.getYawEncPosition()/1024, false);
 		driveTrain.drive(driverController, true);
 	}
 
