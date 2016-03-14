@@ -3,7 +3,6 @@ package org.usfirst.frc.team4213.image_processor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,7 +10,6 @@ import java.util.concurrent.Executors;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
@@ -50,7 +48,6 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 	private Mat latestImage;
 	private Target latestTarget;
 	private CowCamController camera;
-	private int dashCounter = 0;
 	
 	/**
 	 * Runs the Image Processing for the Shooter Image and outputs a
@@ -92,12 +89,12 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			
 			editImage.release();
 			
+			
 			for (int i=0;i<CONTOURS.size();i++) {
 				Rect bbox= Imgproc.boundingRect(CONTOURS.get(i));
 				BOUNDING_RECTS.add(bbox);
-				final int x = i;
 				exec.submit(()->{
-					if (CowDash.getBool("Vision_debug", true)) Imgproc.drawContours(debugImage, CONTOURS, x, ORANGE, 2);
+					//if (CowDash.getBool("Vision_debug", true)) Imgproc.drawContours(debugImage, CONTOURS, x, ORANGE, 2);
 					if (CowDash.getBool("Vision_debug", true)) Core.rectangle(debugImage, new Point(bbox.x,bbox.y), new Point(bbox.x+bbox.width, bbox.y+bbox.height), BLUE, 2);
 				});
 			}
@@ -121,30 +118,48 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			});
 			
 	
-			if (/* threshold Conditions go here ... need to test */BOUNDING_RECTS.size() > 0) {
+			if (BOUNDING_RECTS.size() > 0) {
 				
-				Rect biggestRect = null;
-				
-				for (int i=0;i<BOUNDING_RECTS.size();i++) {
+//				Rect biggestRect = null;
+				List<Rect> possibleRects = new ArrayList<Rect>();
+				for (int i=0; i<BOUNDING_RECTS.size(); i++) {
 					Rect thisRect = BOUNDING_RECTS.get(i);
 					double AR = ((double)thisRect.width)/((double)thisRect.height);
-					if (AR > CowDash.getNum("Vision_min_ratio", 1) &&  AR < CowDash.getNum("Vision_max_ratio", 2)){
-						biggestRect = thisRect;
-						break;
+					if (AR > CowDash.getNum("Vision_min_ratio", 1) &&  AR < CowDash.getNum("Vision_max_ratio", 2) && thisRect.area() > CowDash.getNum("Min Rect Area", 500)){
+						possibleRects.add(thisRect);
+//						biggestRect = thisRect;
 					}
 				}	
 				BOUNDING_RECTS.clear();
 				
-				if (biggestRect != null) {
+				if (!possibleRects.isEmpty()) {
+					possibleRects.sort(new Comparator<Rect>() {
+						@Override
+						public int compare(Rect lhs, Rect rhs) {
+							if(lhs.tl().x < rhs.tl().x){
+								return -1;
+							}else if(lhs.tl().x > rhs.tl().x){
+								return 1;
+							}else if(lhs.tl().x == rhs.tl().x){
+								return 0;
+							}else{
+								return 0;
+							}
+						}
+					});
+					
+					Rect biggestRect = possibleRects.get(0);
+					
 					Point center = new Point(biggestRect.x + biggestRect.width/2, biggestRect.y + biggestRect.height/2);
 					CowDash.setNum("Vision_target_x", center.x);
 					CowDash.setNum("Vision_target_y", center.y);
 					if (CowDash.getBool("Vision_debug", true)) Core.circle(debugImage, center, 2, GREEN, -1);
-					final double angleX = DEG_PER_PX * (center.x - FRAME_WIDTH / 2);
-					final double angleY = DEG_PER_PX * ((center.y) - FRAME_HEIGHT / 2);
+					final double angleX = DEG_PER_PX * (center.x - (FRAME_WIDTH / 2));
+					final double angleY = -DEG_PER_PX * (center.y - (FRAME_HEIGHT / 2));
 					DriverStation.reportError("Angle X :" + angleX + " (Angle Y) :" + angleY , false);
 					final double distance = 0; // x = angle of Shooter (FROM ENCODER);
 												// (77.5/12)/Math.tan(x+angleY);
+					DriverStation.reportError("\n Area : " + biggestRect.area() , false);
 					latestTarget = new Target(angleX, angleY, distance, biggestRect, debugImage);
 				} else {
 					latestTarget = null;
@@ -153,6 +168,7 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 			} else {
 				latestTarget = null;
 			}
+			drawCrosshairs(debugImage);
 			latestImage = debugImage;
 		
 		}catch(NullPointerException e){
@@ -162,6 +178,23 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 		}
 	}
 
+	private void drawCrosshairs(Mat img){
+		int radius = (int)CowDash.getNum("Vision_Crosshair_Rad", 5);
+		int x_offset = (int)CowDash.getNum("Vision_Crosshair_X", 0);
+		int y_offset = (int)CowDash.getNum("Vision_Crosshair_Y", 0);
+		// Horizontal Line
+		Core.line(img, 
+				new Point(FRAME_WIDTH/2 - radius + x_offset, FRAME_HEIGHT/2 - y_offset),  
+				new Point(FRAME_WIDTH/2 + radius + x_offset, FRAME_HEIGHT/2 - y_offset)
+		, ORANGE, 1);
+		// Vertical Line
+		Core.line(img, 
+				new Point(FRAME_WIDTH/2 + x_offset, FRAME_HEIGHT/2 - radius - y_offset),  
+				new Point(FRAME_WIDTH/2 + x_offset, FRAME_HEIGHT/2 + radius - y_offset)
+		, ORANGE, 1);
+		// Circle
+//		Core.circle(img, new Point(FRAME_WIDTH/2 + (int)CowDash.getNum("Vision_Crosshair_X", 0),FRAME_HEIGHT/2 - (int)CowDash.getNum("Vision_Crosshair_Y", 0)), radius, ORANGE);
+	}
 	/**
 	 * Blurs the Image a bit, Converts it to HSV, Applies an RGB Filter, and
 	 * Then a Threshold

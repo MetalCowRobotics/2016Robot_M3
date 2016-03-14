@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4213.robot.systems;
 
 import org.team4213.lib14.CowDash;
+import org.team4213.lib14.TBHController;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
 import org.team4213.lib14.PIDController;
 
@@ -25,7 +26,9 @@ public class ShooterMap {
 	private ShooterState state;
 	private Timer armTimer;
 	private Timer shootTimer;
+	private Timer ejectTimer;
 	private PIDController camPID;
+	private TBHController flywheelTBH;
 	
 	public enum ShooterState {
 		INTAKE, EJECT, IDLE, ARMING, ARMED, SHOOTING;
@@ -37,8 +40,10 @@ public class ShooterMap {
 		CAM_MOTOR.setInverted(true);
 		armTimer = new Timer();
 		shootTimer = new Timer();
+		ejectTimer = new Timer();
 		
 		camPID = new PIDController("Shooter_Cam", 75, 0, 1.2, 1);
+		flywheelTBH = new TBHController("Shooter_Flywheel");
 		resetEnc();
 		camPID.setTarget(0);
 		CAM_ENCODER.setDistancePerPulse(1/Shooter.CAM_PPD);
@@ -89,6 +94,10 @@ public class ShooterMap {
 		CAM_ENCODER.reset();
 	}
 	
+	public boolean readyToFire() {
+		return state == ShooterState.ARMED && Math.abs(FLYWHEEL_ENCODER.getRate()-CowDash.getNum("Shooter_desiredFlywheelRPS", 80)) < CowDash.getNum("Shooter_RPSErrorTolerance", 1.5);
+	}
+	
 	
 
 	public void arm() {
@@ -106,6 +115,8 @@ public class ShooterMap {
 	}
 
 	public void eject() {
+		ejectTimer.reset();
+		ejectTimer.start();
 		state = ShooterState.EJECT;
 	}
 
@@ -129,9 +140,6 @@ public class ShooterMap {
 		setCamSpeed(camPID.feedAndGetValue(-getCamEncDist()));
 	}
 	
-	private void runFlywheelControl() {
-		setWheelSpeed(0);
-	}
 	
 
 	public void step() {
@@ -147,11 +155,20 @@ public class ShooterMap {
 			break;
 		case EJECT:
 			CowDash.setString("Shooter_state", "EJECT");
+			
+			if(ejectTimer.get() < 0.4){
+				setWheelSpeed(-CowDash.getNum("Shooter_shootIntakePower", 0.4));
+			}else{
+				setWheelSpeed(+CowDash.getNum("Shooter_ejectPower", 1.0));
+			}
+			
+			if(ejectTimer.get() > .75){
 			camPID.setTarget(CowDash.getNum("Cam_Eject_Angle", -180));
-			setWheelSpeed(+CowDash.getNum("Shooter_ejectPower", 1.0));
+			}
 			break;
 		case SHOOTING:
 			CowDash.setString("Shooter_state", "SHOOTING");
+			setWheelSpeed(flywheelTBH.feedAndGetValue(getFlyEncRate(), FLYWHEEL_MOTOR.get()));
 			camPID.setTarget(CowDash.getNum("Cam_Shoot_Angle", -180));
 			if ( shootTimer.get() > 2) {
 				shootTimer.stop();
@@ -163,10 +180,11 @@ public class ShooterMap {
 		case ARMING:
 			CowDash.setString("Shooter_state", "ARMING");
 			camPID.setTarget(CowDash.getNum("Cam_Arm_Angle", 10));
-
 			// Intake for armIntakeTime, then go out
+			flywheelTBH.setTarget(CowDash.getNum("Shooter_desiredFlywheelRPS", 80));
 			if (armTimer.get() > CowDash.getNum("Shooter_armIntakeTime", 0.5)) {
-				setWheelSpeed(+CowDash.getNum("Shooter_shootPower", 1.0));
+				setWheelSpeed(flywheelTBH.feedAndGetValue(getFlyEncRate(), FLYWHEEL_MOTOR.get()));
+				
 			} else {
 				setWheelSpeed(-CowDash.getNum("Shooter_shootIntakePower", 0.4));
 			}
@@ -181,7 +199,7 @@ public class ShooterMap {
 		case ARMED:
 			camPID.setTarget(CowDash.getNum("Cam_Arm_Angle", 10));
 			CowDash.setString("Shooter_state", "ARMED");
-			setWheelSpeed(+CowDash.getNum("Shooter_shootPower", 1.0));
+			setWheelSpeed(flywheelTBH.feedAndGetValue(-getFlyEncRate(), FLYWHEEL_MOTOR.get()));
 			break;
 		case IDLE:
 			CowDash.setString("Shooter_state", "IDLE");
@@ -192,8 +210,7 @@ public class ShooterMap {
 			break;
 		}
 		
-		runFlywheelControl();
-
+		CowDash.setNum("Shooter_Flywheel_RPS::", getFlyEncRate());
 		runCamPID();
 	}
 

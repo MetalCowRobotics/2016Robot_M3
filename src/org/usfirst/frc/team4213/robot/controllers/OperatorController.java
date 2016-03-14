@@ -3,6 +3,7 @@ package org.usfirst.frc.team4213.robot.controllers;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
+import org.team4213.lib14.CowMath;
 import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.PIDController;
 import org.team4213.lib14.Target;
@@ -65,7 +66,7 @@ public class OperatorController {
 			state = OperatorState.IDLE;
 		}
 		
-		if(shooter.getSwitchHit() && state==OperatorState.INTAKE){
+		if(shooter.getSwitchHit() && state == OperatorState.INTAKE){
 			controller.rumbleLeft((float) 1.0);
 		}
 		
@@ -119,7 +120,7 @@ public class OperatorController {
 			//DriverStation.reportError("\n DISARMING", false);
 			shooter.idle();
 		}
-		if (shooter.getState()==ShooterState.ARMED) {
+		if (shooter.readyToFire()) {
 			controller.rumbleRight((float) 0.5);
 		}
 		
@@ -135,22 +136,24 @@ public class OperatorController {
 		}
 		
 		if(state == OperatorState.TURRET_ENGAGED){
+			double speedMod = 0.8;
 			switch(visionState) {
 			case OFF:
+				if(imageProcessor.getTarget() != null){
+					speedMod = 0.5;
+				}
 				// Turret Motion by Operator Directly
-				if(Math.abs(controller.getLY()) > 0.15) {
-					turret.manualPitchOverride(-controller.getLY()*0.8);
-				}
-				if(Math.abs(controller.getRX()) > 0.15) {
-					turret.manualYawOverride(controller.getRX()*0.8);
-				}
+				manualTurretDrive(controller,speedMod);
 				break;
 			case LONG:
-				Target curTarget = imageProcessor.getTarget();
 				try{
-					turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
-					turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
-				}catch(NullPointerException npe){
+					Target curTarget = imageProcessor.getTarget();
+					if(curTarget != null){
+						visionDrive(curTarget);
+					}else{
+						manualTurretDrive(controller,speedMod);
+					}
+				}catch(Exception ex){
 					
 				}
 				break;
@@ -165,6 +168,57 @@ public class OperatorController {
 		
 		
 		
+	}
+	
+	public void manualTurretDrive(CowGamepad controller ,double speedMod){
+		if(Math.abs(controller.getLY()) > 0.15) {
+			turret.manualPitchOverride(-controller.getLY()*speedMod);
+		}
+		if(Math.abs(controller.getRX()) > 0.15) {
+			turret.manualYawOverride(controller.getRX()*speedMod);
+		}
+	}
+	
+	public void visionDrive(Target curTarget){
+		
+		double yawSpeedMod = 1;
+		if(shooter.getState() == ShooterState.ARMING || shooter.getState() == ShooterState.ARMED){
+			yawSpeedMod = CowDash.getNum("Vision_Yaw_Slowdown", 0.75);
+		}
+		String visionYawState;
+		// Turret Yaw Movement
+		if(Math.abs(curTarget.angleX) > CowDash.getNum("Vision_X_Hi_Limit", 15) ){
+			visionYawState="HIGH";
+			turret.manualYawBumpOverride(yawSpeedMod * CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Hi", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
+		}else if(Math.abs(curTarget.angleX) > CowDash.getNum("Vision_X_Med_Limit", 10) ){
+			visionYawState="MED";
+			turret.manualYawBumpOverride(yawSpeedMod * CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2_Med", 1))))*CowDash.getNum("Vision_Tracking_X_Kp1_Med", 1.5)));
+		}else{
+			visionYawState="LOW";
+			turret.manualYawBumpOverride(yawSpeedMod * CowMath.copySign(curTarget.angleX, Math.sqrt(Math.abs(Math.atan(curTarget.angleX * CowDash.getNum("Vision_Tracking_X_Kp2", .6))))*CowDash.getNum("Vision_Tracking_X_Kp1", .6)));
+		}
+		CowDash.setString("Vision_Yaw_Setting", visionYawState);
+
+		
+		double pitchSpeedMod = 1;
+		// Turret Pitch Movement
+		if(curTarget.angleY < 0){
+			pitchSpeedMod = CowDash.getNum("Vision_Pitch_Slowdown", 0.5);
+		}
+		String visionPitchState;
+		if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Hi_Limit", 15)){
+			visionPitchState="HIGH";
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Hi", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Hi", .6)));
+		}else if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Med_Limit", 7)){
+			visionPitchState="MED";
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Med", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Med", .6)));
+		}else{
+			visionPitchState="LOW";
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
+		}
+		CowDash.setString("Vision_Pitch_Setting", visionPitchState);
+//		turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
+//		turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
 	}
 	
 	public void idleAll(){

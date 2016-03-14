@@ -58,6 +58,8 @@ public class CowCamController extends TimerTask{
 	
 	private static final MatOfByte TMP_MAT_BYTE = new MatOfByte();
 	
+	private static final String[] AUTO_EXP_CMD = {"v4l2-ctl","--set-ctrl=exposure_auto=1"};
+
 
 	/**
 	 * Initializes a Camera Controller with a Port , Camera FPS , And an
@@ -109,22 +111,26 @@ public class CowCamController extends TimerTask{
 		// Sets Frame Height to 240px
 		videoCapture.set(Highgui.CV_CAP_PROP_FRAME_HEIGHT, 240);
 		
-		String[] auto_exp_cmd = {"v4l2-ctl","--set-ctrl=exposure_auto=1"};
-		
-		try {
-			Runtime.getRuntime().exec(auto_exp_cmd);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		setTrackingSettings();
+		//setExposureAuto();
+		//setTrackingSettings();
 		
 	}
 	
 	public void setTrackingSettings() {
+		setExposureAuto();
 		setExposure((int)CowDash.getNum("Vision_Tracking_Exposure", 25));
 	}
 	
+	public void setExposureAuto(){		
+		try {
+			Runtime.getRuntime().exec(AUTO_EXP_CMD);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void setHumanFriendlySettings() {
+		setExposureAuto();
 		setExposure((int)CowDash.getNum("Vision_Human_Exposure", 500));
 	}
 
@@ -138,6 +144,7 @@ public class CowCamController extends TimerTask{
 			e.printStackTrace();
 		}
 	}
+	
 	
 	/**
 	 * Returns a <code>byte[]</code> from the Camera's Image. This method is
@@ -254,8 +261,9 @@ public class CowCamController extends TimerTask{
 			try {
 				videoCapture.open(cameraPort, 320, 240, fps);
 				setCameraOptions();
-				
+				DriverStation.reportError("We aren't getting Camera Yet", false);
 			} catch (Exception ex) {
+				DriverStation.reportError(ex.getMessage(), false);
 				return;
 			}
 			opened=true;

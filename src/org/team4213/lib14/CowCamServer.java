@@ -120,7 +120,11 @@ public class CowCamServer extends TimerTask{
 			return;
 		}
 		
-		if (isStreaming && cameraController.getImg() != null) {
+		if(cameraController.getImg() == null){
+			return;
+		}
+		
+		if (isStreaming) {
 			//DriverStation.reportError("we are streaming", false);
 			// Stream Periodically based on FPS
 			// long period = (long) (1000 / (1.0 * fps));

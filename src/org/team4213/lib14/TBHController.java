@@ -14,12 +14,6 @@ public class TBHController{
 		this.name = name;
 		lastPWM = 0;
 	}
-	public TBHController(String name, double ki) {
-		this(name);
-		CowDash.setNum(name + "::ki", ki);
-
-	}
-	
 	public void setTarget(double rps){
 		desiredRPS = rps;
 	}
@@ -35,7 +29,7 @@ public class TBHController{
 			lastError =  desiredRPS - currentRPS;
 		}
 		final double newError = desiredRPS - currentRPS;
-		ki = CowDash.getNum(name + "::ki", 0.1)/1000;
+		ki = CowDash.getNum(name + "::ki", 1)/1000;
 		final double newPWM;
 		if(newError*lastError < 0){
 			newPWM = (currentPWM+lastPWM)/2;
