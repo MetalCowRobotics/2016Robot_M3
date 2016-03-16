@@ -1,9 +1,11 @@
 package org.team4213.lib14;
 
 
+import java.io.Serializable;
+
 import edu.wpi.first.wpilibj.Joystick;
 
-public abstract class CowGamepad extends Joystick {
+public abstract class CowGamepad extends Joystick implements Serializable{
 
 	boolean[] previousStates;
 	boolean[] toggleStates;

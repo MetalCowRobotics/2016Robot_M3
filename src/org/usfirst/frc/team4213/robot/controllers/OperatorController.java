@@ -10,12 +10,11 @@ import org.team4213.lib14.Target;
 import org.usfirst.frc.team4213.image_processor.ShooterImageProcessor;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 import org.usfirst.frc.team4213.robot.systems.RobotMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap.Camera;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
-
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class OperatorController {
 	private TurretMap turret;
@@ -149,6 +148,7 @@ public class OperatorController {
 				try{
 					Target curTarget = imageProcessor.getTarget();
 					if(curTarget != null){
+						
 						visionDrive(curTarget);
 					}else{
 						manualTurretDrive(controller,speedMod);
@@ -199,26 +199,69 @@ public class OperatorController {
 		}
 		CowDash.setString("Vision_Yaw_Setting", visionYawState);
 
-		
+//		double deg_pp = CowDash.getNum("Deg_Per_PX", 0.14);
+//		double dist = 64/ Math.tan(turret.getPitchEncDistance() + curTarget.angleY - 39);
+//		CowDash.setNum("Distance_From_Target", dist);
+//		double yOffset = (5*Math.pow(10,-10)*Math.pow(dist,5) - 4*Math.pow(10,-7)*Math.pow(dist,4) 
+//		- (0.0001)*Math.pow(dist,3) - (0.0163)*Math.pow(dist,2) - (1.1415)*dist + 51.707);
+//		CowDash.setNum("Desired_angle", yOffset);
+//		yOffset -= turret.getPitchEncDistance() - curTarget.angleY ;
+//		double targetPitch = yOffset ;
+		double yOffset = 0;
 		double pitchSpeedMod = 1;
+		int bracket = 1;
+		
+		if( turret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_1", 90) ){
+			yOffset = CowDash.getNum("Vision_Offset_1", -10);
+			bracket = 1;
+		}else if(turret.getPitchEncDistance() + curTarget.angleY >  CowDash.getNum("Vision_Offset_Ang_2", 85) ){
+			yOffset = CowDash.getNum("Vision_Offset_2", -10);
+			bracket = 2;
+		}else if(turret.getPitchEncDistance() + curTarget.angleY >  CowDash.getNum("Vision_Offset_Ang_3", 80) ){
+			yOffset = CowDash.getNum("Vision_Offset_3", -10);
+			bracket = 3;
+		}else if(turret.getPitchEncDistance() + curTarget.angleY >  CowDash.getNum("Vision_Offset_Ang_4", 76) ){
+			yOffset = CowDash.getNum("Vision_Offset_4", -10);
+			bracket = 4;
+		}else if(turret.getPitchEncDistance() + curTarget.angleY >  CowDash.getNum("Vision_Offset_Ang_5", 73) ){
+			yOffset = CowDash.getNum("Vision_Offset_5", -10);
+			bracket = 5;
+		}else if(turret.getPitchEncDistance() + curTarget.angleY >  CowDash.getNum("Vision_Offset_Ang_6", 70) ){
+			yOffset = CowDash.getNum("Vision_Offset_6", -10);
+			bracket = 6;
+		}else{
+			yOffset = 0;
+			bracket = -1;
+		}
+		CowDash.setString("Current_Shooting_Bracket", "Bracket "+ bracket);
+		
+		yOffset *= Camera.DEG_PER_PX;
+		double targetPitch = yOffset + curTarget.angleY;
 		// Turret Pitch Movement
-		if(curTarget.angleY < 0){
+		if(targetPitch < 0){
 			pitchSpeedMod = CowDash.getNum("Vision_Pitch_Slowdown", 0.5);
 		}
 		String visionPitchState;
-		if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Hi_Limit", 15)){
+		if(Math.abs(targetPitch)> CowDash.getNum("Vision_Y_Hi_Limit", 15)){
 			visionPitchState="HIGH";
-			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Hi", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Hi", .6)));
-		}else if(Math.abs(curTarget.angleY)> CowDash.getNum("Vision_Y_Med_Limit", 7)){
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(targetPitch, Math.sqrt(Math.abs(Math.atan(targetPitch * CowDash.getNum("Vision_Tracking_Y_Kp2_Hi", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Hi", .6)));
+		}else if(Math.abs(targetPitch)> CowDash.getNum("Vision_Y_Med_Limit", 7)){
 			visionPitchState="MED";
-			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2_Med", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Med", .6)));
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(targetPitch, Math.sqrt(Math.abs(Math.atan(targetPitch * CowDash.getNum("Vision_Tracking_Y_Kp2_Med", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1_Med", .6)));
 		}else{
 			visionPitchState="LOW";
-			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(curTarget.angleY, Math.sqrt(Math.abs(Math.atan(curTarget.angleY * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
+			turret.manualPitchBumpOverride(pitchSpeedMod*CowMath.copySign(targetPitch, Math.sqrt(Math.abs(Math.atan(targetPitch * CowDash.getNum("Vision_Tracking_Y_Kp2", .6))))*CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
 		}
 		CowDash.setString("Vision_Pitch_Setting", visionPitchState);
 //		turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
 //		turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
+		if(turret.getPitchEncDistance() > CowDash.getNum("Vision_Shoot_BR_1", 100)){
+			shooter.setShootWheelSpeed(CowDash.getNum("Vision_Shoot_Speed_BR_1", 74));
+		}else if(turret.getPitchEncDistance() > CowDash.getNum("Vision_Shoot_BR_2", 85)){
+			shooter.setShootWheelSpeed(CowDash.getNum("Vision_Shoot_Speed_BR_2", 90));
+		}else{
+			shooter.setShootWheelSpeed(100);
+		}
 	}
 	
 	public void idleAll(){

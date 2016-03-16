@@ -183,9 +183,9 @@ public class Robot extends IterativeRobot {
 		turret.setRawPitchSpeed(gunnerController.getLY());
 		turret.setRawYawSpeed(gunnerController.getRX());
 		
-		if(gunnerController.getButton(GamepadButton.A)) shooter.setWheelSpeed(1);
-		else if(gunnerController.getButton(GamepadButton.B)) shooter.setWheelSpeed(-1);
-		else shooter.setWheelSpeed(0);
+		if(gunnerController.getButton(GamepadButton.A)) shooter.setCurrentWheelSpeed(1);
+		else if(gunnerController.getButton(GamepadButton.B)) shooter.setCurrentWheelSpeed(-1);
+		else shooter.setCurrentWheelSpeed(0);
 		
 		if(gunnerController.getButton(GamepadButton.X)) shooter.setCamSpeed(1);
 		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);

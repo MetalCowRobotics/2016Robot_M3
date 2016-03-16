@@ -90,8 +90,11 @@ public final class RobotMap {
 
 	}
 	
-	public final class Camera {
+	public final static class Camera {
 		public static final int FRAME_WIDTH = 320;
 		public static final int FRAME_HEIGHT = 240;
+		public final static double CAM_FOV_DIAG = 60;
+		public static final double DEG_PER_PX = CAM_FOV_DIAG
+				/ Math.sqrt(Math.pow(FRAME_WIDTH, 2) + Math.pow(FRAME_HEIGHT, 2));
 	}
 }
