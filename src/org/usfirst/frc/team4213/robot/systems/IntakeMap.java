@@ -4,7 +4,6 @@ import org.usfirst.frc.team4213.robot.systems.RobotMap.Intake;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 
@@ -14,12 +13,12 @@ public class IntakeMap {
 	private static final SpeedController PITCH_MOTOR = new CANTalon(Intake.PITCH_MOTOR_CHANNEL);
 	private static final Encoder PITCH_ENCODER = new Encoder(Intake.ENCODER_CH_A, Intake.ENCODER_CH_B, false,
 			CounterBase.EncodingType.k4X);
-	public static final DigitalInput LIMIT_SWITCH = new DigitalInput(Intake.LIMIT_SWITCH_CH);
 
 	private IntakeState state;
-	private int desiredPitchAngle;
+	private int desiredPitchAngle = -160;
 	private double pidError;
-	private boolean hasHitLimitSwitch = false;
+	private double lastPidError = 0;
+	private boolean hasHitZero = false;
 
 	public enum IntakeState {
 		DOWN, EJECT, INTAKE, UP;
@@ -37,8 +36,13 @@ public class IntakeMap {
 	}
 
 	public void setPitchSpeed(double speed) {
-		if (!hasHitLimitSwitch) {
+		if (!hasHitZero) {
 			PITCH_MOTOR.set(Intake.LOWER_SPEED);
+			if (Math.abs(lastPidError - pidError) < 2) {
+				desiredPitchAngle = 0;
+				resetEnc();
+				hasHitZero = true;
+			}
 		} else {
 			PITCH_MOTOR.set(speed);
 		}
@@ -68,25 +72,21 @@ public class IntakeMap {
 	public IntakeState getState() {
 		return state;
 	}
-	
-	public void idle(){
+
+	public void idle() {
 		state = IntakeState.DOWN;
 	}
-	
-	public void eject(){
+
+	public void eject() {
 		state = IntakeState.EJECT;
 	}
-	
-	public void intake(){
+
+	public void intake() {
 		state = IntakeState.INTAKE;
 	}
 
-	public void raise(){
+	public void raise() {
 		state = IntakeState.UP;
-	}
-	
-	public boolean getBottomedOut() {
-		return !LIMIT_SWITCH.get();
 	}
 
 	public void step() {
@@ -110,11 +110,8 @@ public class IntakeMap {
 		default:
 			break;
 		}
-		if (getBottomedOut()) {
-			hasHitLimitSwitch = true;
-			resetEnc();
-		}
 		runPitchPID();
+		lastPidError = pidError;
 	}
 
 }

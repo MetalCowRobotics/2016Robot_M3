@@ -60,8 +60,8 @@ public final class RobotMap {
 		public static final double INTAKE_SPEED = -1;
 		public static final double EJECT_SPEED = 1;
 
-		public static final int ENCODER_CH_A = 0;
-		public static final int ENCODER_CH_B = 1;
+		public static final int ENCODER_CH_A = 4;
+		public static final int ENCODER_CH_B = 5;
 		public static final int LIMIT_SWITCH_CH = 8;
 
 		private static final double GEARSGR = 4.5;
@@ -76,7 +76,7 @@ public final class RobotMap {
 	}
 
 	public final class Shooter {
-		public static final int CAM_CHANNEL = 5;
+		public static final int CAM_CHANNEL = 0;
 		public static final int CAM_ENC_CH_A = 0;
 		public static final int CAM_ENC_CH_B = 1;
 		private static final int CAM_GEARSGR = 3;
@@ -86,7 +86,8 @@ public final class RobotMap {
 
 		public static final int BALL_LIMIT_SWITCH = 4;
 
-		public static final int FLYWHEEL_CHANNEL = 3;
+		public static final int FLYWHEEL_CHANNEL = 4;
+		public static final int FLYWHEEL_CHANNEL_2 = 5;
 		public static final int FLYWHEEL_ENC_CH_A = 8;
 		public static final int FLYWHEEL_ENC_CH_B = 9;
 		public static final double FLYWHEEL_PPR = 100;
