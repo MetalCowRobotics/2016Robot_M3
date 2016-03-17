@@ -45,6 +45,9 @@ public final class RobotMap {
 			public static final int MIN_ANGLE = 20 - START_ANGLE;
 			public static final double ABS_TOLERANCE = 3;
 			public static final double BUMP_AMT = 1;
+			public static final int ENC_CH_A = 2;
+			public static final int ENC_CH_B = 3;
+
 		}
 
 	}
@@ -80,7 +83,7 @@ public final class RobotMap {
 		private static final double CAM_PLANETARYGR = 27.0;
 		private static final double CAM_PPR = 7.0;
 		public static final double CAM_PPD = (CAM_GEARSGR * CAM_PLANETARYGR * CAM_PPR) / 360.0;
-		
+
 		public static final int BALL_LIMIT_SWITCH = 4;
 
 		public static final int FLYWHEEL_CHANNEL = 3;
@@ -89,7 +92,7 @@ public final class RobotMap {
 		public static final double FLYWHEEL_PPR = 100;
 
 	}
-	
+
 	public final static class Camera {
 		public static final int FRAME_WIDTH = 320;
 		public static final int FRAME_HEIGHT = 240;
