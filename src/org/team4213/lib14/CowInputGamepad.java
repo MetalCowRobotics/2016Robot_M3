@@ -1,6 +1,6 @@
 package org.team4213.lib14;
 
-public interface CowInputController {
+public interface CowInputGamepad {
 	public double getRX();
 
 	public double getRY();
