@@ -21,6 +21,7 @@ public final class RobotMap {
 	public final class Turret {
 		public final class Yaw_Motor {
 			public static final int MOTOR_CHANNEL = 1;
+			public static final int STRING_POT = 0;
 			public static final int LIMIT_SWITCH = 8;
 			public static final int OFFSET = 0;
 			public static final double PPR = 1024;

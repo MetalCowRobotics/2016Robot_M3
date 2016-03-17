@@ -18,14 +18,11 @@ import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
-import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.Talon;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,36 +33,37 @@ import edu.wpi.first.wpilibj.Talon;
  */
 public class Robot extends IterativeRobot {
 
-//	TurretMap turret;
-//	IntakeMap intake; // TODO: Stitch in and test intake
-//	ShooterMap shooter;
-//
-//	AIRFLOController driverController;
-//	CowGamepad gunnerController;
-//
-//	//DriveController driveTrain;
-//	OperatorController ballSystems;
-	DriveMap chassis;
-//
-//	// Camera Controller
-//	public static CowCamServer camServer;
-//	// The Camera Server
-//	public CowCamController shooterCameraController;
-//	// public CowCamController frontCameraController;
-//
-//	// The Camera Image Processor
-//	public ShooterImageProcessor shooterProcessingTask;
-//	// The Thread Pool / Executor of Tasks to Use
-//	public ScheduledExecutorService executor;
-//	// A new Camera Controller for the Shooter
-//	boolean allowedToSave = false;
-//
-//	static {
-//		DriverStation.reportError("\n Loading OpenCV...", false);
-//		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
-//		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
-//		DriverStation.reportError("\n Loaded OpenCV.", false);
-//	}
+	TurretMap turret;
+	IntakeMap intake; // TODO: Stitch in and test intake
+	ShooterMap shooter;
+
+	AIRFLOController driverController;
+	CowGamepad gunnerController;
+
+	DriveController driveTrain;
+	OperatorController ballSystems;
+
+	Timer timer;
+
+	// Camera Controller
+	public static CowCamServer camServer;
+	// The Camera Server
+	public CowCamController shooterCameraController;
+	// public CowCamController frontCameraController;
+
+	// The Camera Image Processor
+	public ShooterImageProcessor shooterProcessingTask;
+	// The Thread Pool / Executor of Tasks to Use
+	public ScheduledExecutorService executor;
+	// A new Camera Controller for the Shooter
+	boolean allowedToSave = false;
+
+	static {
+		DriverStation.reportError("\n Loading OpenCV...", false);
+		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
+		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
+		DriverStation.reportError("\n Loaded OpenCV.", false);
+	}
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -74,56 +72,56 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 
-//		CowDash.load();
-//
-//		driverController = new AIRFLOController(0);
-//		gunnerController = new Xbox360Controller(1);
+		CowDash.load();
 
-//		executor = Executors.newScheduledThreadPool(1);
-//
-//		try {
-//
-//			shooterCameraController = new CowCamController(0, 25);
-//			// frontCameraController = new CowCamController(1, 25);
-//
-//			shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
-//			camServer = new CowCamServer(1180, shooterCameraController, shooterProcessingTask);
-//
-//			executor.scheduleWithFixedDelay(shooterCameraController, 0, 15, TimeUnit.MILLISECONDS);
-//			// executor.scheduleWithFixedDelay(frontCameraController, 0,
-//			// 35,TimeUnit.MILLISECONDS);
-//
-//			executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
-//			executor.scheduleWithFixedDelay(camServer, 0, 35, TimeUnit.MILLISECONDS);
-//			executor.scheduleAtFixedRate(() -> {
-//				System.gc();
-//			} , 45, 45, TimeUnit.SECONDS);
-//		} catch (Exception e) {
-//			DriverStation.reportError("Failed vision start", true);
-//		}
+		driverController = new AIRFLOController(0);
+		gunnerController = new Xbox360Controller(1);
+
+		executor = Executors.newScheduledThreadPool(1);
+
+		timer = new Timer();
+
+		try {
+
+			shooterCameraController = new CowCamController(0, 25);
+			// frontCameraController = new CowCamController(1, 25);
+
+			shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
+			camServer = new CowCamServer(1180, shooterCameraController, shooterProcessingTask);
+
+			executor.scheduleWithFixedDelay(shooterCameraController, 0, 15, TimeUnit.MILLISECONDS);
+			// executor.scheduleWithFixedDelay(frontCameraController, 0,
+			// 35,TimeUnit.MILLISECONDS);
+
+			executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
+			executor.scheduleWithFixedDelay(camServer, 0, 35, TimeUnit.MILLISECONDS);
+			executor.scheduleAtFixedRate(() -> {
+				System.gc();
+			} , 45, 45, TimeUnit.SECONDS);
+		} catch (Exception e) {
+			DriverStation.reportError("Failed vision start", true);
+		}
 
 		// Systems
-//		turret = new TurretMap();		
-		chassis = new DriveMap();
-//
-//		shooter = new ShooterMap();
-//		try{
-//		intake = new IntakeMap();
-//		}catch(Exception ex){
-//			DriverStation.reportError(ex.getMessage(), false);
-//		}
-//		//driveTrain = new DriveController();
-//		ballSystems = new OperatorController(turret, shooter, intake, shooterProcessingTask, shooterCameraController);
+		turret = new TurretMap();
+		shooter = new ShooterMap();
+		try{
+		intake = new IntakeMap();
+		}catch(Exception ex){
+			DriverStation.reportError(ex.getMessage(), false);
+		}
+		driveTrain = new DriveController(new DriveMap());
+		ballSystems = new OperatorController(turret, shooter, intake, shooterProcessingTask, shooterCameraController);
 
 	}
 
 	@Override
 	public void disabledInit() {
-//		if (allowedToSave) {
-//			CowDash.save();
-//		}
-//
-//		allowedToSave = true;
+		if (allowedToSave) {
+			CowDash.save();
+		}
+
+		allowedToSave = true;
 	}
 
 	@Override
@@ -159,27 +157,12 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		
-		
-//		private static final SpeedController LEFT_MOTOR = new Talon(RobotMap.Drivetrain.LEFT_MOTOR_CHANNEL);
-//		private static final SpeedController RIGHT_MOTOR = new Talon(RobotMap.Drivetrain.RIGHT_MOTOR_CHANNEL);
+		driverController.prestep();
+		gunnerController.prestep();
 
-		
-		
-		
-		
-		chassis.setLeftMotorSpeed(.3);
-		chassis.setRightMotorSpeed(.3);
-		
-		
-		
-		
-		//driverController.prestep();
-		//gunnerController.prestep();
+		ballSystems.drive(gunnerController);
+		driveTrain.drive(driverController, true);
 
-		//ballSystems.drive(gunnerController);
-		//driveTrain.drive(driverController, true);
-		
 		// if(gunnerController.getButtonTripped(GamepadButton.START)){
 		// DriverStation.reportError("There is an Error", false);
 		// camServer.setCam(frontCameraController);
@@ -187,8 +170,8 @@ public class Robot extends IterativeRobot {
 		// camServer.setCam(shooterCameraController);
 		// }
 
-		//driverController.endstep();
-		//gunnerController.endstep();
+		driverController.endstep();
+		gunnerController.endstep();
 	}
 
 	/**
@@ -199,31 +182,27 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-//		turret.setRawPitchSpeed(gunnerController.getLY());
-//		turret.setRawYawSpeed(gunnerController.getRX());
-//
-//		if (gunnerController.getButton(GamepadButton.A))
-//			shooter.setCurrentWheelSpeed(1);
-//		else if (gunnerController.getButton(GamepadButton.B))
-//			shooter.setCurrentWheelSpeed(-1);
-//		else
-//			shooter.setCurrentWheelSpeed(0);
-//
-//		if (gunnerController.getButton(GamepadButton.X))
-//			shooter.setCamSpeed(1);
-//		else if (gunnerController.getButton(GamepadButton.Y))
-//			shooter.setCamSpeed(-1);
-//		else
-//			shooter.setCamSpeed(0);
-//
-//		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
-//		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
-//		//driveTrain.drive(driverController, true);
-//		intake.setPitchSpeed(driverController.getLY());
+		turret.setRawPitchSpeed(gunnerController.getLY());
+		turret.setRawYawSpeed(gunnerController.getRX());
+
+		if (gunnerController.getButton(GamepadButton.A))
+			shooter.setCurrentWheelSpeed(1);
+		else if (gunnerController.getButton(GamepadButton.B))
+			shooter.setCurrentWheelSpeed(-1);
+		else
+			shooter.setCurrentWheelSpeed(0);
+
+		if (gunnerController.getButton(GamepadButton.X))
+			shooter.setCamSpeed(1);
+		else if (gunnerController.getButton(GamepadButton.Y))
+			shooter.setCamSpeed(-1);
+		else
+			shooter.setCamSpeed(0);
+
+		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
+		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
+		driveTrain.drive(driverController, true);
+		intake.setPitchSpeed(driverController.getLY());
 	}
 
-	@Override
-	public void teleopInit(){
-		
-	}
 }
