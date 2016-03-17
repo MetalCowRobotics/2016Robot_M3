@@ -44,7 +44,7 @@ public final class RobotMap {
 			public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
 			private static final int START_ANGLE = -38;
 			public static final int MAX_ANGLE = 80 - START_ANGLE;
-			public static final int MIN_ANGLE = 20 - START_ANGLE;
+			public static final int MIN_ANGLE = 70 - START_ANGLE;
 			public static final double ABS_TOLERANCE = 3;
 			public static final double BUMP_AMT = 1;
 			public static final int ENC_CH_A = 2;

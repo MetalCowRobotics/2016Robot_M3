@@ -25,15 +25,16 @@ public class DriveController {
 	 *            speeds
 	 */
 	public void drive(AIRFLOController controller, boolean squareUnits) {
-//		driveMap.setLeftMotorSpeed(-controller.getRY());
-//		driveMap.setRightMotorSpeed(controller.getLY());
-		driveMap.setLeftMotorSpeed(0.2);
-		driveMap.setRightMotorSpeed(0.2);
+		
+
 
 		
 //		
-//		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
-//				Drivetrain.SPRINT_SPEED);
+		double throttle = controller.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
+				Drivetrain.SPRINT_SPEED);
+		
+		driveMap.setLeftMotorSpeed(-controller.getRY() * throttle);
+		driveMap.setRightMotorSpeed(controller.getLY() * throttle);
 //		double leftStick = driverController.getLY();
 //
 //		// Read the values from the controller

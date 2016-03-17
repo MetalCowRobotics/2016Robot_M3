@@ -49,6 +49,7 @@ public class OperatorController {
 		visionPIDY = new PIDController("Vision_PID_Y", 10, 0, 0, 1);
 		visionPIDY.setTarget(0);
 		visionPIDX.setTarget(0);
+		visionState = VisionState.OFF;
 
 	}
 
@@ -123,40 +124,41 @@ public class OperatorController {
 		}
 
 		// Cycle state
-		if (controller.getButtonTripped(GamepadButton.BACK)) {
-			if (visionState == VisionState.LONG) {
-				cameraController.setHumanFriendlySettings();
-				visionState = VisionState.OFF;
-			} else {
-				cameraController.setTrackingSettings();
-				visionState = VisionState.LONG;
-			}
-		}
+//		if (controller.getButtonTripped(GamepadButton.BACK)) {
+//			if (visionState == VisionState.LONG) {
+//				cameraController.setHumanFriendlySettings();
+//				visionState = VisionState.OFF;
+//			} else {
+//				cameraController.setTrackingSettings();
+//				visionState = VisionState.LONG;
+//			}
+//		}
 
 		if (state == OperatorState.TURRET_ENGAGED) {
 			double speedMod = 0.8;
-			switch (visionState) {
-			case OFF:
-				if (imageProcessor.getTarget() != null) {
-					speedMod = 0.5;
-				}
-				// Turret Motion by Operator Directly
-				manualTurretDrive(controller, speedMod);
-				break;
-			case LONG:
-				try {
-					Target curTarget = imageProcessor.getTarget();
-					if (curTarget != null) {
-
-						visionDrive(curTarget);
-					} else {
-						manualTurretDrive(controller, speedMod);
-					}
-				} catch (Exception ex) {
-
-				}
-				break;
-			}
+			manualTurretDrive(controller, speedMod);
+//			switch (visionState) {
+//			case OFF:
+////				if (imageProcessor.getTarget() != null) {
+////					speedMod = 0.5;
+////				}	
+//				// Turret Motion by Operator Directly
+//				manualTurretDrive(controller, speedMod);
+//				break;
+//			case LONG:
+//				try {
+//					Target curTarget = imageProcessor.getTarget();
+//					if (curTarget != null) {
+//
+//						visionDrive(curTarget);
+//					} else {
+//						manualTurretDrive(controller, speedMod);
+//					}
+//				} catch (Exception ex) {
+//
+//				}
+//				break;
+//			}
 		}
 
 		turret.endstep();

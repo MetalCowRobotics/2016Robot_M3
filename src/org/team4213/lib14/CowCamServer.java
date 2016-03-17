@@ -136,8 +136,6 @@ public class CowCamServer extends TimerTask{
 				if(task == null){
 					img = cameraController.getImg();
 					CowDash.setBool("Vision_debug", false);
-				}else if (CowDash.getBool("Vision_debug", false)){
-					img = task.getImage();
 				} else {
 					img = cameraController.getImg();
 				}

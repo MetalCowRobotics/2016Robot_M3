@@ -13,7 +13,6 @@ import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
-import org.usfirst.frc.team4213.image_processor.ShooterImageProcessor;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
@@ -52,7 +51,7 @@ public class Robot extends IterativeRobot {
 	// public CowCamController frontCameraController;
 
 	// The Camera Image Processor
-	public ShooterImageProcessor shooterProcessingTask;
+//	public ShooterImageProcessor shooterProcessingTask;
 	// The Thread Pool / Executor of Tasks to Use
 	public ScheduledExecutorService executor;
 	// A new Camera Controller for the Shooter
@@ -86,14 +85,14 @@ public class Robot extends IterativeRobot {
 			shooterCameraController = new CowCamController(0, 25);
 			// frontCameraController = new CowCamController(1, 25);
 
-			shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
-			camServer = new CowCamServer(1180, shooterCameraController, shooterProcessingTask);
+//			shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
+			camServer = new CowCamServer(1180, shooterCameraController, null);
 
-			executor.scheduleWithFixedDelay(shooterCameraController, 0, 15, TimeUnit.MILLISECONDS);
+			executor.scheduleWithFixedDelay(shooterCameraController, 0, 35, TimeUnit.MILLISECONDS);
 			// executor.scheduleWithFixedDelay(frontCameraController, 0,
 			// 35,TimeUnit.MILLISECONDS);
 
-			executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
+//			executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
 			executor.scheduleWithFixedDelay(camServer, 0, 35, TimeUnit.MILLISECONDS);
 			executor.scheduleAtFixedRate(() -> {
 				System.gc();
@@ -111,7 +110,7 @@ public class Robot extends IterativeRobot {
 			DriverStation.reportError(ex.getMessage(), false);
 		}
 		driveTrain = new DriveController(new DriveMap());
-		ballSystems = new OperatorController(turret, shooter, intake, shooterProcessingTask, shooterCameraController);
+		ballSystems = new OperatorController(turret, shooter, intake, null, shooterCameraController);
 
 	}
 
