@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
@@ -36,7 +37,7 @@ public class Robot extends IterativeRobot {
 	IntakeMap intake; // TODO: Stitch in and test intake
 	ShooterMap shooter;
 
-	CowGamepad driverController;
+	AIRFLOController driverController;
 	CowGamepad gunnerController;
 
 	DriveController driveTrain;
@@ -73,7 +74,7 @@ public class Robot extends IterativeRobot {
 
 		CowDash.load();
 
-		driverController = new Xbox360Controller(0);
+		driverController = new AIRFLOController(0);
 		gunnerController = new Xbox360Controller(1);
 
 		executor = Executors.newScheduledThreadPool(1);
@@ -104,8 +105,11 @@ public class Robot extends IterativeRobot {
 		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
+		try{
 		intake = new IntakeMap();
-
+		}catch(Exception ex){
+			DriverStation.reportError(ex.getMessage(), false);
+		}
 		driveTrain = new DriveController(new DriveMap());
 		ballSystems = new OperatorController(turret, shooter, intake, shooterProcessingTask, shooterCameraController);
 
@@ -198,6 +202,7 @@ public class Robot extends IterativeRobot {
 		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
 		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
 		driveTrain.drive(driverController, true);
+		intake.setPitchSpeed(driverController.getLY());
 	}
 
 }

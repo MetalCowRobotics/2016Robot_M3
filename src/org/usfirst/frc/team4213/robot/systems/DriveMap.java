@@ -26,5 +26,10 @@ public class DriveMap extends RobotDrive{
 	public void tDrive(double leftStick, double rightStick, double throttle, boolean squareUnits){
 		tankDrive(leftStick*throttle, rightStick * throttle, squareUnits); // TankDrive
 	}
-	
+	public void setLeftMotorSpeed(double speed){
+		LEFT_MOTOR.set(speed);
+	}
+	public void setRightMotorSpeed(double speed){
+		RIGHT_MOTOR.set(speed);
+	}
 }

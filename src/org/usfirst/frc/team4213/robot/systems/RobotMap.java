@@ -1,5 +1,7 @@
 package org.usfirst.frc.team4213.robot.systems;
 
+import org.team4213.lib14.CowDash;
+
 public final class RobotMap {
 
 	// IDEA: - to extrapolate to a .txt file
@@ -9,8 +11,8 @@ public final class RobotMap {
 	// Then rather than reading FINALS actually call the getters()
 
 	public final class Drivetrain {
-		public static final int LEFT_MOTOR_CHANNEL = 8;
-		public static final int RIGHT_MOTOR_CHANNEL = 9;
+		public static final int LEFT_MOTOR_CHANNEL = 0;
+		public static final int RIGHT_MOTOR_CHANNEL = 1;
 		public static final double SPRINT_SPEED = 1;
 		public static final double NORMAL_SPEED = 0.7;
 		public static final double CRAWL_SPEED = 0.5;
@@ -69,7 +71,7 @@ public final class RobotMap {
 		private static final int PPR = 7;
 
 		public static final double COUNT_PER_DEG = (GEARSGR * PLANETARYGR * PPR) / 360;
-		public static final double LOWER_SPEED = 0.4;
+		public static final double LOWER_SPEED = -.6;
 		public static final int RAISE_ANGLE = 100;
 		public static final double PID_P_VAL = 1.0 / 120;
 
@@ -83,8 +85,6 @@ public final class RobotMap {
 		private static final double CAM_PLANETARYGR = 27.0;
 		private static final double CAM_PPR = 7.0;
 		public static final double CAM_PPD = (CAM_GEARSGR * CAM_PLANETARYGR * CAM_PPR) / 360.0;
-
-		public static final int BALL_LIMIT_SWITCH = 4;
 
 		public static final int FLYWHEEL_CHANNEL = 4;
 		public static final int FLYWHEEL_CHANNEL_2 = 5;

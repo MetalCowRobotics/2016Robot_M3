@@ -56,7 +56,7 @@ public class OperatorController {
 		turret.prestep();
 
 		// INTAKE
-		if (controller.getButtonTripped(GamepadButton.B) && isAllIdle() && state == OperatorState.IDLE) {
+		if (controller.getButtonTripped(GamepadButton.B) && state == OperatorState.IDLE) {
 			shooter.intake();
 			intake.intake();
 			turret.idle();
@@ -66,12 +66,10 @@ public class OperatorController {
 			state = OperatorState.IDLE;
 		}
 
-		if (shooter.getSwitchHit() && state == OperatorState.INTAKE) {
-			controller.rumbleLeft((float) 1.0);
-		}
+
 
 		// EJECT
-		if (controller.getButtonTripped(GamepadButton.Y) && isAllIdle() && state == OperatorState.IDLE) {
+		if (controller.getButtonTripped(GamepadButton.Y) && state == OperatorState.IDLE) {
 			shooter.eject();
 			intake.eject();
 			turret.idle();
@@ -304,12 +302,6 @@ public class OperatorController {
 		shooter.idle();
 		intake.idle();
 		turret.idle();
-	}
-
-	// Checks if Intake is Ready or is Already Intaking
-	public boolean isAllIdle() {
-		return intake.getState() == IntakeState.DOWN && shooter.getState() == ShooterState.IDLE
-				&& turret.getState() == TurretState.IDLE;
 	}
 
 }

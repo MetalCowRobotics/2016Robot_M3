@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
+import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
@@ -23,23 +24,28 @@ public class DriveController {
 	 *            - should units be squared, provides more fine control at lower
 	 *            speeds
 	 */
-	public void drive(CowGamepad driverController, boolean squareUnits) {
+	public void drive(AIRFLOController controller, boolean squareUnits) {
+//		driveMap.setLeftMotorSpeed(-controller.getRY());
+//		driveMap.setRightMotorSpeed(controller.getLY());
+		driveMap.setLeftMotorSpeed(0.2);
+		driveMap.setRightMotorSpeed(0.2);
 
-		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
-				Drivetrain.SPRINT_SPEED);
-		double leftStick = driverController.getLY();
-
-		// Read the values from the controller
-		if(driverController.getButtonToggled(10)){
-			double rotation = -driverController.getRX();
-			
-			driveMap.arcDrive(leftStick, rotation, throttle, squareUnits);
-			
-		}else{
-			double rightStick = driverController.getRY();
-			
-			driveMap.tDrive(leftStick, rightStick, throttle, squareUnits);
-		}
+		
+//		
+//		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
+//				Drivetrain.SPRINT_SPEED);
+//		double leftStick = driverController.getLY();
+//
+//		// Read the values from the controller
+//		if(driverController.getButtonToggled(10)){
+//			double rotation = -driverController.getRX();
+//			
+//			driveMap.arcDrive(leftStick, rotation, throttle, squareUnits);
+//			
+//		}else{
+//			double rightStick = driverController.getRY();	
+//			driveMap.tDrive(leftStick, rightStick, throttle, squareUnits);
+//		}
 
 	}
 		
@@ -55,13 +61,13 @@ public class DriveController {
 	 */
 	public void drive(Xbox360Controller driverController, boolean squareUnits) {
 
-		// Read the values from the controller
-		double direction = driverController.getLY();
-		double rotation = driverController.getRX();
-		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
-				Drivetrain.SPRINT_SPEED);
-
-		driveMap.arcDrive(direction, rotation, throttle, squareUnits);
+//		// Read the values from the controller
+//		double direction = driverController.getLY();
+//		double rotation = driverController.getRX();
+//		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
+//				Drivetrain.SPRINT_SPEED);
+//
+//		driveMap.arcDrive(direction, rotation, throttle, squareUnits);
 	}
 
 }

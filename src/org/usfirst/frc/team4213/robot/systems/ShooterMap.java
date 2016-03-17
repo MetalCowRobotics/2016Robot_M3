@@ -20,7 +20,6 @@ public class ShooterMap {
 
 	private static final Encoder CAM_ENCODER = new Encoder(Shooter.CAM_ENC_CH_A, Shooter.CAM_ENC_CH_B, false,
 			CounterBase.EncodingType.k4X);
-	private static final DigitalInput BALL_LIM_SWITCH = new DigitalInput(Shooter.BALL_LIMIT_SWITCH);
 	private static final Encoder FLYWHEEL_ENCODER = new Encoder(Shooter.FLYWHEEL_ENC_CH_A, Shooter.FLYWHEEL_ENC_CH_B,
 			false, CounterBase.EncodingType.k4X);
 
@@ -63,6 +62,7 @@ public class ShooterMap {
 	}
 
 	public void setCurrentWheelSpeed(double speed) {
+//		speed *= -1;
 		CowDash.setNum("Shooter_wheelSpeed", speed);
 		FLYWHEEL_MOTOR.set(speed);
 		FLYWHEEL_MOTOR_2.set(speed);
@@ -72,9 +72,6 @@ public class ShooterMap {
 		flywheelSpeed = speed;
 	}
 
-	public boolean getSwitchHit() {
-		return !BALL_LIM_SWITCH.get();
-	}
 
 	public double getCamEncValue() {
 		return CAM_ENCODER.get();
@@ -164,7 +161,7 @@ public class ShooterMap {
 			if (ejectTimer.get() < 0.4) {
 				setCurrentWheelSpeed(-CowDash.getNum("Shooter_shootIntakePower", 0.4));
 			} else {
-				setCurrentWheelSpeed(+CowDash.getNum("Shooter_ejectPower", 1.0));
+				setCurrentWheelSpeed(-CowDash.getNum("Shooter_ejectPower", 1.0));
 			}
 
 			if (ejectTimer.get() > .75) {

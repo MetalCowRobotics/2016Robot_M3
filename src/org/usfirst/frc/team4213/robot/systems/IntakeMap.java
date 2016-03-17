@@ -9,14 +9,13 @@ import edu.wpi.first.wpilibj.SpeedController;
 
 public class IntakeMap {
 
-	private static final SpeedController ROLLER_MOTOR = new CANTalon(Intake.ROLLER_MOTOR_CHANNEL);
-	private static final SpeedController PITCH_MOTOR = new CANTalon(Intake.PITCH_MOTOR_CHANNEL);
-	private static final Encoder PITCH_ENCODER = new Encoder(Intake.ENCODER_CH_A, Intake.ENCODER_CH_B, false,
-			CounterBase.EncodingType.k4X);
+	public final SpeedController ROLLER_MOTOR = new CANTalon(Intake.ROLLER_MOTOR_CHANNEL);
+	public final SpeedController PITCH_MOTOR = new CANTalon(Intake.PITCH_MOTOR_CHANNEL);
+	public Encoder PITCH_ENCODER = new Encoder(Intake.ENCODER_CH_A, Intake.ENCODER_CH_B, false, CounterBase.EncodingType.k4X);
 
 	private IntakeState state;
-	private int desiredPitchAngle = -160;
-	private double pidError;
+	private int desiredPitchAngle = 0;
+	private double pidError = 10;
 	private double lastPidError = 0;
 	private boolean hasHitZero = false;
 
@@ -25,10 +24,12 @@ public class IntakeMap {
 	}
 
 	public IntakeMap() {
-		resetEnc();
 		setEncDistPerPulse(1 / Intake.COUNT_PER_DEG);
 		state = IntakeState.DOWN;
 		desiredPitchAngle = 0;
+		resetEnc();
+		PITCH_ENCODER.setReverseDirection(true);
+		
 	}
 
 	public void setRollerSpeed(double speed) {
@@ -38,7 +39,7 @@ public class IntakeMap {
 	public void setPitchSpeed(double speed) {
 		if (!hasHitZero) {
 			PITCH_MOTOR.set(Intake.LOWER_SPEED);
-			if (Math.abs(lastPidError - pidError) < 2) {
+			if (Math.abs(getEncDistance()) > 135) {
 				desiredPitchAngle = 0;
 				resetEnc();
 				hasHitZero = true;
@@ -110,6 +111,7 @@ public class IntakeMap {
 		default:
 			break;
 		}
+		
 		runPitchPID();
 		lastPidError = pidError;
 	}
