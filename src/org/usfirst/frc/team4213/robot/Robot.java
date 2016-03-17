@@ -2,7 +2,6 @@
 package org.usfirst.frc.team4213.robot;
 
 import org.team4213.lib14.AIRFLOController;
-
 import org.team4213.lib14.Xbox360Controller;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -10,13 +9,13 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
+import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretPitchMap;
 import org.usfirst.frc.team4213.robot.systems.TurretYawMap;
 
 import edu.wpi.first.wpilibj.Timer; //TODO: What does this do?
-
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -60,7 +59,7 @@ public class Robot extends IterativeRobot {
     	myTurretPitch = new TurretPitchMap();
     	myTurretYaw = new TurretYawMap();
     	myIntake = new IntakeMap();
-    	
+    	driveTrain = new DriveController(new DriveMap());
         
         //TODO: Read-in and Populate the RobotMap from a textFile
         
@@ -118,93 +117,93 @@ public class Robot extends IterativeRobot {
     	
     	
     	
-    	/////////////////////////////////////
-    	//From here down the gunnerController will be used for actions
-    	/////////////////////////////////////
-    	
-    	//////
-    	// Shooter In/Out
-    	/////
-    	if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Positive
-    		myShooter.setWheelSpeed(1);
-    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_Y)){ //Motor Negative
-    		myShooter.setWheelSpeed(-.6);
-    	}else{ //STOP
-    		myShooter.setWheelSpeed(0);
-    	}
-    	
-    	//////
-    	// CAM-Kicker In/Out
-    	/////
-    	if(gunnerController.getButton(gunnerController.XBOX_BTN_RBUMP)){ //Motor Positive
-    		myShooter.setCamSpeed(.8);
-    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_LBUMP)){ //Motor Negative
-    		myShooter.setCamSpeed(.5);
-    	}else{ //STOP
-    		myShooter.setCamSpeed(0);
-    	}
-    	
-    	
-    	
-    	//////
-    	// Turret Up/Down
-    	/////
-    	if(gunnerController.XBOX_AXIS_LY > .25){ //Motor Positive
-    		myTurretPitch.PITCH_MOTOR.set(.5);
-    	}else if(gunnerController.XBOX_AXIS_LY < -.25){ //Motor Negative
-    		myTurretPitch.PITCH_MOTOR.set(-.5);
-    	}else{ //STOP
-    		myTurretPitch.PITCH_MOTOR.set(0);
-    	}
-    	    	
-    	//////
-    	// Turret Left/Right
-    	/////
-    	if(gunnerController.XBOX_AXIS_RX > .25){ //Motor Positive
-    		myTurretYaw.YAW_MOTOR.set(.5);
-    	}else if(gunnerController.XBOX_AXIS_RX < -.25){ //Motor Negative
-    		myTurretYaw.YAW_MOTOR.set(-.5);
-    	}else{ //STOP
-    		myTurretYaw.YAW_MOTOR.set(0);
-    	}
-    	
-    	//////
-    	// Turret in Safe Dropping position
-    	/////
-    	//if(myTurretYaw.LIMITSWITCH???){
-    	//	DriverStation.reportError("   ++++++++++++ TURRET SAFE ++++++++++++   ", false);
-    	//}    	
-    	
-    	
-    	//////
-    	// Intake in/out
-    	/////
-    	if(gunnerController.getButton(gunnerController.XBOX_BTN_X)){ //Motor Positive
-    		myIntake.ROLLER_MOTOR.set(1);
-    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_B)){ //Motor Negative
-    		myIntake.ROLLER_MOTOR.set(-1);
-    	}else{ //STOP
-    		myIntake.ROLLER_MOTOR.set(0);
-    	}
-    	
-    	//////
-    	// Intake Up/Down
-    	/////
-    	if(gunnerController.getButton(gunnerController.XBOX_BTN_BACK)){ //Motor Positive
-    		myIntake.PITCH_MOTOR.set(.5);
-    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_START)){ //Motor Negative
-    		myIntake.PITCH_MOTOR.set(-.5);
-    	}else{ //STOP
-    		myIntake.PITCH_MOTOR.set(0);
-    	}    	
-    	
-    	
-    	//////
-    	// BALL IN THE SHOOT!!! Alert
-    	/////
-    	if(myShooter.ballLimitSwitch.get()){
-    		DriverStation.reportError("   ++++++++++++ SHOOT THE BALL ++++++++++++   ", false);
-    	}
+//    	/////////////////////////////////////
+//    	//From here down the gunnerController will be used for actions
+//    	/////////////////////////////////////
+//    	
+//    	//////
+//    	// Shooter In/Out
+//    	/////
+//    	if(gunnerController.getButton(gunnerController.XBOX_BTN_A)){ //Motor Positive
+//    		myShooter.setWheelSpeed(1);
+//    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_Y)){ //Motor Negative
+//    		myShooter.setWheelSpeed(-.6);
+//    	}else{ //STOP
+//    		myShooter.setWheelSpeed(0);
+//    	}
+//    	
+//    	//////
+//    	// CAM-Kicker In/Out
+//    	/////
+//    	if(gunnerController.getButton(gunnerController.XBOX_BTN_RBUMP)){ //Motor Positive
+//    		myShooter.setCamSpeed(.8);
+//    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_LBUMP)){ //Motor Negative
+//    		myShooter.setCamSpeed(.5);
+//    	}else{ //STOP
+//    		myShooter.setCamSpeed(0);
+//    	}
+//    	
+//    	
+//    	
+//    	//////
+//    	// Turret Up/Down
+//    	/////
+//    	if(gunnerController.XBOX_AXIS_LY > .25){ //Motor Positive
+//    		myTurretPitch.PITCH_MOTOR.set(.5);
+//    	}else if(gunnerController.XBOX_AXIS_LY < -.25){ //Motor Negative
+//    		myTurretPitch.PITCH_MOTOR.set(-.5);
+//    	}else{ //STOP
+//    		myTurretPitch.PITCH_MOTOR.set(0);
+//    	}
+//    	    	
+//    	//////
+//    	// Turret Left/Right
+//    	/////
+//    	if(gunnerController.XBOX_AXIS_RX > .25){ //Motor Positive
+//    		myTurretYaw.YAW_MOTOR.set(.5);
+//    	}else if(gunnerController.XBOX_AXIS_RX < -.25){ //Motor Negative
+//    		myTurretYaw.YAW_MOTOR.set(-.5);
+//    	}else{ //STOP
+//    		myTurretYaw.YAW_MOTOR.set(0);
+//    	}
+//    	
+//    	//////
+//    	// Turret in Safe Dropping position
+//    	/////
+//    	//if(myTurretYaw.LIMITSWITCH???){
+//    	//	DriverStation.reportError("   ++++++++++++ TURRET SAFE ++++++++++++   ", false);
+//    	//}    	
+//    	
+//    	
+//    	//////
+//    	// Intake in/out
+//    	/////
+//    	if(gunnerController.getButton(gunnerController.XBOX_BTN_X)){ //Motor Positive
+//    		myIntake.ROLLER_MOTOR.set(1);
+//    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_B)){ //Motor Negative
+//    		myIntake.ROLLER_MOTOR.set(-1);
+//    	}else{ //STOP
+//    		myIntake.ROLLER_MOTOR.set(0);
+//    	}
+//    	
+//    	//////
+//    	// Intake Up/Down
+//    	/////
+//    	if(gunnerController.getButton(gunnerController.XBOX_BTN_BACK)){ //Motor Positive
+//    		myIntake.PITCH_MOTOR.set(.5);
+//    	}else if(gunnerController.getButton(gunnerController.XBOX_BTN_START)){ //Motor Negative
+//    		myIntake.PITCH_MOTOR.set(-.5);
+//    	}else{ //STOP
+//    		myIntake.PITCH_MOTOR.set(0);
+//    	}    	
+//    	
+//    	
+//    	//////
+//    	// BALL IN THE SHOOT!!! Alert
+//    	/////
+//    	if(myShooter.ballLimitSwitch.get()){
+//    		DriverStation.reportError("   ++++++++++++ SHOOT THE BALL ++++++++++++   ", false);
+//    	}
     	
     	
     	
