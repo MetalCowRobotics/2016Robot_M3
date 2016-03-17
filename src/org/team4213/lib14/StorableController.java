@@ -38,7 +38,6 @@ public class StorableController {
 
 		for (short i = 0; i < currentButtonVals.length; i++) {
 			currentButtonVals[i] = buttonVals.getBoolean(i);
-
 		}
 	}
 

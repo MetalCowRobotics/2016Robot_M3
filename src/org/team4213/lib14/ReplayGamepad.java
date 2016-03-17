@@ -5,6 +5,7 @@ import java.io.FileReader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.usfirst.frc.team4213.robot.systems.RobotMap;
 
@@ -18,14 +19,14 @@ public class ReplayGamepad implements CowInputGamepad {
 	boolean[] previousStates;
 	boolean[] toggleStates;
 
-	public ReplayGamepad() {
+	public ReplayGamepad(short n) {
 		counter = 0;
 
 		JSONArray savefile = null;
 		try {
-			savefile = new JSONArray(new JSONTokener(new FileReader(RobotMap.AUTONOMOUS_FILE)));
+			savefile = new JSONObject(new JSONTokener(new FileReader(RobotMap.AUTONOMOUS_FILE))).getJSONArray("" + n);
 		} catch (FileNotFoundException e) {
-			DriverStation.reportError("\nCowDash.load: could not find file\n", true);
+			DriverStation.reportError("\nCowDash.load: could not find file for autonomous\n", true);
 			return;
 		} catch (JSONException je) {
 			DriverStation.reportError("\nCowDash.load: could not parse JSON\n", true);

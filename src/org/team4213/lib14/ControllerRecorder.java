@@ -3,27 +3,36 @@ package org.team4213.lib14;
 import java.io.FileWriter;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.usfirst.frc.team4213.robot.systems.RobotMap;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 
 public class ControllerRecorder {
-	public JSONArray inputs;
-	private Timer timer;
-	private CowGamepad controller;
+	public JSONArray[] inputs;
+	private CowGamepad[] controller;
 
-	public ControllerRecorder(CowGamepad controller) {
-		inputs = new JSONArray();
-		this.controller = controller;
+	public ControllerRecorder(CowGamepad... controllers) {
+		inputs = new JSONArray[controllers.length];
+		for (short i = 0; i < controller.length; i++) {
+			inputs[i] = new JSONArray();
+		}
+
+		this.controller = controllers;
 	}
 
 	public void record() {
-		inputs.put(new StorableController(controller).serialize());
+		for (short i = 0; i < controller.length; i++) {
+			inputs[i].put(new StorableController(controller[i]).serialize());
+		}
 	}
 
 	public void save() {
 		try (FileWriter file = new FileWriter(RobotMap.AUTONOMOUS_FILE)) {
+			JSONObject obj = new JSONObject();
+			for (short i = 0; i < controller.length; i++) {
+				obj.append("" + i, inputs[i]);
+			}
 			String out = inputs.toString();
 			if (out != null) {
 				file.write(out);

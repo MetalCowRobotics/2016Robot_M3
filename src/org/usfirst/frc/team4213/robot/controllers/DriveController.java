@@ -1,15 +1,15 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
-import org.team4213.lib14.CowGamepad;
+import org.team4213.lib14.CowInputGamepad;
+import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Drivetrain;
 
-
 public class DriveController {
 
 	private DriveMap driveMap;
-	
+
 	public DriveController(DriveMap driveMap) {
 		this.driveMap = driveMap;
 	}
@@ -23,26 +23,25 @@ public class DriveController {
 	 *            - should units be squared, provides more fine control at lower
 	 *            speeds
 	 */
-	public void drive(CowGamepad driverController, boolean squareUnits) {
+	public void drive(CowInputGamepad driverController, boolean squareUnits) {
 
 		double throttle = driverController.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
 				Drivetrain.SPRINT_SPEED);
 		double leftStick = driverController.getLY();
 
 		// Read the values from the controller
-		if(driverController.getButtonToggled(10)){
+		if (driverController.getButtonToggled(GamepadButton.START)) {
 			double rotation = -driverController.getRX();
-			
+
 			driveMap.arcDrive(leftStick, rotation, throttle, squareUnits);
-			
-		}else{
+
+		} else {
 			double rightStick = driverController.getRY();
-			
+
 			driveMap.tDrive(leftStick, rightStick, throttle, squareUnits);
 		}
 
 	}
-		
 
 	/**
 	 * Arcade style driving for the DriveTrain.
