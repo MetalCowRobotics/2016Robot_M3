@@ -8,6 +8,9 @@ public class DriveMap extends RobotDrive{
 
 	public DriveMap() {
 		super(LEFT_MOTOR, RIGHT_MOTOR);
+		((Talon)LEFT_MOTOR).setSafetyEnabled(false);
+		((Talon)RIGHT_MOTOR).setSafetyEnabled(false);
+
 	}
 	private static final SpeedController LEFT_MOTOR = new Talon(RobotMap.Drivetrain.LEFT_MOTOR_CHANNEL);
 	private static final SpeedController RIGHT_MOTOR = new Talon(RobotMap.Drivetrain.RIGHT_MOTOR_CHANNEL);

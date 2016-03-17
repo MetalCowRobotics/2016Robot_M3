@@ -100,8 +100,8 @@ public abstract class CowGamepad extends Joystick {
 	}
 
 	public void prestep() {
-		this.rumbleLeft(0);
-		this.rumbleRight(0);
+//		this.rumbleLeft(0);
+//		this.rumbleRight(0);
 	}
 
 	public void endstep() {

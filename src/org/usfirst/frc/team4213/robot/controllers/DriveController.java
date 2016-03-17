@@ -27,8 +27,7 @@ public class DriveController {
 	public void drive(AIRFLOController controller, boolean squareUnits) {
 //		driveMap.setLeftMotorSpeed(-controller.getRY());
 //		driveMap.setRightMotorSpeed(controller.getLY());
-		driveMap.setLeftMotorSpeed(0.2);
-		driveMap.setRightMotorSpeed(0.2);
+
 
 		
 //		
