@@ -12,8 +12,6 @@ public class StorableController {
 	int dpadY;
 	boolean[] currentButtonVals;
 
-	private static final String SAVE_FILE_NAME = "/home/lvuser/dashboardvalues.json";
-
 	public StorableController(CowGamepad controller) {
 		RX = controller.getRX();
 		RY = controller.getRY();

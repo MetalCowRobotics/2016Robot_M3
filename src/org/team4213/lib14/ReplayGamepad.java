@@ -1,5 +1,15 @@
 package org.team4213.lib14;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONTokener;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
+
+import edu.wpi.first.wpilibj.DriverStation;
+
 public class ReplayGamepad implements CowInputGamepad {
 
 	StorableController[] inputs;
@@ -8,10 +18,23 @@ public class ReplayGamepad implements CowInputGamepad {
 	boolean[] previousStates;
 	boolean[] toggleStates;
 
-	public ReplayGamepad(StorableController[] storedInputs) {
+	public ReplayGamepad() {
 		counter = 0;
-		inputs = storedInputs;
 
+		JSONArray savefile = null;
+		try {
+			savefile = new JSONArray(new JSONTokener(new FileReader(RobotMap.AUTONOMOUS_FILE)));
+		} catch (FileNotFoundException e) {
+			DriverStation.reportError("\nCowDash.load: could not find file\n", true);
+			return;
+		} catch (JSONException je) {
+			DriverStation.reportError("\nCowDash.load: could not parse JSON\n", true);
+			return;
+		}
+		inputs = new StorableController[savefile.length()];
+		for (int i = 0; i < savefile.length(); i++) {
+			inputs[i] = new StorableController(savefile.getJSONObject(i));
+		}
 		previousStates = new boolean[20];
 		toggleStates = new boolean[20];
 		for (short i = 0; i < 20; i++) {
