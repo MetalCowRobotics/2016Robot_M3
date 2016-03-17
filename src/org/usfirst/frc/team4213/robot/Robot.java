@@ -2,31 +2,26 @@
 package org.usfirst.frc.team4213.robot;
 
 import java.util.Timer;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
 import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
+import org.usfirst.frc.team4213.image_processor.ShooterImageProcessor;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
-import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
-import org.usfirst.frc.team4213.image_processor.*;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -40,20 +35,20 @@ public class Robot extends IterativeRobot {
 	TurretMap turret;
 	IntakeMap intake; // TODO: Stitch in and test intake
 	ShooterMap shooter;
-	
+
 	CowGamepad driverController;
 	CowGamepad gunnerController;
-	
+
 	DriveController driveTrain;
 	OperatorController ballSystems;
-	
+
 	Timer timer;
-	
+
 	// Camera Controller
 	public static CowCamServer camServer;
 	// The Camera Server
 	public CowCamController shooterCameraController;
-	//public CowCamController frontCameraController;
+	// public CowCamController frontCameraController;
 
 	// The Camera Image Processor
 	public ShooterImageProcessor shooterProcessingTask;
@@ -75,57 +70,60 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void robotInit() {
-		
+
 		CowDash.load();
 
 		driverController = new Xbox360Controller(0);
 		gunnerController = new Xbox360Controller(1);
-		
+
 		executor = Executors.newScheduledThreadPool(1);
-		
+
 		timer = new Timer();
-		
-		try{
 
-		shooterCameraController = new CowCamController(0, 25);
-		//frontCameraController = new CowCamController(1, 25);
+		try {
 
-		shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
-		camServer = new CowCamServer(1180, shooterCameraController,shooterProcessingTask);
-		
-		executor.scheduleWithFixedDelay(shooterCameraController, 0, 15,TimeUnit.MILLISECONDS);
-//		executor.scheduleWithFixedDelay(frontCameraController, 0, 35,TimeUnit.MILLISECONDS);
+			shooterCameraController = new CowCamController(0, 25);
+			// frontCameraController = new CowCamController(1, 25);
 
-		executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
-		executor.scheduleWithFixedDelay(camServer,0,35,TimeUnit.MILLISECONDS);
-		executor.scheduleAtFixedRate(()->{System.gc();}, 45, 45, TimeUnit.SECONDS);
-		}catch(Exception e){
+			shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
+			camServer = new CowCamServer(1180, shooterCameraController, shooterProcessingTask);
+
+			executor.scheduleWithFixedDelay(shooterCameraController, 0, 15, TimeUnit.MILLISECONDS);
+			// executor.scheduleWithFixedDelay(frontCameraController, 0,
+			// 35,TimeUnit.MILLISECONDS);
+
+			executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
+			executor.scheduleWithFixedDelay(camServer, 0, 35, TimeUnit.MILLISECONDS);
+			executor.scheduleAtFixedRate(() -> {
+				System.gc();
+			} , 45, 45, TimeUnit.SECONDS);
+		} catch (Exception e) {
 			DriverStation.reportError("Failed vision start", true);
 		}
-		
+
 		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
-		//intake = new IntakeMap();
-		
-		driveTrain = new DriveController(new DriveMap());
-		ballSystems = new OperatorController(turret,shooter,null,shooterProcessingTask,shooterCameraController);
+		intake = new IntakeMap();
 
+		driveTrain = new DriveController(new DriveMap());
+		ballSystems = new OperatorController(turret, shooter, intake, shooterProcessingTask, shooterCameraController);
 
 	}
-	
+
+	@Override
 	public void disabledInit() {
-		if(allowedToSave) {
+		if (allowedToSave) {
 			CowDash.save();
 		}
-		
-		
-		allowedToSave=true;
+
+		allowedToSave = true;
 	}
 
+	@Override
 	public void disabledPeriodic() {
 	}
-	
+
 	/**
 	 * This autonomous (along with the chooser code above) shows how to select
 	 * between different autonomous modes using the dashboard. The sendable
@@ -157,17 +155,17 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		driverController.prestep();
 		gunnerController.prestep();
-		
+
 		ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
-		
-//		if(gunnerController.getButtonTripped(GamepadButton.START)){
-//			DriverStation.reportError("There is an Error", false);
-//			camServer.setCam(frontCameraController);
-//		}else if(gunnerController.getButtonReleased(GamepadButton.START)){
-//			camServer.setCam(shooterCameraController);
-//		}
-		
+
+		// if(gunnerController.getButtonTripped(GamepadButton.START)){
+		// DriverStation.reportError("There is an Error", false);
+		// camServer.setCam(frontCameraController);
+		// }else if(gunnerController.getButtonReleased(GamepadButton.START)){
+		// camServer.setCam(shooterCameraController);
+		// }
+
 		driverController.endstep();
 		gunnerController.endstep();
 	}
@@ -182,17 +180,23 @@ public class Robot extends IterativeRobot {
 	public void testPeriodic() {
 		turret.setRawPitchSpeed(gunnerController.getLY());
 		turret.setRawYawSpeed(gunnerController.getRX());
-		
-		if(gunnerController.getButton(GamepadButton.A)) shooter.setCurrentWheelSpeed(1);
-		else if(gunnerController.getButton(GamepadButton.B)) shooter.setCurrentWheelSpeed(-1);
-		else shooter.setCurrentWheelSpeed(0);
-		
-		if(gunnerController.getButton(GamepadButton.X)) shooter.setCamSpeed(1);
-		else if(gunnerController.getButton(GamepadButton.Y)) shooter.setCamSpeed(-1);
-		else shooter.setCamSpeed(0);
-		
-		DriverStation.reportError("\n Enc 1 Position:"+shooter.getFlyEncDist(), false);
-		DriverStation.reportError("\n Enc 2 Revolutions:"+turret.getYawEncPosition()/1024, false);
+
+		if (gunnerController.getButton(GamepadButton.A))
+			shooter.setCurrentWheelSpeed(1);
+		else if (gunnerController.getButton(GamepadButton.B))
+			shooter.setCurrentWheelSpeed(-1);
+		else
+			shooter.setCurrentWheelSpeed(0);
+
+		if (gunnerController.getButton(GamepadButton.X))
+			shooter.setCamSpeed(1);
+		else if (gunnerController.getButton(GamepadButton.Y))
+			shooter.setCamSpeed(-1);
+		else
+			shooter.setCamSpeed(0);
+
+		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
+		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
 		driveTrain.drive(driverController, true);
 	}
 
