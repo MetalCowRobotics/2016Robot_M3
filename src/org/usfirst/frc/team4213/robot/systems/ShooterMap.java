@@ -16,6 +16,8 @@ public class ShooterMap {
 
 	private static final SpeedController CAM_MOTOR = new CANTalon(Shooter.CAM_CHANNEL);
 	private static final SpeedController FLYWHEEL_MOTOR = new CANTalon(Shooter.FLYWHEEL_CHANNEL);
+	private static final SpeedController FLYWHEEL_MOTOR_2 = new CANTalon(Shooter.FLYWHEEL_CHANNEL_2);
+
 	private static final Encoder CAM_ENCODER = new Encoder(Shooter.CAM_ENC_CH_A, Shooter.CAM_ENC_CH_B, false,
 			CounterBase.EncodingType.k4X);
 	private static final DigitalInput BALL_LIM_SWITCH = new DigitalInput(Shooter.BALL_LIMIT_SWITCH);
@@ -63,6 +65,7 @@ public class ShooterMap {
 	public void setCurrentWheelSpeed(double speed) {
 		CowDash.setNum("Shooter_wheelSpeed", speed);
 		FLYWHEEL_MOTOR.set(speed);
+		FLYWHEEL_MOTOR_2.set(speed);
 	}
 
 	public void setShootWheelSpeed(double speed) {
