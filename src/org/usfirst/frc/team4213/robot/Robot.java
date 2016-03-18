@@ -152,8 +152,11 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousPeriodic() {
 		if(timer.get() <3){
-			drivemap.setLeftMotorSpeed(0.7);
-			drivemap.setLeftMotorSpeed(0.7);
+			drivemap.setLeftMotorSpeed(-0.7);
+			drivemap.setRightMotorSpeed(0.7);
+		}else if(timer.get() > 3){
+			drivemap.setLeftMotorSpeed(0);
+			drivemap.setRightMotorSpeed(0);
 		}
 	}
 
