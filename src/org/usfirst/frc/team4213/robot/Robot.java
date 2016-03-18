@@ -6,7 +6,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.team4213.lib14.AIRFLOController;
-import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
@@ -46,23 +45,12 @@ public class Robot extends IterativeRobot {
 
 	// Camera Controller
 	public static CowCamServer camServer;
-	// The Camera Server
-	public CowCamController shooterCameraController;
-	// public CowCamController frontCameraController;
-
-	// The Camera Image Processor
-//	public ShooterImageProcessor shooterProcessingTask;
+	
 	// The Thread Pool / Executor of Tasks to Use
 	public ScheduledExecutorService executor;
 	// A new Camera Controller for the Shooter
 	boolean allowedToSave = false;
 
-	static {
-		DriverStation.reportError("\n Loading OpenCV...", false);
-		// Loads the OpenCV Library from The RoboRIO's Local Lib Directory
-		System.load("/usr/local/lib/lib_OpenCV/java/libopencv_java2410.so");
-		DriverStation.reportError("\n Loaded OpenCV.", false);
-	}
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -81,22 +69,9 @@ public class Robot extends IterativeRobot {
 		timer = new Timer();
 
 		try {
+			camServer = new CowCamServer();
+			executor.scheduleWithFixedDelay(camServer, 0, 60, TimeUnit.MILLISECONDS);
 
-//			shooterCameraController = new CowCamController(0, 25);
-			// frontCameraController = new CowCamController(1, 25);
-
-//			shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
-//			camServer = new CowCamServer(1180, shooterCameraController, null);
-
-//			executor.scheduleWithFixedDelay(shooterCameraController, 0, 35, TimeUnit.MILLISECONDS);
-			// executor.scheduleWithFixedDelay(frontCameraController, 0,
-			// 35,TimeUnit.MILLISECONDS);
-
-//			executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
-//			executor.scheduleWithFixedDelay(camServer, 0, 35, TimeUnit.MILLISECONDS);
-//			executor.scheduleAtFixedRate(() -> {
-//				System.gc();
-//			} , 45, 45, TimeUnit.SECONDS);
 		} catch (Exception e) {
 			DriverStation.reportError("Failed vision start", true);
 		}
@@ -111,7 +86,7 @@ public class Robot extends IterativeRobot {
 		}
 		drivemap = new DriveMap();
 		driveTrain = new DriveController(drivemap);
-		ballSystems = new OperatorController(turret, shooter, intake, null, shooterCameraController);
+		ballSystems = new OperatorController(turret, shooter, intake);
 
 	}
 

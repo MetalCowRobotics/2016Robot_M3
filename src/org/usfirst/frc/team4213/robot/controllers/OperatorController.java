@@ -20,8 +20,6 @@ public class OperatorController {
 	private TurretMap turret;
 	private ShooterMap shooter;
 	private IntakeMap intake;
-	private ShooterImageProcessor imageProcessor;
-	private CowCamController cameraController;
 	private PIDController visionPIDX;
 	private PIDController visionPIDY;
 
@@ -36,13 +34,10 @@ public class OperatorController {
 	private OperatorState state;
 	private VisionState visionState;
 
-	public OperatorController(TurretMap turret, ShooterMap shooter, IntakeMap intake, ShooterImageProcessor processor,
-			CowCamController cameraController) {
+	public OperatorController(TurretMap turret, ShooterMap shooter, IntakeMap intake) {
 		this.turret = turret;
 		this.shooter = shooter;
 		this.intake = intake;
-		this.imageProcessor = processor;
-		this.cameraController = cameraController;
 		state = OperatorState.IDLE;
 		visionState = VisionState.OFF;
 		visionPIDX = new PIDController("Vision_PID_X", 10, 0, 0, 1);
