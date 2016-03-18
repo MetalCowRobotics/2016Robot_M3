@@ -82,21 +82,21 @@ public class Robot extends IterativeRobot {
 
 		try {
 
-//			shooterCameraController = new CowCamController(0, 25);
+			shooterCameraController = new CowCamController(0, 15);
 			// frontCameraController = new CowCamController(1, 25);
 
 //			shooterProcessingTask = new ShooterImageProcessor(shooterCameraController);
-//			camServer = new CowCamServer(1180, shooterCameraController, null);
+			camServer = new CowCamServer(1180, shooterCameraController, null);
 
-//			executor.scheduleWithFixedDelay(shooterCameraController, 0, 35, TimeUnit.MILLISECONDS);
+			executor.scheduleWithFixedDelay(shooterCameraController, 0, 35, TimeUnit.MILLISECONDS);
 			// executor.scheduleWithFixedDelay(frontCameraController, 0,
 			// 35,TimeUnit.MILLISECONDS);
 
 //			executor.scheduleWithFixedDelay(shooterProcessingTask, 0, 10, TimeUnit.MILLISECONDS);
-//			executor.scheduleWithFixedDelay(camServer, 0, 35, TimeUnit.MILLISECONDS);
-//			executor.scheduleAtFixedRate(() -> {
-//				System.gc();
-//			} , 45, 45, TimeUnit.SECONDS);
+			executor.scheduleWithFixedDelay(camServer, 0, 35, TimeUnit.MILLISECONDS);
+			executor.scheduleAtFixedRate(() -> {
+				System.gc();
+			} , 45, 45, TimeUnit.SECONDS);
 		} catch (Exception e) {
 			DriverStation.reportError("Failed vision start", true);
 		}
