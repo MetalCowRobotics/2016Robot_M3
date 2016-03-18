@@ -13,7 +13,6 @@ public class DriveController {
 	private static double rampRate;
 	public DriveController(DriveMap driveMap) {
 		this.driveMap = driveMap;
-		rampRate =  CowDash.getNum("Drive_Ramp_Rate", 0.05);
 	}
 
 	/**
@@ -27,6 +26,8 @@ public class DriveController {
 	 */
 	public void drive(AIRFLOController controller, boolean squareUnits) {
 ////		
+		rampRate =  CowDash.getNum("Drive_Ramp_Rate", 0.05);
+
 		double throttle = controller.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
 				Drivetrain.SPRINT_SPEED);
 		
@@ -37,21 +38,21 @@ public class DriveController {
 		double rightSetSpeed = rightSpeed;
 		
 		if(leftSpeed > driveMap.getLeftMotorSpeed()){
-			if(Math.abs(driveMap.getLeftMotorSpeed() - leftSpeed) > rampRate){
+			if(Math.abs(leftSpeed - driveMap.getLeftMotorSpeed()) > rampRate){
 				leftSetSpeed = driveMap.getLeftMotorSpeed() + rampRate;
 			}
 		}else if(leftSpeed <= driveMap.getLeftMotorSpeed()){
-			if(Math.abs(driveMap.getLeftMotorSpeed() - leftSpeed) < rampRate){
+			if(Math.abs(leftSpeed - driveMap.getLeftMotorSpeed()) > rampRate){
 				leftSetSpeed = driveMap.getLeftMotorSpeed() - rampRate;
 			}
 		}
 		
 		if(rightSpeed > driveMap.getRightMotorSpeed()){
-			if(Math.abs(driveMap.getRightMotorSpeed() - rightSpeed) > rampRate){
+			if(Math.abs(rightSpeed - driveMap.getRightMotorSpeed()) > rampRate){
 				rightSetSpeed = driveMap.getRightMotorSpeed() + rampRate;
 			}
 		}else if(rightSpeed <= driveMap.getRightMotorSpeed()){
-			if(Math.abs(driveMap.getRightMotorSpeed() - rightSpeed) < rampRate){
+			if(Math.abs(rightSpeed - driveMap.getRightMotorSpeed()) > rampRate){
 				rightSetSpeed = driveMap.getRightMotorSpeed() - rampRate;
 			}
 		}
