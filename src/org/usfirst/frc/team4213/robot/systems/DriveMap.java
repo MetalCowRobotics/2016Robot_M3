@@ -1,6 +1,9 @@
 package org.usfirst.frc.team4213.robot.systems;
 
+import com.kauailabs.nav6.frc.IMU;
+
 import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Talon;
 
@@ -8,6 +11,7 @@ public class DriveMap{
 
 	private static final SpeedController LEFT_MOTOR = new Talon(RobotMap.Drivetrain.LEFT_MOTOR_CHANNEL);
 	private static final SpeedController RIGHT_MOTOR = new Talon(RobotMap.Drivetrain.RIGHT_MOTOR_CHANNEL);
+	private static final IMU IMU = new IMU(new SerialPort(57600, SerialPort.Port.kOnboard));
 
 //	/**
 //	 * This one will actually move the robot.
@@ -36,5 +40,9 @@ public class DriveMap{
 	
 	public double getLeftMotorSpeed(){
 		return -LEFT_MOTOR.get();
+	}
+	
+	public double getIMURotation(){
+		return IMU.getYaw();
 	}
 }
