@@ -29,4 +29,12 @@ public class DriveMap{
 	public void setRightMotorSpeed(double speed){
 		RIGHT_MOTOR.set(speed);
 	}
+	
+	public double getRightMotorSpeed(){
+		return RIGHT_MOTOR.get();
+	}
+	
+	public double getLeftMotorSpeed(){
+		return LEFT_MOTOR.get();
+	}
 }

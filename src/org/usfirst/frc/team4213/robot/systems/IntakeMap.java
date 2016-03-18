@@ -39,7 +39,7 @@ public class IntakeMap {
 	public void setPitchSpeed(double speed) {
 		if (!hasHitZero) {
 			PITCH_MOTOR.set(Intake.LOWER_SPEED);
-			if (Math.abs(getEncDistance()) > 135) {
+			if (Math.abs(getEncDistance()) > 140) {
 				desiredPitchAngle = 0;
 				resetEnc();
 				hasHitZero = true;

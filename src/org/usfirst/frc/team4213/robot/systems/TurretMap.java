@@ -6,6 +6,7 @@ import org.usfirst.frc.team4213.robot.systems.RobotMap.Turret;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 
@@ -86,16 +87,22 @@ public class TurretMap { // Replace these with the Constants
 		if ((speed > 0 && getPitchEncDistance() > Turret.Pitch_Motor.MAX_ANGLE)
 				|| (speed < 0 && getPitchEncDistance() < 0)) {
 			setRawPitchSpeed(0);
+			speed = 0;
 			return;
 		}
 
 		if (state == TurretState.ENGAGED) {
-			if (speed < 0 && getPitchEncDistance() < Turret.Pitch_Motor.MIN_ANGLE) {
-				setRawPitchSpeed(0);
-				return;
+			if (speed < 0) {
+				if(getPitchEncDistance() < Turret.Pitch_Motor.MIN_ANGLE){
+					DriverStation.reportError("We Cannot Go Any Lower", false);
+					setRawPitchSpeed(0);
+					speed = 0;
+					return;
+				}
 			}
 		}
-
+		
+		DriverStation.reportError("\n Speed : " + speed + "; Current Pos : " + getPitchEncDistance() + "; State : " + state.toString(), false);
 		setRawPitchSpeed(speed);
 	}
 
@@ -123,23 +130,23 @@ public class TurretMap { // Replace these with the Constants
 		state = TurretState.IDLING;
 	}
 
-	public void bumpTurretUp() {
-		if (PITCH_PID.getTarget() < Turret.Pitch_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
-			PITCH_PID.bumpTarget(Turret.Pitch_Motor.BUMP_AMT);
-			// DriverStation.reportError("\n Moving Turret Up", false);
-		} else {
-			// DriverStation.reportError("\n At Max Pitch Angle", false);
-		}
-	}
-
-	public void bumpTurretDown() {
-		if (PITCH_PID.getTarget() > Turret.Pitch_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
-			PITCH_PID.bumpTarget(-Turret.Pitch_Motor.BUMP_AMT);
-			// DriverStation.reportError("\n Moving Turret Down", false);
-		} else {
-			// DriverStation.reportError("\n At Min Pitch Angle", false);
-		}
-	}
+//	public void bumpTurretUp() {
+//		if (PITCH_PID.getTarget() < Turret.Pitch_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
+//			PITCH_PID.bumpTarget(Turret.Pitch_Motor.BUMP_AMT);
+//			// DriverStation.reportError("\n Moving Turret Up", false);
+//		} else {
+//			// DriverStation.reportError("\n At Max Pitch Angle", false);
+//		}
+//	}
+//
+//	public void bumpTurretDown() {
+//		if (PITCH_PID.getTarget() > Turret.Pitch_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
+//			PITCH_PID.bumpTarget(-Turret.Pitch_Motor.BUMP_AMT);
+//			// DriverStation.reportError("\n Moving Turret Down", false);
+//		} else {
+//			// DriverStation.reportError("\n At Min Pitch Angle", false);
+//		}
+//	}
 
 	public void bumpTurretRight() {
 		if (YAW_PID.getTarget() < Turret.Yaw_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
@@ -165,6 +172,7 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
+	
 	public void manualYawOverride(double speed) {
 		overrideYawPID = true;
 		if (state == TurretState.ENGAGED) {
@@ -225,7 +233,7 @@ public class TurretMap { // Replace these with the Constants
 			if (Math.abs(PITCH_PID.getError()) < Turret.Pitch_Motor.ABS_TOLERANCE) {
 				YAW_PID.setTarget(-180);
 				if(Math.abs(YAW_PID.getError()) < Turret.Yaw_Motor.ABS_TOLERANCE){
-					state = TurretState.ENGAGED;
+						state = TurretState.ENGAGED;
 				}
 			}
 			break;

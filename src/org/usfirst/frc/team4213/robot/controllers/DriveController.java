@@ -6,13 +6,17 @@ import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Drivetrain;
 
+import edu.wpi.first.wpilibj.Timer;
+
 
 public class DriveController {
 
 	private DriveMap driveMap;
-	
+	private Timer rampTimer;
+	private final static double rampRate = 0.1;
 	public DriveController(DriveMap driveMap) {
 		this.driveMap = driveMap;
+		rampTimer.start();
 	}
 
 	/**
@@ -25,16 +29,38 @@ public class DriveController {
 	 *            speeds
 	 */
 	public void drive(AIRFLOController controller, boolean squareUnits) {
-		
-
-
-		
 //		
 		double throttle = controller.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
 				Drivetrain.SPRINT_SPEED);
 		
-		driveMap.setLeftMotorSpeed(-controller.getRY() * throttle);
-		driveMap.setRightMotorSpeed(controller.getLY() * throttle);
+		final double leftSpeed = controller.getRY() * throttle;
+		final double rightSpeed = controller.getLY() * throttle;
+		
+		double leftSetSpeed = leftSpeed;
+		double rightSetSpeed = rightSpeed;
+		
+		if(leftSpeed > driveMap.getLeftMotorSpeed()){
+			if(Math.abs(driveMap.getLeftMotorSpeed() - leftSpeed) > rampRate){
+				leftSetSpeed = driveMap.getLeftMotorSpeed() + rampRate;
+			}
+		}else if(leftSpeed <= driveMap.getLeftMotorSpeed()){
+			if(Math.abs(driveMap.getLeftMotorSpeed() - leftSpeed) < rampRate){
+				leftSetSpeed = driveMap.getLeftMotorSpeed() - rampRate;
+			}
+		}
+		
+		if(rightSpeed > driveMap.getRightMotorSpeed()){
+			if(Math.abs(driveMap.getRightMotorSpeed() - rightSpeed) > rampRate){
+				rightSetSpeed = driveMap.getRightMotorSpeed() + rampRate;
+			}
+		}else if(rightSpeed <= driveMap.getRightMotorSpeed()){
+			if(Math.abs(driveMap.getRightMotorSpeed() - rightSpeed) < rampRate){
+				rightSetSpeed = driveMap.getRightMotorSpeed() - rampRate;
+			}
+		}
+		
+		driveMap.setLeftMotorSpeed(-leftSetSpeed);
+		driveMap.setRightMotorSpeed(rightSetSpeed);
 //		double leftStick = driverController.getLY();
 //
 //		// Read the values from the controller
