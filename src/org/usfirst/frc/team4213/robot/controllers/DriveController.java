@@ -2,6 +2,7 @@ package org.usfirst.frc.team4213.robot.controllers;
 
 import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowDash;
+import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Drivetrain;
@@ -57,9 +58,13 @@ public class DriveController {
 			}
 		}
 		
-
-		driveMap.setLeftMotorSpeed(-leftSetSpeed);
-		driveMap.setRightMotorSpeed(rightSetSpeed);
+		if(controller.getButton(GamepadButton.A)){
+			driveMap.setLeftMotorSpeed(-rightSetSpeed);
+			driveMap.setRightMotorSpeed(rightSetSpeed);
+		}else{
+			driveMap.setLeftMotorSpeed(-leftSetSpeed);
+			driveMap.setRightMotorSpeed(rightSetSpeed);
+		}
 //		double leftStick = driverController.getLY();
 //
 //		// Read the values from the controller
