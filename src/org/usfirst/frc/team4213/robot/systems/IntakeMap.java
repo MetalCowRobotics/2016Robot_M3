@@ -1,11 +1,13 @@
 package org.usfirst.frc.team4213.robot.systems;
 
+import org.team4213.lib14.CowDash;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Intake;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 
 public class IntakeMap {
 
@@ -13,20 +15,17 @@ public class IntakeMap {
 	public final SpeedController PITCH_MOTOR = new CANTalon(Intake.PITCH_MOTOR_CHANNEL);
 	public Encoder PITCH_ENCODER = new Encoder(Intake.ENCODER_CH_A, Intake.ENCODER_CH_B, false, CounterBase.EncodingType.k4X);
 
+	private Timer moveTimer;
 	private IntakeState state;
-	private int desiredPitchAngle = 0;
-	private double pidError = 10;
-	private double lastPidError = 0;
-	private boolean hasHitZero = false;
 
 	public enum IntakeState {
-		DOWN, EJECT, INTAKE, UP;
+		DOWN, EJECT, INTAKE, UP, RAISING , LOWERING ;
 	}
 
 	public IntakeMap() {
 		setEncDistPerPulse(1 / Intake.COUNT_PER_DEG);
 		state = IntakeState.DOWN;
-		desiredPitchAngle = 0;
+		moveTimer = new Timer();
 		resetEnc();
 		PITCH_ENCODER.setReverseDirection(true);
 		
@@ -37,16 +36,7 @@ public class IntakeMap {
 	}
 
 	public void setPitchSpeed(double speed) {
-		if (!hasHitZero) {
-			PITCH_MOTOR.set(Intake.LOWER_SPEED);
-			if (Math.abs(getEncDistance()) > 140) {
-				desiredPitchAngle = 0;
-				resetEnc();
-				hasHitZero = true;
-			}
-		} else {
-			PITCH_MOTOR.set(speed);
-		}
+		PITCH_MOTOR.set(speed);
 	}
 
 	public double getEncPosition() {
@@ -65,17 +55,14 @@ public class IntakeMap {
 		PITCH_ENCODER.setDistancePerPulse(distancePerPulse);
 	}
 
-	public void runPitchPID() {
-		pidError = desiredPitchAngle - getEncDistance();
-		setPitchSpeed(pidError * Intake.PID_P_VAL);
-	}
-
 	public IntakeState getState() {
 		return state;
 	}
 
 	public void idle() {
-		state = IntakeState.DOWN;
+		moveTimer.reset();
+		moveTimer.start();
+		state = IntakeState.LOWERING;
 	}
 
 	public void eject() {
@@ -87,33 +74,47 @@ public class IntakeMap {
 	}
 
 	public void raise() {
-		state = IntakeState.UP;
+		moveTimer.reset();
+		moveTimer.start();
+		state = IntakeState.RAISING;
 	}
 
 	public void step() {
 		switch (state) {
 		case EJECT:
 			setRollerSpeed(Intake.EJECT_SPEED);
-			desiredPitchAngle = 0;
 			break;
 		case INTAKE:
 			setRollerSpeed(Intake.INTAKE_SPEED);
-			desiredPitchAngle = 0;
 			break;
 		case UP:
+			setPitchSpeed(0);
 			setRollerSpeed(0);
-			desiredPitchAngle = Intake.RAISE_ANGLE;
 			break;
 		case DOWN:
+			setPitchSpeed(0);
 			setRollerSpeed(0);
-			desiredPitchAngle = 0;
 			break;
+		case RAISING:
+			if(moveTimer.get() < CowDash.getNum("Intake_Rise_Time", 8)){
+			setPitchSpeed(Intake.RAISE_SPEED);
+			setRollerSpeed(0);
+			}else{
+				state = IntakeState.UP;
+			}
+			break;
+		case LOWERING:
+			if(moveTimer.get() < CowDash.getNum("Intake_Lower_Time", 8)){
+				setPitchSpeed(Intake.LOWER_SPEED);
+				setRollerSpeed(0);
+			}else{
+				state = IntakeState.DOWN;
+			}
+			break;
+		
 		default:
 			break;
 		}
-		
-		runPitchPID();
-		lastPidError = pidError;
 	}
 
 }

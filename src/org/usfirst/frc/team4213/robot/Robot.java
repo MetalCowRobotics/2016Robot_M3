@@ -166,27 +166,28 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		turret.setRawPitchSpeed(gunnerController.getLY());
-		turret.setRawYawSpeed(gunnerController.getRX());
-
-		if (gunnerController.getButton(GamepadButton.A))
-			shooter.setCurrentWheelSpeed(1);
-		else if (gunnerController.getButton(GamepadButton.B))
-			shooter.setCurrentWheelSpeed(-1);
-		else
-			shooter.setCurrentWheelSpeed(0);
-
-		if (gunnerController.getButton(GamepadButton.X))
-			shooter.setCamSpeed(1);
-		else if (gunnerController.getButton(GamepadButton.Y))
-			shooter.setCamSpeed(-1);
-		else
-			shooter.setCamSpeed(0);
-
-		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
-		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
-		driveTrain.drive(driverController, true);
-		intake.setPitchSpeed(driverController.getLY());
+//		turret.setRawPitchSpeed(gunnerController.getLY());
+//		turret.setRawYawSpeed(gunnerController.getRX());
+//
+//		if (gunnerController.getButton(GamepadButton.A))
+//			shooter.setCurrentWheelSpeed(1);
+//		else if (gunnerController.getButton(GamepadButton.B))
+//			shooter.setCurrentWheelSpeed(-1);
+//		else
+//			shooter.setCurrentWheelSpeed(0);
+//
+//		if (gunnerController.getButton(GamepadButton.X))
+//			shooter.setCamSpeed(1);
+//		else if (gunnerController.getButton(GamepadButton.Y))
+//			shooter.setCamSpeed(-1);
+//		else
+//			shooter.setCamSpeed(0);
+//
+//		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
+//		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
+//		driveTrain.drive(driverController, true);
+		intake.setPitchSpeed(gunnerController.getLY());
+		
 	}
 
 }
