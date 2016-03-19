@@ -35,6 +35,6 @@ public class DriveMap{
 	}
 	
 	public double getLeftMotorSpeed(){
-		return -LEFT_MOTOR.get();
+		return LEFT_MOTOR.get();
 	}
 }
