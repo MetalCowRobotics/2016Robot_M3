@@ -16,7 +16,6 @@ public class IntakeMap {
 	private IntakeState state;
 	private int desiredPitchAngle = 0;
 	private double pidError = 10;
-	private double lastPidError = 0;
 	private boolean hasHitZero = false;
 
 	public enum IntakeState {
@@ -113,7 +112,6 @@ public class IntakeMap {
 		}
 		
 		runPitchPID();
-		lastPidError = pidError;
 	}
 
 }
