@@ -96,11 +96,11 @@ public class OperatorController {
 		}
 
 		// ENGAGING TURRET
-		if (controller.getButtonTripped(GamepadButton.LT) && state == OperatorState.IDLE) {
+		if (controller.getButtonTripped(GamepadButton.LT) && state == OperatorState.IDLE && intake.getState() == IntakeState.DOWN) {
 			// DriverStation.reportError("\n ENGAGING", false);
 			turret.engage();
 			state = OperatorState.TURRET_ENGAGED;
-		} else if (controller.getButtonReleased(GamepadButton.LT) && state == OperatorState.TURRET_ENGAGED) {
+		} else if (controller.getButtonReleased(GamepadButton.LT) && state == OperatorState.TURRET_ENGAGED ) {
 			// DriverStation.reportError("\n DISENGAGING", false);
 			idleAll();
 			state = OperatorState.IDLE;
