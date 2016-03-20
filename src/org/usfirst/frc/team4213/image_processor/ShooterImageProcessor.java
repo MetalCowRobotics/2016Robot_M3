@@ -18,17 +18,14 @@ import org.team4213.lib14.CowCamController;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.ImageProcessingTask;
 import org.team4213.lib14.Target;
+import org.usfirst.frc.team4213.robot.systems.RobotMap.Camera;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class ShooterImageProcessor implements ImageProcessingTask{
 	public final static int THRESH = 100;
 	public final static int THRESH_MAX = 255;
-	public final static int FRAME_WIDTH = 320;
-	public final static int FRAME_HEIGHT = 240;
-	public final static double CAM_FOV_DIAG = 60;
-	public final static double DEG_PER_PX = CAM_FOV_DIAG
-			/ Math.sqrt(Math.pow(FRAME_WIDTH, 2) + Math.pow(FRAME_HEIGHT, 2));
+	
 	
 	public final static Scalar BLUE = new Scalar(255,0,0);
 	public final static Scalar GREEN = new Scalar(0,255,0);
@@ -154,8 +151,8 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 					CowDash.setNum("Vision_target_x", center.x);
 					CowDash.setNum("Vision_target_y", center.y);
 					if (CowDash.getBool("Vision_debug", true)) Core.circle(debugImage, center, 2, GREEN, -1);
-					final double angleX = DEG_PER_PX * (center.x - (FRAME_WIDTH / 2));
-					final double angleY = -DEG_PER_PX * (center.y - (FRAME_HEIGHT / 2));
+					final double angleX = Camera.DEG_PER_PX * (center.x - (Camera.FRAME_WIDTH / 2));
+					final double angleY = -Camera.DEG_PER_PX * (center.y - (Camera.FRAME_HEIGHT / 2));
 					DriverStation.reportError("Angle X :" + angleX + " (Angle Y) :" + angleY , false);
 					final double distance = 0; // x = angle of Shooter (FROM ENCODER);
 												// (77.5/12)/Math.tan(x+angleY);
@@ -184,13 +181,13 @@ public class ShooterImageProcessor implements ImageProcessingTask{
 		int y_offset = (int)CowDash.getNum("Vision_Crosshair_Y", 0);
 		// Horizontal Line
 		Core.line(img, 
-				new Point(FRAME_WIDTH/2 - radius + x_offset, FRAME_HEIGHT/2 - y_offset),  
-				new Point(FRAME_WIDTH/2 + radius + x_offset, FRAME_HEIGHT/2 - y_offset)
+				new Point(Camera.FRAME_WIDTH/2 - radius + x_offset, Camera.FRAME_HEIGHT/2 - y_offset),  
+				new Point(Camera.FRAME_WIDTH/2 + radius + x_offset, Camera.FRAME_HEIGHT/2 - y_offset)
 		, ORANGE, 1);
 		// Vertical Line
 		Core.line(img, 
-				new Point(FRAME_WIDTH/2 + x_offset, FRAME_HEIGHT/2 - radius - y_offset),  
-				new Point(FRAME_WIDTH/2 + x_offset, FRAME_HEIGHT/2 + radius - y_offset)
+				new Point(Camera.FRAME_WIDTH/2 + x_offset, Camera.FRAME_HEIGHT/2 - radius - y_offset),  
+				new Point(Camera.FRAME_WIDTH/2 + x_offset, Camera.FRAME_HEIGHT/2 + radius - y_offset)
 		, ORANGE, 1);
 		// Circle
 //		Core.circle(img, new Point(FRAME_WIDTH/2 + (int)CowDash.getNum("Vision_Crosshair_X", 0),FRAME_HEIGHT/2 - (int)CowDash.getNum("Vision_Crosshair_Y", 0)), radius, ORANGE);
