@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 
-public class TurretMap { // Replace these with the Constants
+public class TurretMap {
 	private static final SpeedController YAW_MOTOR = new CANTalon(Turret.Yaw_Motor.MOTOR_CHANNEL);
 	private static final SpeedController PITCH_MOTOR = new CANTalon(Turret.Pitch_Motor.MOTOR_CHANNEL);
 	private static final Encoder YAW_ENC = new Encoder(Turret.Yaw_Motor.ENC_CH_A, Turret.Yaw_Motor.ENC_CH_B, true,
@@ -23,6 +23,8 @@ public class TurretMap { // Replace these with the Constants
 	private boolean overrideYawPID;
 	private boolean overridePitchPID;
 
+	private boolean stateSet;
+
 	private TurretState state;
 
 	public enum TurretState {
@@ -30,12 +32,19 @@ public class TurretMap { // Replace these with the Constants
 	}
 
 	public TurretMap() {
-		state = TurretState.IDLE;
+		// Set Current State of Turret
+		setState(TurretState.IDLE);
+
+		// Setup Yaw
 		YAW_ENC.reset();
 		YAW_ENC.setDistancePerPulse(1 / Turret.Yaw_Motor.COUNT_PER_DEG);
+
+		// Setup Pitch
 		PITCH_ENC.reset();
 		PITCH_ENC.setDistancePerPulse(1 / Turret.Pitch_Motor.COUNT_PER_DEG);
 		PITCH_MOTOR.setInverted(true);
+
+		// Sets Overrides to False
 		overridePitchPID = false;
 		overrideYawPID = false;
 	}
@@ -91,18 +100,11 @@ public class TurretMap { // Replace these with the Constants
 			return;
 		}
 
-		if (state == TurretState.ENGAGED) {
-			if (speed < 0) {
-				if(getPitchEncDistance() < Turret.Pitch_Motor.MIN_ANGLE){
-					DriverStation.reportError("We Cannot Go Any Lower", false);
-					setRawPitchSpeed(0);
-					speed = 0;
-					return;
-				}
-			}
+		if (state == TurretState.ENGAGED && speed < 0 && getPitchEncDistance() < Turret.Pitch_Motor.MIN_ANGLE) {
+			DriverStation.reportError("We Cannot Go Any Lower", false);
+			setRawPitchSpeed(0);
+			return;
 		}
-		
-		DriverStation.reportError("\n Speed : " + speed + "; Current Pos : " + getPitchEncDistance() + "; State : " + state.toString(), false);
 		setRawPitchSpeed(speed);
 	}
 
@@ -123,30 +125,12 @@ public class TurretMap { // Replace these with the Constants
 	}
 
 	public void engage() {
-		state = TurretState.ENGAGING;
+		setState(TurretState.ENGAGING);
 	}
 
 	public void idle() {
-		state = TurretState.IDLING;
+		setState(TurretState.IDLING);
 	}
-
-//	public void bumpTurretUp() {
-//		if (PITCH_PID.getTarget() < Turret.Pitch_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
-//			PITCH_PID.bumpTarget(Turret.Pitch_Motor.BUMP_AMT);
-//			// DriverStation.reportError("\n Moving Turret Up", false);
-//		} else {
-//			// DriverStation.reportError("\n At Max Pitch Angle", false);
-//		}
-//	}
-//
-//	public void bumpTurretDown() {
-//		if (PITCH_PID.getTarget() > Turret.Pitch_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
-//			PITCH_PID.bumpTarget(-Turret.Pitch_Motor.BUMP_AMT);
-//			// DriverStation.reportError("\n Moving Turret Down", false);
-//		} else {
-//			// DriverStation.reportError("\n At Min Pitch Angle", false);
-//		}
-//	}
 
 	public void bumpTurretRight() {
 		if (YAW_PID.getTarget() < Turret.Yaw_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
@@ -172,7 +156,6 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	
 	public void manualYawOverride(double speed) {
 		overrideYawPID = true;
 		if (state == TurretState.ENGAGED) {
@@ -192,6 +175,11 @@ public class TurretMap { // Replace these with the Constants
 		if (state == TurretState.ENGAGED) {
 			PITCH_PID.setTarget(getPitchEncDistance() + angle);
 		}
+	}
+
+	public void setState(TurretState state) {
+		stateSet = false;
+		this.state = state;
 	}
 
 	private void runPitchPID() {
@@ -223,7 +211,7 @@ public class TurretMap { // Replace these with the Constants
 			if (Math.abs(YAW_PID.getError()) < Turret.Yaw_Motor.ABS_TOLERANCE) {
 				PITCH_PID.setTarget(0);
 				if (Math.abs(PITCH_PID.getError()) < Turret.Pitch_Motor.ABS_TOLERANCE) {
-					state = TurretState.IDLE;
+					setState(TurretState.IDLE);
 				}
 			}
 			break;
@@ -232,18 +220,24 @@ public class TurretMap { // Replace these with the Constants
 			PITCH_PID.setTarget(Turret.Pitch_Motor.MIN_ANGLE);
 			if (Math.abs(PITCH_PID.getError()) < Turret.Pitch_Motor.ABS_TOLERANCE) {
 				YAW_PID.setTarget(-180);
-				if(Math.abs(YAW_PID.getError()) < Turret.Yaw_Motor.ABS_TOLERANCE){
-						state = TurretState.ENGAGED;
+				if (Math.abs(YAW_PID.getError()) < Turret.Yaw_Motor.ABS_TOLERANCE) {
+					setState(TurretState.ENGAGED);
 				}
 			}
 			break;
 		case ENGAGED:
-			CowDash.setString("Turret_state", "ENGAGED");
+			if (!stateSet) {
+				CowDash.setString("Turret_state", "ENGAGED");
+				stateSet = true;
+			}
 			break;
 		case IDLE:
-			CowDash.setString("Turret_state", "IDLE");
-			setPitchSpeed(0);
-			setYawSpeed(0);
+			if (!stateSet) {
+				CowDash.setString("Turret_state", "IDLE");
+				setPitchSpeed(0);
+				setYawSpeed(0);
+				stateSet = true;
+			}
 			break;
 		default:
 			CowDash.setString("Turret_state", "I_AM_ERROR");

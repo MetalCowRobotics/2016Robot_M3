@@ -1,7 +1,5 @@
 package org.usfirst.frc.team4213.robot.systems;
 
-import org.team4213.lib14.CowDash;
-
 public final class RobotMap {
 
 	// IDEA: - to extrapolate to a .txt file
@@ -33,7 +31,7 @@ public final class RobotMap {
 			public static final int MIN_ANGLE = -360;
 			public static final double ABS_TOLERANCE = 3;
 			public static final double BUMP_AMT = 3;
-			public static final double MAX_SPEED = 0.45;
+			public static final double MAX_SPEED = 0.6; // OLD WAS .45
 		}
 
 		public final class Pitch_Motor {

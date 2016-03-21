@@ -9,7 +9,6 @@ import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
-import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
@@ -31,26 +30,30 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class Robot extends IterativeRobot {
 
+	// RAW SYSTEMS
 	TurretMap turret;
-	IntakeMap intake; // TODO: Stitch in and test intake
+	IntakeMap intake;
 	ShooterMap shooter;
+	DriveMap drivemap;
 
+	// GAMEPADS
 	AIRFLOController driverController;
 	CowGamepad gunnerController;
 
+	// SYSTEM CONTROLLERS
 	DriveController driveTrain;
 	OperatorController ballSystems;
-	DriveMap drivemap;
-	Timer timer;
+
+	Timer autonTimer;
 
 	// Camera Controller
 	public static CowCamServer camServer;
-	
+
 	// The Thread Pool / Executor of Tasks to Use
 	public ScheduledExecutorService executor;
-	// A new Camera Controller for the Shooter
-	boolean allowedToSave = false;
 
+	// Boolean for Saving Ability
+	boolean allowedToSave = false;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -59,19 +62,23 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 
+		// Loads the Dashboard
 		CowDash.load();
 
+		// Initialize Gamepads
 		driverController = new AIRFLOController(0);
 		gunnerController = new Xbox360Controller(1);
 
+		// Initialize Executor
 		executor = Executors.newScheduledThreadPool(1);
 
-		timer = new Timer();
+		// Initialize Timer for Autonomous
+		autonTimer = new Timer();
 
+		// Initialize and Run Camera Server
 		try {
 			camServer = new CowCamServer();
-			executor.scheduleWithFixedDelay(camServer, 0, 80, TimeUnit.MILLISECONDS);
-
+			executor.scheduleWithFixedDelay(camServer, 0, 60, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			DriverStation.reportError("Failed vision start", true);
 		}
@@ -79,11 +86,8 @@ public class Robot extends IterativeRobot {
 		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
-		try{
 		intake = new IntakeMap();
-		}catch(Exception ex){
-			DriverStation.reportError(ex.getMessage(), false);
-		}
+
 		drivemap = new DriveMap();
 		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, intake);
@@ -116,9 +120,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		// TODO: AUTO!!!
-		timer.reset();
-		timer.start();
+		autonTimer.reset();
+		autonTimer.start();
 	}
 
 	/**
@@ -126,13 +129,18 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		if(timer.get() <3){
+		if (autonTimer.get() < 3) {
 			drivemap.setLeftMotorSpeed(-0.7);
 			drivemap.setRightMotorSpeed(0.7);
-		}else if(timer.get() > 3){
+		} else if (autonTimer.get() > 3) {
 			drivemap.setLeftMotorSpeed(0);
 			drivemap.setRightMotorSpeed(0);
 		}
+	}
+
+	@Override
+	public void teleopInit() {
+		autonTimer.stop();
 	}
 
 	/**
@@ -141,8 +149,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		driverController.prestep();
-		gunnerController.prestep();
+		// driverController.prestep();
+		// gunnerController.prestep();
 
 		ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
@@ -154,8 +162,8 @@ public class Robot extends IterativeRobot {
 		// camServer.setCam(shooterCameraController);
 		// }
 
-		driverController.endstep();
-		gunnerController.endstep();
+		// driverController.endstep();
+		// gunnerController.endstep();
 	}
 
 	/**
@@ -166,28 +174,30 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-//		turret.setRawPitchSpeed(gunnerController.getLY());
-//		turret.setRawYawSpeed(gunnerController.getRX());
-//
-//		if (gunnerController.getButton(GamepadButton.A))
-//			shooter.setCurrentWheelSpeed(1);
-//		else if (gunnerController.getButton(GamepadButton.B))
-//			shooter.setCurrentWheelSpeed(-1);
-//		else
-//			shooter.setCurrentWheelSpeed(0);
-//
-//		if (gunnerController.getButton(GamepadButton.X))
-//			shooter.setCamSpeed(1);
-//		else if (gunnerController.getButton(GamepadButton.Y))
-//			shooter.setCamSpeed(-1);
-//		else
-//			shooter.setCamSpeed(0);
-//
-//		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
-//		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
-//		driveTrain.drive(driverController, true);
-		intake.setPitchSpeed(gunnerController.getLY());
-		
+		// turret.setRawPitchSpeed(gunnerController.getLY());
+		// turret.setRawYawSpeed(gunnerController.getRX());
+		//
+		// if (gunnerController.getButton(GamepadButton.A))
+		// shooter.setCurrentWheelSpeed(1);
+		// else if (gunnerController.getButton(GamepadButton.B))
+		// shooter.setCurrentWheelSpeed(-1);
+		// else
+		// shooter.setCurrentWheelSpeed(0);
+		//
+		// if (gunnerController.getButton(GamepadButton.X))
+		// shooter.setCamSpeed(1);
+		// else if (gunnerController.getButton(GamepadButton.Y))
+		// shooter.setCamSpeed(-1);
+		// else
+		// shooter.setCamSpeed(0);
+		//
+		// DriverStation.reportError("\n Enc 1 Position:" +
+		// shooter.getFlyEncDist(), false);
+		// DriverStation.reportError("\n Enc 2 Revolutions:" +
+		// turret.getYawEncPosition() / 1024, false);
+		// driveTrain.drive(driverController, true);
+		// intake.setPitchSpeed(gunnerController.getLY());
+
 	}
 
 }
