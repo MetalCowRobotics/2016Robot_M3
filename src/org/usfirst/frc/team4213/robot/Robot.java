@@ -141,8 +141,6 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-//		driverController.prestep();
-		gunnerController.prestep();
 
 		ballSystems.drive(gunnerController);
 //		driveTrain.drive(driverController, true);
@@ -154,8 +152,6 @@ public class Robot extends IterativeRobot {
 		// camServer.setCam(shooterCameraController);
 		// }
 
-//		driverController.endstep();
-		gunnerController.endstep();
 	}
 
 	/**
