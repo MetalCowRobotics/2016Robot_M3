@@ -70,7 +70,7 @@ public class Robot extends IterativeRobot {
 
 		try {
 			camServer = new CowCamServer();
-			executor.scheduleWithFixedDelay(camServer, 0, 80, TimeUnit.MILLISECONDS);
+			executor.scheduleWithFixedDelay(camServer, 0, 60, TimeUnit.MILLISECONDS);
 
 		} catch (Exception e) {
 			DriverStation.reportError("Failed vision start", true);
