@@ -8,11 +8,12 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.SpeedController;
 
 public class TurretMap { // Replace these with the Constants
-	private static final SpeedController YAW_MOTOR = new CANTalon(Turret.Yaw_Motor.MOTOR_CHANNEL);
-	private static final SpeedController PITCH_MOTOR = new CANTalon(Turret.Pitch_Motor.MOTOR_CHANNEL);
+	private static final SpeedController YAW_MOTOR = new Jaguar(Turret.Yaw_Motor.MOTOR_CHANNEL);
+	private static final SpeedController PITCH_MOTOR = new Jaguar(Turret.Pitch_Motor.MOTOR_CHANNEL);
 	private static final Encoder YAW_ENC = new Encoder(Turret.Yaw_Motor.ENC_CH_A, Turret.Yaw_Motor.ENC_CH_B, true,
 			CounterBase.EncodingType.k4X);
 	private static final Encoder PITCH_ENC = new Encoder(Turret.Pitch_Motor.ENC_CH_A, Turret.Pitch_Motor.ENC_CH_B, true,
@@ -102,7 +103,6 @@ public class TurretMap { // Replace these with the Constants
 			}
 		}
 		
-		DriverStation.reportError("\n Speed : " + speed + "; Current Pos : " + getPitchEncDistance() + "; State : " + state.toString(), false);
 		setRawPitchSpeed(speed);
 	}
 

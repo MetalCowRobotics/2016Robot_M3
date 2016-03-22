@@ -20,7 +20,7 @@ public final class RobotMap {
 
 	public final class Turret {
 		public final class Yaw_Motor {
-			public static final int MOTOR_CHANNEL = 1;
+			public static final int MOTOR_CHANNEL = 6;
 			public static final int STRING_POT = 0;
 			public static final int LIMIT_SWITCH = 8;
 			public static final int OFFSET = 0;
@@ -37,7 +37,7 @@ public final class RobotMap {
 		}
 
 		public final class Pitch_Motor {
-			public static final int MOTOR_CHANNEL = 3;
+			public static final int MOTOR_CHANNEL = 2;
 			private static final int GEARSGR = 3;
 			private static final int PLANETARYGR = 188;
 			private static final int PPR = 7;
@@ -80,7 +80,7 @@ public final class RobotMap {
 	}
 
 	public final class Shooter {
-		public static final int CAM_CHANNEL = 0;
+		public static final int CAM_CHANNEL = 5;
 		public static final int CAM_ENC_CH_A = 0;
 		public static final int CAM_ENC_CH_B = 1;
 		private static final int CAM_GEARSGR = 3;
@@ -88,8 +88,8 @@ public final class RobotMap {
 		private static final double CAM_PPR = 7.0;
 		public static final double CAM_PPD = (CAM_GEARSGR * CAM_PLANETARYGR * CAM_PPR) / 360.0;
 
-		public static final int FLYWHEEL_CHANNEL = 4;
-		public static final int FLYWHEEL_CHANNEL_2 = 5;
+		public static final int FLYWHEEL_CHANNEL = 3;
+		public static final int FLYWHEEL_CHANNEL_2 = 4;
 		public static final int FLYWHEEL_ENC_CH_A = 8;
 		public static final int FLYWHEEL_ENC_CH_B = 9;
 		public static final double FLYWHEEL_PPR = 100;

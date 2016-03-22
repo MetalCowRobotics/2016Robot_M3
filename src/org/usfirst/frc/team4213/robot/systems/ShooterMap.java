@@ -9,14 +9,15 @@ import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Jaguar;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
 
 public class ShooterMap {
 
-	private static final SpeedController CAM_MOTOR = new CANTalon(Shooter.CAM_CHANNEL);
-	private static final SpeedController FLYWHEEL_MOTOR = new CANTalon(Shooter.FLYWHEEL_CHANNEL);
-	private static final SpeedController FLYWHEEL_MOTOR_2 = new CANTalon(Shooter.FLYWHEEL_CHANNEL_2);
+	private static final SpeedController CAM_MOTOR = new Jaguar(Shooter.CAM_CHANNEL);
+	private static final SpeedController FLYWHEEL_MOTOR = new Jaguar(Shooter.FLYWHEEL_CHANNEL);
+	private static final SpeedController FLYWHEEL_MOTOR_2 = new Jaguar(Shooter.FLYWHEEL_CHANNEL_2);
 
 	private static final Encoder CAM_ENCODER = new Encoder(Shooter.CAM_ENC_CH_A, Shooter.CAM_ENC_CH_B, false,
 			CounterBase.EncodingType.k4X);

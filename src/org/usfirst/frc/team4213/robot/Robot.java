@@ -32,16 +32,16 @@ import edu.wpi.first.wpilibj.Timer;
 public class Robot extends IterativeRobot {
 
 	TurretMap turret;
-	IntakeMap intake; // TODO: Stitch in and test intake
+//	IntakeMap intake; // TODO: Stitch in and test intake
 	ShooterMap shooter;
 
 	AIRFLOController driverController;
 	CowGamepad gunnerController;
 
-	DriveController driveTrain;
+//	DriveController driveTrain;
 	OperatorController ballSystems;
-	DriveMap drivemap;
-	Timer timer;
+//	DriveMap drivemap;
+//	Timer timer;
 
 	// Camera Controller
 	public static CowCamServer camServer;
@@ -66,11 +66,11 @@ public class Robot extends IterativeRobot {
 
 		executor = Executors.newScheduledThreadPool(1);
 
-		timer = new Timer();
+//		timer = new Timer();
 
 		try {
 			camServer = new CowCamServer();
-			executor.scheduleWithFixedDelay(camServer, 0, 80, TimeUnit.MILLISECONDS);
+			executor.scheduleWithFixedDelay(camServer, 0, 60, TimeUnit.MILLISECONDS);
 
 		} catch (Exception e) {
 			DriverStation.reportError("Failed vision start", true);
@@ -79,14 +79,14 @@ public class Robot extends IterativeRobot {
 		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
-		try{
-		intake = new IntakeMap();
-		}catch(Exception ex){
-			DriverStation.reportError(ex.getMessage(), false);
-		}
-		drivemap = new DriveMap();
-		driveTrain = new DriveController(drivemap);
-		ballSystems = new OperatorController(turret, shooter, intake);
+//		try{
+//		intake = new IntakeMap();
+//		}catch(Exception ex){
+//			DriverStation.reportError(ex.getMessage(), false);
+//		}
+//		drivemap = new DriveMap();
+//		driveTrain = new DriveController(drivemap);
+		ballSystems = new OperatorController(turret, shooter, null);
 
 	}
 
@@ -117,8 +117,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		// TODO: AUTO!!!
-		timer.reset();
-		timer.start();
+//		timer.reset();
+//		timer.start();
 	}
 
 	/**
@@ -126,13 +126,13 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		if(timer.get() <3){
-			drivemap.setLeftMotorSpeed(-0.7);
-			drivemap.setRightMotorSpeed(0.7);
-		}else if(timer.get() > 3){
-			drivemap.setLeftMotorSpeed(0);
-			drivemap.setRightMotorSpeed(0);
-		}
+//		if(timer.get() <3){
+//			drivemap.setLeftMotorSpeed(-0.7);
+//			drivemap.setRightMotorSpeed(0.7);
+//		}else if(timer.get() > 3){
+//			drivemap.setLeftMotorSpeed(0);
+//			drivemap.setRightMotorSpeed(0);
+//		}
 	}
 
 	/**
@@ -141,11 +141,11 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		driverController.prestep();
+//		driverController.prestep();
 		gunnerController.prestep();
 
 		ballSystems.drive(gunnerController);
-		driveTrain.drive(driverController, true);
+//		driveTrain.drive(driverController, true);
 
 		// if(gunnerController.getButtonTripped(GamepadButton.START)){
 		// DriverStation.reportError("There is an Error", false);
@@ -154,7 +154,7 @@ public class Robot extends IterativeRobot {
 		// camServer.setCam(shooterCameraController);
 		// }
 
-		driverController.endstep();
+//		driverController.endstep();
 		gunnerController.endstep();
 	}
 
@@ -166,8 +166,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-//		turret.setRawPitchSpeed(gunnerController.getLY());
-//		turret.setRawYawSpeed(gunnerController.getRX());
+		turret.setRawPitchSpeed(gunnerController.getLY());
+		turret.setRawYawSpeed(gunnerController.getRX());
 //
 //		if (gunnerController.getButton(GamepadButton.A))
 //			shooter.setCurrentWheelSpeed(1);
@@ -186,7 +186,7 @@ public class Robot extends IterativeRobot {
 //		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
 //		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
 //		driveTrain.drive(driverController, true);
-		intake.setPitchSpeed(gunnerController.getLY());
+//		intake.setPitchSpeed(gunnerController.getLY());
 		
 	}
 

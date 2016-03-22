@@ -31,7 +31,8 @@ public class CowCamServer extends TimerTask{
                 NIVision.IMAQdxCameraControlMode.CameraControlModeController);
         NIVision.IMAQdxConfigureGrab(session);
     	NIVision.IMAQdxStartAcquisition(session);
-		
+		CameraServer.getInstance().setQuality(50);
+		CameraServer.getInstance().setSize(1);
 	}
 	
 	/*
