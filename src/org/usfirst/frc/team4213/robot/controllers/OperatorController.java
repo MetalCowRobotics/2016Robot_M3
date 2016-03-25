@@ -7,7 +7,8 @@ import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.PIDController;
 import org.team4213.lib14.Target;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
-import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeState;
+import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeRaiseState;
+import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeRollerState;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Camera;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
@@ -56,20 +57,26 @@ public class OperatorController {
 			state = OperatorState.INTAKE;
 		} else if (state == OperatorState.INTAKE && (!controller.getButton(GamepadButton.B))) {
 			idleAll();
+			intake.idleRoller();
 			state = OperatorState.IDLE;
 		}
 
 
 
 		// EJECT
-		if (state == OperatorState.IDLE && controller.getButton(GamepadButton.Y)) {
+		if ((state == OperatorState.IDLE || state == OperatorState.INTAKE_RAISED) && controller.getButton(GamepadButton.Y)) {
 			shooter.eject();
 			intake.eject();
 			turret.idle();
 			state = OperatorState.EJECT;
 		} else if (state == OperatorState.EJECT && (!controller.getButton(GamepadButton.Y))) {
 			idleAll();
-			state = OperatorState.IDLE;
+			intake.idleRoller();
+			if(intake.getRaiseState() == IntakeRaiseState.UP || intake.getRaiseState() == IntakeRaiseState.RAISING){
+				state = OperatorState.INTAKE_RAISED;
+			}else{
+				state = OperatorState.IDLE;
+			}
 		}
 
 		// Shoot the Ball
@@ -88,11 +95,13 @@ public class OperatorController {
 		if (state == OperatorState.INTAKE_RAISED && controller.getPOV() == 180) {
 			// DriverStation.reportError("\n LOWERING", false);
 			idleAll();
+			intake.idleRoller();
+			intake.lower();
 			state = OperatorState.IDLE;
 		}
 
 		// ENGAGING TURRET
-		if (state == OperatorState.IDLE && intake.getState() == IntakeState.DOWN && controller.getButton(GamepadButton.LT)) {
+		if (state == OperatorState.IDLE && intake.getRaiseState() == IntakeRaiseState.DOWN && controller.getButton(GamepadButton.LT)) {
 			// DriverStation.reportError("\n ENGAGING", false);
 			turret.engage();
 			state = OperatorState.TURRET_ENGAGED;
@@ -292,7 +301,7 @@ public class OperatorController {
 
 	public void idleAll() {
 		shooter.idle();
-		intake.idle();
+//		intake.idle();
 		turret.idle();
 	}
 

@@ -16,15 +16,23 @@ public class IntakeMap {
 	public Encoder PITCH_ENCODER = new Encoder(Intake.ENCODER_CH_A, Intake.ENCODER_CH_B, false, CounterBase.EncodingType.k4X);
 
 	private Timer moveTimer;
-	private IntakeState state;
-
-	public enum IntakeState {
-		DOWN, EJECT, INTAKE, UP, RAISING , LOWERING ;
+	private IntakeRaiseState vertState;
+	private IntakeRollerState rollerState;
+	
+	public enum IntakeRaiseState {
+		DOWN, UP, RAISING , LOWERING ;
+	}
+	
+	public enum IntakeRollerState {
+		INTAKE,EJECT,IDLE;
 	}
 
 	public IntakeMap() {
 		setEncDistPerPulse(1 / Intake.COUNT_PER_DEG);
-		state = IntakeState.UP;
+		
+		vertState = IntakeRaiseState.UP;
+		rollerState = IntakeRollerState.IDLE;
+		
 		moveTimer = new Timer();
 		resetEnc();
 		PITCH_ENCODER.setReverseDirection(true);
@@ -55,60 +63,71 @@ public class IntakeMap {
 		PITCH_ENCODER.setDistancePerPulse(distancePerPulse);
 	}
 
-	public IntakeState getState() {
-		return state;
+	public IntakeRaiseState getRaiseState() {
+		return vertState;
+	}
+	
+	public IntakeRollerState getRollerState() {
+		return rollerState;
 	}
 
-	public void idle() {
-		moveTimer.reset();
-		moveTimer.start();
-		state = IntakeState.LOWERING;
+	public void idleRoller() {
+		rollerState = IntakeRollerState.IDLE;
 	}
 
 	public void eject() {
-		state = IntakeState.EJECT;
+		rollerState = IntakeRollerState.EJECT;
 	}
 
 	public void intake() {
-		state = IntakeState.INTAKE;
+		rollerState = IntakeRollerState.INTAKE;
 	}
-
+	
 	public void raise() {
 		moveTimer.reset();
 		moveTimer.start();
-		state = IntakeState.RAISING;
+		vertState = IntakeRaiseState.RAISING;
+	}
+	
+	public void lower() {
+		moveTimer.reset();
+		moveTimer.start();
+		vertState = IntakeRaiseState.LOWERING;
 	}
 
 	public void step() {
-		switch (state) {
+		
+		switch (rollerState) {
 		case EJECT:
 			setRollerSpeed(Intake.EJECT_SPEED);
 			break;
 		case INTAKE:
 			setRollerSpeed(Intake.INTAKE_SPEED);
 			break;
+		case IDLE:
+			setRollerSpeed(0);
+			break;
+		}
+		
+		switch(vertState){
 		case UP:
 			setPitchSpeed(0);
-			setRollerSpeed(0);
 			break;
 		case DOWN:
 			setPitchSpeed(0);
-			setRollerSpeed(0);
 			break;
 		case RAISING:
 			if(moveTimer.get() < CowDash.getNum("Intake_Rise_Time", 8)){
 			setPitchSpeed(Intake.RAISE_SPEED);
-			setRollerSpeed(0);
 			}else{
-				state = IntakeState.UP;
+				vertState = IntakeRaiseState.UP;
 			}
 			break;
 		case LOWERING:
 			if(moveTimer.get() < CowDash.getNum("Intake_Lower_Time", 8)){
 				setPitchSpeed(Intake.LOWER_SPEED);
-				setRollerSpeed(0);
 			}else{
-				state = IntakeState.DOWN;
+				vertState = IntakeRaiseState.DOWN;
 			}
 			break;
 		
