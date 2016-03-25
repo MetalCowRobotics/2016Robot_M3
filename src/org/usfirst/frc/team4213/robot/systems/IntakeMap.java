@@ -24,7 +24,7 @@ public class IntakeMap {
 
 	public IntakeMap() {
 		setEncDistPerPulse(1 / Intake.COUNT_PER_DEG);
-		state = IntakeState.DOWN;
+		state = IntakeState.UP;
 		moveTimer = new Timer();
 		resetEnc();
 		PITCH_ENCODER.setReverseDirection(true);

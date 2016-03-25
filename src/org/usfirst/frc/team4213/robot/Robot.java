@@ -79,12 +79,10 @@ public class Robot extends IterativeRobot {
 		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
-		try{
 		intake = new IntakeMap();
-		}catch(Exception ex){
-			DriverStation.reportError(ex.getMessage(), false);
-		}
 		drivemap = new DriveMap();
+		
+		//Controllers
 		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, intake);
 
@@ -141,21 +139,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		driverController.prestep();
-		gunnerController.prestep();
-
 		ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
-
-		// if(gunnerController.getButtonTripped(GamepadButton.START)){
-		// DriverStation.reportError("There is an Error", false);
-		// camServer.setCam(frontCameraController);
-		// }else if(gunnerController.getButtonReleased(GamepadButton.START)){
-		// camServer.setCam(shooterCameraController);
-		// }
-
-		driverController.endstep();
-		gunnerController.endstep();
 	}
 
 	/**
