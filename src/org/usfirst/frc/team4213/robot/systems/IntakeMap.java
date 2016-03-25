@@ -58,6 +58,10 @@ public class IntakeMap {
 	public IntakeState getState() {
 		return state;
 	}
+	
+	public void setIntakeState(IntakeState i) {
+		state = i;
+	}
 
 	public void idle() {
 		moveTimer.reset();

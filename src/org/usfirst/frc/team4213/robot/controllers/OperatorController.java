@@ -67,8 +67,14 @@ public class OperatorController {
 			intake.eject();
 			turret.idle();
 			state = OperatorState.EJECT;
+		} else if (state == OperatorState.INTAKE_RAISED && controller.getButton(GamepadButton.Y)) {
+			shooter.eject();
+			intake.eject();
+			state = OperatorState.EJECT;
 		} else if (state == OperatorState.EJECT && (!controller.getButton(GamepadButton.Y))) {
+			
 			idleAll();
+			
 			state = OperatorState.IDLE;
 		}
 
