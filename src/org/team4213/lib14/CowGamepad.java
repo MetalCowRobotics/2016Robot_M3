@@ -4,17 +4,8 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public abstract class CowGamepad extends Joystick {
 
-	boolean[] previousStates;
-	boolean[] toggleStates;
-
 	public CowGamepad(int port) {
 		super(port);
-		previousStates = new boolean[20];
-		toggleStates = new boolean[20];
-		for (short i = 0; i < 20; i++) {
-			previousStates[i] = false;
-			toggleStates[i] = false;
-		}
 	}
 
 	public abstract boolean getButton(int n);
@@ -97,56 +88,6 @@ public abstract class CowGamepad extends Joystick {
 			return topSpeedSprint; // fromt-bumper buttons
 		else
 			return topSpeedNormal;
-	}
-
-	public void prestep() {
-		this.rumbleLeft(0);
-		this.rumbleRight(0);
-	}
-
-	public void endstep() {
-		for (int i = 1; i < previousStates.length; i++) {
-			try {
-				previousStates[i] = getButton(i);
-			} catch (Exception e) {
-
-			}
-		}
-	}
-
-	public boolean getButtonTripped(int n) {
-		if (getButton(n)) {
-			if (previousStates[n]) {
-				return false;
-			} else {
-				return true;
-			}
-
-		} else {
-			return false;
-		}
-	}
-
-	public boolean getButtonReleased(int n) {
-		if (!getButton(n)) {
-			if (previousStates[n]) {
-				return true;
-			} else {
-				return false;
-			}
-
-		} else {
-			return false;
-		}
-	}
-
-	public boolean getButtonToggled(int n) {
-		if (!getButton(n)) {
-		} else if (previousStates[n]) {
-		} else {
-			toggleStates[n] = !toggleStates[n];
-		}
-		return toggleStates[n];
 	}
 
 	// IDEA: Timeout on the rumble
