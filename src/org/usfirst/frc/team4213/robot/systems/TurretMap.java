@@ -130,23 +130,23 @@ public class TurretMap { // Replace these with the Constants
 		state = TurretState.IDLING;
 	}
 
-//	public void bumpTurretUp() {
-//		if (PITCH_PID.getTarget() < Turret.Pitch_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
-//			PITCH_PID.bumpTarget(Turret.Pitch_Motor.BUMP_AMT);
-//			// DriverStation.reportError("\n Moving Turret Up", false);
-//		} else {
-//			// DriverStation.reportError("\n At Max Pitch Angle", false);
-//		}
-//	}
-//
-//	public void bumpTurretDown() {
-//		if (PITCH_PID.getTarget() > Turret.Pitch_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
-//			PITCH_PID.bumpTarget(-Turret.Pitch_Motor.BUMP_AMT);
-//			// DriverStation.reportError("\n Moving Turret Down", false);
-//		} else {
-//			// DriverStation.reportError("\n At Min Pitch Angle", false);
-//		}
-//	}
+	public void bumpTurretUp() {
+		if (PITCH_PID.getTarget() < Turret.Pitch_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
+			PITCH_PID.bumpTarget(Turret.Pitch_Motor.BUMP_AMT);
+			// DriverStation.reportError("\n Moving Turret Up", false);
+		} else {
+			// DriverStation.reportError("\n At Max Pitch Angle", false);
+		}
+	}
+
+	public void bumpTurretDown() {
+		if (PITCH_PID.getTarget() > Turret.Pitch_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
+			PITCH_PID.bumpTarget(-Turret.Pitch_Motor.BUMP_AMT);
+			// DriverStation.reportError("\n Moving Turret Down", false);
+		} else {
+			// DriverStation.reportError("\n At Min Pitch Angle", false);
+		}
+	}
 
 	public void bumpTurretRight() {
 		if (YAW_PID.getTarget() < Turret.Yaw_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
@@ -228,6 +228,7 @@ public class TurretMap { // Replace these with the Constants
 			}
 			break;
 		case ENGAGING:
+			DriverStation.reportError("Turret is Engaged", false);
 			CowDash.setString("Turret_state", "ENGAGING");
 			PITCH_PID.setTarget(Turret.Pitch_Motor.MIN_ANGLE);
 			if (Math.abs(PITCH_PID.getError()) < Turret.Pitch_Motor.ABS_TOLERANCE) {

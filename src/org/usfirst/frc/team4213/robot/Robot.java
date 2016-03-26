@@ -15,11 +15,18 @@ import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
+import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
+import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
+
+import com.kauailabs.nav6.frc.IMU;
+import com.kauailabs.nav6.frc.IMUAdvanced;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -37,11 +44,13 @@ public class Robot extends IterativeRobot {
 
 	AIRFLOController driverController;
 	CowGamepad gunnerController;
+	
+	IMU imu;
 
 //	DriveController driveTrain;
 	OperatorController ballSystems;
 //	DriveMap drivemap;
-//	Timer timer;
+	Timer timer;
 
 	// Camera Controller
 	public static CowCamServer camServer;
@@ -50,8 +59,8 @@ public class Robot extends IterativeRobot {
 	public ScheduledExecutorService executor;
 	// A new Camera Controller for the Shooter
 	boolean allowedToSave = false;
-
-
+	int autonState = 0; 
+	
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
@@ -66,7 +75,7 @@ public class Robot extends IterativeRobot {
 
 		executor = Executors.newScheduledThreadPool(1);
 
-//		timer = new Timer();
+		timer = new Timer();
 
 		try {
 			camServer = new CowCamServer();
@@ -87,7 +96,7 @@ public class Robot extends IterativeRobot {
 //		drivemap = new DriveMap();
 //		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, null);
-
+		imu = new IMU(new SerialPort(57600,SerialPort.Port.kOnboard),(byte)50);
 	}
 
 	@Override
@@ -117,8 +126,8 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void autonomousInit() {
 		// TODO: AUTO!!!
-//		timer.reset();
-//		timer.start();
+		timer.reset();
+		timer.start();
 	}
 
 	/**
@@ -126,15 +135,71 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-//		if(timer.get() <3){
+		turret.prestep();
+		switch(autonState){
+		case 0:
 //			drivemap.setLeftMotorSpeed(-0.7);
 //			drivemap.setRightMotorSpeed(0.7);
-//		}else if(timer.get() > 3){
+			if(timer.get() < 3){
+//				intake.idle();
+			}else if(timer.get() < 7 ){
+//				if(imu.getWorldLinearAccelX() < 0){
+					autonState++;
+//				}
+			}else{
+				autonState++;
+			}
+			break;
+		case 1:
 //			drivemap.setLeftMotorSpeed(0);
 //			drivemap.setRightMotorSpeed(0);
-//		}
+			
+			if(turret.getState() == TurretState.IDLE){
+				turret.engage();
+			}
+			
+			if(turret.getState() == TurretState.ENGAGED){
+				for(int i = 0; i < Math.floor(90 / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
+					turret.bumpTurretRight();
+				}
+				for(int i = 0; i < Math.floor(25 / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
+					turret.bumpTurretUp();
+				}
+				autonState++;
+			}
+			break;
+		case 2:
+//			drivemap.setLeftMotorSpeed(0);
+//			drivemap.setRightMotorSpeed(0);
+			if(shooter.getState() == ShooterState.IDLE){
+				shooter.arm();
+			}
+			if(shooter.getState() == ShooterState.ARMED){
+				Timer.delay(2);
+				shooter.shoot();
+				Timer.delay(3);
+				autonState++;
+			}
+			break;
+		default:
+//			drivemap.setLeftMotorSpeed(0);
+//			drivemap.setRightMotorSpeed(0);
+//			intake.idle();
+			shooter.idle();
+			turret.idle();
+		}
+//		intake.step();
+		shooter.step();
+		turret.endstep();
+
 	}
 
+	
+	@Override
+	public void teleopInit(){
+		timer.stop();
+	}
+	
 	/**
 	 * This function is called periodically during operator control Working
 	 * Calls for Drivers to do their stuff
@@ -153,7 +218,7 @@ public class Robot extends IterativeRobot {
 		// }
 
 	}
-
+	
 	/**
 	 * This function is called periodically during test mode Coders and
 	 * Developers use this during their tests
@@ -162,8 +227,17 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		turret.setRawPitchSpeed(gunnerController.getLY());
-		turret.setRawYawSpeed(gunnerController.getRX());
+		DriverStation.reportError("isConnected ?" + imu.isConnected(), false);
+//		DriverStation.reportError("Accel X= " + imu.getWorldLinearAccelX() + "\n", false);
+//		DriverStation.reportError("Accel Y= " + imu.getWorldLinearAccelY() + "\n", false);
+
+		
+		DriverStation.reportError("Yaw= " + imu.getYaw() + "\n", false);
+		DriverStation.reportError("Pitch= " + imu.getPitch() + "\n", false);
+		DriverStation.reportError("Roll= " + imu.getRoll() + "\n", false);
+
+//		turret.setRawPitchSpeed(gunnerController.getLY());
+//		turret.setRawYawSpeed(gunnerController.getRX());
 //
 //		if (gunnerController.getButton(GamepadButton.A))
 //			shooter.setCurrentWheelSpeed(1);
