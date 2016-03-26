@@ -9,17 +9,22 @@ import org.team4213.lib14.AIRFLOController;
 import org.team4213.lib14.CowCamServer;
 import org.team4213.lib14.CowDash;
 import org.team4213.lib14.CowGamepad;
-import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
+import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
+import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
+
+import com.kauailabs.nav6.frc.IMUAdvanced;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -43,6 +48,8 @@ public class Robot extends IterativeRobot {
 	DriveMap drivemap;
 	Timer timer;
 
+	IMUAdvanced imu;
+	
 	// Camera Controller
 	public static CowCamServer camServer;
 	
@@ -50,7 +57,8 @@ public class Robot extends IterativeRobot {
 	public ScheduledExecutorService executor;
 	// A new Camera Controller for the Shooter
 	boolean allowedToSave = false;
-
+	
+	int autonState = 0;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -85,6 +93,7 @@ public class Robot extends IterativeRobot {
 		//Controllers
 		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, intake);
+		imu = new IMUAdvanced(new SerialPort(57600, SerialPort.Port.kOnboard));
 
 	}
 
@@ -124,13 +133,60 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		if(timer.get() <3){
+		turret.prestep();
+		switch(autonState){
+		case 0:
 			drivemap.setLeftMotorSpeed(-0.7);
 			drivemap.setRightMotorSpeed(0.7);
-		}else if(timer.get() > 3){
+			
+			if(timer.get() < 3){
+				intake.idle();
+			}else if(timer.get() < 7 ){
+				if(imu.getWorldLinearAccelX() < 0){
+					autonState++;
+				}
+			}else{
+				autonState++;
+			}
+			
+		case 1:
 			drivemap.setLeftMotorSpeed(0);
 			drivemap.setRightMotorSpeed(0);
+			
+			if(turret.getState() == TurretState.IDLE){
+				turret.engage();
+			}
+			
+			if(turret.getState() == TurretState.ENGAGED){
+				for(int i = 0; i < Math.floor(90 / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
+					turret.bumpTurretRight();
+				}
+				for(int i = 0; i < Math.floor(25 / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
+					turret.bumpTurretUp();
+				}
+				autonState++;
+			}
+		case 2:
+			drivemap.setLeftMotorSpeed(0);
+			drivemap.setRightMotorSpeed(0);
+			if(shooter.getState() == ShooterState.IDLE){
+				shooter.arm();
+			}
+			if(shooter.getState() == ShooterState.ARMED){
+				Timer.delay(.5);
+				shooter.shoot();
+				autonState++;
+			}
+		default:
+			drivemap.setLeftMotorSpeed(0);
+			drivemap.setRightMotorSpeed(0);
+			intake.idle();
+			shooter.idle();
+			turret.idle();
 		}
+		intake.step();
+		shooter.step();
+		turret.endstep();
 	}
 
 	/**
