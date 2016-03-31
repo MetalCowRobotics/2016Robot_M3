@@ -38,7 +38,7 @@ public class OperatorController {
 		this.turret = turret;
 		this.shooter = shooter;
 		this.intake = intake;
-		state = OperatorState.IDLE;
+		state = OperatorState.INTAKE_RAISED;
 		visionState = VisionState.OFF;
 		visionPIDX = new PIDController("Vision_PID_X", 10, 0, 0, 1);
 		visionPIDY = new PIDController("Vision_PID_Y", 10, 0, 0, 1);
