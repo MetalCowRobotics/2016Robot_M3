@@ -254,4 +254,8 @@ public class TurretMap { // Replace these with the Constants
 
 	}
 
+	public boolean isAtYawTarget() {
+		return Math.abs(YAW_PID.getError())<Turret.Yaw_Motor.ABS_TOLERANCE;
+	}
+
 }

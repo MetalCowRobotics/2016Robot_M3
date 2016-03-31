@@ -66,9 +66,6 @@ public class OperatorController {
 		// EJECT
 		if ((state == OperatorState.IDLE || state == OperatorState.INTAKE_RAISED) && controller.getButton(GamepadButton.Y)) {
 			shooter.eject();
-			if(state == OperatorState.IDLE){
-				intake.eject();
-			}
 			turret.idle();
 			state = OperatorState.EJECT;
 		} else if (state == OperatorState.EJECT && (!controller.getButton(GamepadButton.Y))) {
@@ -137,6 +134,9 @@ public class OperatorController {
 
 		if (state == OperatorState.TURRET_ENGAGED) {
 			double speedMod = 0.8;
+			if(controller.getButton(GamepadButton.LB)){
+				speedMod = 0.4;
+			}
 			manualTurretDrive(controller, speedMod);
 //			switch (visionState) {
 //			case OFF:
