@@ -82,7 +82,7 @@ public abstract class CowGamepad extends Joystick {
 	 * @return topSpeedCurrent value double 0 to 1
 	 */
 	public double getThrottle(double topSpeedNormal, double topSpeedCrawl, double topSpeedSprint) {
-		if (getButton(GamepadButton.RT) || getButton(GamepadButton.LT))
+		if (getButton(GamepadButton.RT) /* || getButton(GamepadButton.LT)*/)
 			return topSpeedCrawl; // front-bottom triggers
 		else if (getButton(GamepadButton.RB) || getButton(GamepadButton.LB))
 			return topSpeedSprint; // fromt-bumper buttons

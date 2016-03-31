@@ -28,7 +28,7 @@ public class DriveController {
 		double throttle = controller.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
 				Drivetrain.SPRINT_SPEED);
 		
-		if (controller.getButton(GamepadButton.A)){			//Go into half-arcade
+		if (controller.getButton(GamepadButton.A) || controller.getButton(GamepadButton.LT)){			//Go into half-arcade
 			driveMap.setLeftMotorSpeed(-controller.getLY() * throttle);
 			driveMap.setRightMotorSpeed(controller.getLY() * throttle);
 		} else {											//Stay in regular drive
