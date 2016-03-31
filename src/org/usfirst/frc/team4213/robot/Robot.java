@@ -55,6 +55,9 @@ public class Robot extends IterativeRobot {
 	boolean allowedToSave = false;
 	int autonState = 0;
 	double autonShotTime = 0;
+	boolean straightAuton = false;
+	int angleX = 90;
+	int angleY = 39;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -89,6 +92,7 @@ public class Robot extends IterativeRobot {
 		//Controllers
 		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, intake);
+		CowDash.getNum("AUTONOMOUS_MODE", 0);
 
 	}
 
@@ -121,6 +125,28 @@ public class Robot extends IterativeRobot {
 		// TODO: AUTO!!!
 		timer.reset();
 		timer.start();
+		switch ( (int) CowDash.getNum("AUTONOMOUS_MODE", 0)){
+		case 1:
+			angleX = 90;
+			angleY = 39;
+			break;
+		case 5:
+			angleX = 270;
+			angleY = 49;
+			break;
+		case 2:
+			angleX = 90;
+			angleY = 49;
+			break;
+		case 34:
+			straightAuton = true;
+			break;
+		default:
+			angleX = 90;
+			angleY = 39;
+			break;
+		
+		}
 	}
 
 	/**
@@ -128,13 +154,19 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-//		if(timer.get() <3){
-//			drivemap.setLeftMotorSpeed(-0.7);
-//			drivemap.setRightMotorSpeed(0.7);
-//		}else if(timer.get() > 3){
-//			drivemap.setLeftMotorSpeed(0);
-//			drivemap.setRightMotorSpeed(0);
-//		}
+
+		
+		if(straightAuton){
+			if(timer.get() <3){
+				drivemap.setLeftMotorSpeed(-0.7);
+				drivemap.setRightMotorSpeed(0.7);
+			}else if(timer.get() > 3){
+				drivemap.setLeftMotorSpeed(0);
+				drivemap.setRightMotorSpeed(0);
+			}
+			return;
+		}
+		
 		turret.prestep();
 		switch(autonState){
 		case 0:
@@ -149,6 +181,7 @@ public class Robot extends IterativeRobot {
 				drivemap.setLeftMotorSpeed(-0.5);
 				drivemap.setRightMotorSpeed(0.5);
 				intake.lower();
+				
 
 			}else{
 				autonState++;
@@ -163,12 +196,14 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if(turret.getState() == TurretState.ENGAGED){
-				for(int i = 0; i < Math.floor(90 / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
+				// 90
+				for(int i = 0; i < Math.floor(angleX / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
 					turret.prestep();
 					turret.bumpTurretLeft();
 					turret.endstep();
 				}
-				for(int i = 0; i < Math.floor(42 / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
+				// 39
+				for(int i = 0; i < Math.floor(angleY / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
 					turret.prestep();
 					turret.bumpTurretUp();
 					turret.endstep();
@@ -248,7 +283,9 @@ public class Robot extends IterativeRobot {
 //		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
 //		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
 //		driveTrain.drive(driverController, true);
-		intake.setPitchSpeed(gunnerController.getLY());
+//		intake.setPitchSpeed(gunnerController.getLY());
+		DriverStation.reportError("\n" + CowDash.getNum("AUTONOMOUS_MODE",0), false);
+
 		
 	}
 
