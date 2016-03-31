@@ -135,14 +135,17 @@ public class Robot extends IterativeRobot {
 		turret.prestep();
 		switch(autonState){
 		case 0:
-			drivemap.setLeftMotorSpeed(-0.7);
-			drivemap.setRightMotorSpeed(0.7);
-			if(timer.get() < 3){
+			
+			if(timer.get() < 4){
 				intake.idle();
-			}else if(timer.get() > 7 ){
+				drivemap.setLeftMotorSpeed(-0.7);
+				drivemap.setRightMotorSpeed(0.7);
+			}else if(timer.get() < 7 ){
 //				if(imu.getWorldLinearAccelX() < 0){
-					autonState++;
+//					autonState++;
 //				}
+				drivemap.setLeftMotorSpeed(-0.5);
+				drivemap.setRightMotorSpeed(0.5);
 			}else{
 				autonState++;
 			}
