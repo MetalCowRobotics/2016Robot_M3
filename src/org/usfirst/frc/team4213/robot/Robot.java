@@ -47,8 +47,6 @@ public class Robot extends IterativeRobot {
 	OperatorController ballSystems;
 	DriveMap drivemap;
 	Timer timer;
-
-	IMUAdvanced imu;
 	
 	// Camera Controller
 	public static CowCamServer camServer;
@@ -59,6 +57,8 @@ public class Robot extends IterativeRobot {
 	boolean allowedToSave = false;
 	
 	int autonState = 0;
+	double autonShotTime;
+
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -93,7 +93,6 @@ public class Robot extends IterativeRobot {
 		//Controllers
 		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, intake);
-		imu = new IMUAdvanced(new SerialPort(57600, SerialPort.Port.kOnboard));
 
 	}
 
@@ -138,17 +137,16 @@ public class Robot extends IterativeRobot {
 		case 0:
 			drivemap.setLeftMotorSpeed(-0.7);
 			drivemap.setRightMotorSpeed(0.7);
-			
 			if(timer.get() < 3){
 				intake.idle();
-			}else if(timer.get() < 7 ){
-				if(imu.getWorldLinearAccelX() < 0){
+			}else if(timer.get() > 7 ){
+//				if(imu.getWorldLinearAccelX() < 0){
 					autonState++;
-				}
+//				}
 			}else{
 				autonState++;
 			}
-			
+			break;
 		case 1:
 			drivemap.setLeftMotorSpeed(0);
 			drivemap.setRightMotorSpeed(0);
@@ -158,31 +156,47 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if(turret.getState() == TurretState.ENGAGED){
-				for(int i = 0; i < Math.floor(90 / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
+				for(int i = 0; i < Math.floor(180 / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
+					turret.prestep();
 					turret.bumpTurretRight();
+					turret.endstep();
 				}
 				for(int i = 0; i < Math.floor(25 / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
+					turret.prestep();
 					turret.bumpTurretUp();
+					turret.endstep();
 				}
 				autonState++;
 			}
+			break;
 		case 2:
 			drivemap.setLeftMotorSpeed(0);
 			drivemap.setRightMotorSpeed(0);
-			if(shooter.getState() == ShooterState.IDLE){
-				shooter.arm();
-			}
-			if(shooter.getState() == ShooterState.ARMED){
-				Timer.delay(.5);
-				shooter.shoot();
+			
+			if (autonShotTime != 0 && autonShotTime+2<timer.get()){
 				autonState++;
+				autonShotTime = 0;
+			} else {
+				if (turret.isAtYawTarget()){
+						turret.setYawSpeed(0);
+					if (shooter.getState() == ShooterState.IDLE){
+						shooter.arm();
+					}
+					if (shooter.getState() == ShooterState.ARMED){
+						Timer.delay(1.2);
+						autonShotTime = timer.get();
+						shooter.shoot();
+					}
+				}
 			}
+			break;
 		default:
 			drivemap.setLeftMotorSpeed(0);
 			drivemap.setRightMotorSpeed(0);
 			intake.idle();
 			shooter.idle();
 			turret.idle();
+			break;
 		}
 		intake.step();
 		shooter.step();
