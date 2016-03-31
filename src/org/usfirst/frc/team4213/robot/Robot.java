@@ -136,7 +136,7 @@ public class Robot extends IterativeRobot {
 		switch(autonState){
 		case 0:
 			
-			if(timer.get() < 4){
+			if(timer.get() < 5){
 				intake.idle();
 				drivemap.setLeftMotorSpeed(-0.7);
 				drivemap.setRightMotorSpeed(0.7);
@@ -159,12 +159,12 @@ public class Robot extends IterativeRobot {
 			}
 			
 			if(turret.getState() == TurretState.ENGAGED){
-				for(int i = 0; i < Math.floor(180 / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
+				for(int i = 0; i < Math.floor(90 / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
 					turret.prestep();
 					turret.bumpTurretRight();
 					turret.endstep();
 				}
-				for(int i = 0; i < Math.floor(25 / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
+				for(int i = 0; i < Math.floor(35 / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
 					turret.prestep();
 					turret.bumpTurretUp();
 					turret.endstep();
