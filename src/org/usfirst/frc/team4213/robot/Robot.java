@@ -127,8 +127,8 @@ public class Robot extends IterativeRobot {
 		timer.start();
 		switch ( (int) CowDash.getNum("AUTONOMOUS_MODE", 0)){
 		case 1:
-			angleX = 90;
-			angleY = 39;
+			angleX = 94;
+			angleY = 36;
 			break;
 		case 5:
 			angleX = 270;
@@ -142,8 +142,8 @@ public class Robot extends IterativeRobot {
 			straightAuton = true;
 			break;
 		default:
-			angleX = 90;
-			angleY = 39;
+			angleX = 92;
+			angleY = 38;
 			break;
 		
 		}
