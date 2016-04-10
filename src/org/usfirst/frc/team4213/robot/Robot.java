@@ -15,8 +15,11 @@ import org.usfirst.frc.team4213.robot.controllers.DriveController;
 import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
+import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
+import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
+import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
@@ -50,7 +53,11 @@ public class Robot extends IterativeRobot {
 	public ScheduledExecutorService executor;
 	// A new Camera Controller for the Shooter
 	boolean allowedToSave = false;
-
+	int autonState = 0;
+	double autonShotTime = 0;
+	boolean straightAuton = false;
+	int angleX = 90;
+	int angleY = 39;
 
 	/**
 	 * This function is run when the robot is first started up and should be
@@ -70,7 +77,7 @@ public class Robot extends IterativeRobot {
 
 		try {
 			camServer = new CowCamServer();
-			executor.scheduleWithFixedDelay(camServer, 0, 80, TimeUnit.MILLISECONDS);
+			executor.scheduleWithFixedDelay(camServer, 0, 60, TimeUnit.MILLISECONDS);
 
 		} catch (Exception e) {
 			DriverStation.reportError("Failed vision start", true);
@@ -79,14 +86,13 @@ public class Robot extends IterativeRobot {
 		// Systems
 		turret = new TurretMap();
 		shooter = new ShooterMap();
-		try{
 		intake = new IntakeMap();
-		}catch(Exception ex){
-			DriverStation.reportError(ex.getMessage(), false);
-		}
 		drivemap = new DriveMap();
+		
+		//Controllers
 		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, intake);
+		CowDash.getNum("AUTONOMOUS_MODE", 0);
 
 	}
 
@@ -119,6 +125,28 @@ public class Robot extends IterativeRobot {
 		// TODO: AUTO!!!
 		timer.reset();
 		timer.start();
+		switch ( (int) CowDash.getNum("AUTONOMOUS_MODE", 0)){
+		case 1:
+			angleX = 94;
+			angleY = 36;
+			break;
+		case 5:
+			angleX = 270;
+			angleY = 49;
+			break;
+		case 2:
+			angleX = 90;
+			angleY = 49;
+			break;
+		case 34:
+			straightAuton = true;
+			break;
+		default:
+			angleX = 92;
+			angleY = 38;
+			break;
+		
+		}
 	}
 
 	/**
@@ -126,13 +154,95 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
-		if(timer.get() <3){
-			drivemap.setLeftMotorSpeed(-0.7);
-			drivemap.setRightMotorSpeed(0.7);
-		}else if(timer.get() > 3){
+
+		
+		if(straightAuton){
+			if(timer.get() <3){
+				drivemap.setLeftMotorSpeed(-0.7);
+				drivemap.setRightMotorSpeed(0.7);
+			}else if(timer.get() > 3){
+				drivemap.setLeftMotorSpeed(0);
+				drivemap.setRightMotorSpeed(0);
+			}
+			return;
+		}
+		
+		turret.prestep();
+		switch(autonState){
+		case 0:
+			
+			if(timer.get() < 5){
+				drivemap.setLeftMotorSpeed(-0.7);
+				drivemap.setRightMotorSpeed(0.7);
+			}else if(timer.get() < 7 ){
+//				if(imu.getWorldLinearAccelX() < 0){
+//					autonState++;
+//				}
+				drivemap.setLeftMotorSpeed(-0.5);
+				drivemap.setRightMotorSpeed(0.5);
+				intake.lower();
+				
+
+			}else{
+				autonState++;
+			}
+			break;
+		case 1:
 			drivemap.setLeftMotorSpeed(0);
 			drivemap.setRightMotorSpeed(0);
+			
+			if(turret.getState() == TurretState.IDLE){
+				turret.engage();
+			}
+			
+			if(turret.getState() == TurretState.ENGAGED){
+				// 90
+				for(int i = 0; i < Math.floor(angleX / RobotMap.Turret.Yaw_Motor.BUMP_AMT); i++){
+					turret.prestep();
+					turret.bumpTurretLeft();
+					turret.endstep();
+				}
+				// 39
+				for(int i = 0; i < Math.floor(angleY / RobotMap.Turret.Pitch_Motor.BUMP_AMT); i++){
+					turret.prestep();
+					turret.bumpTurretUp();
+					turret.endstep();
+				}
+				autonState++;
+			}
+			break;
+		case 2:
+			drivemap.setLeftMotorSpeed(0);
+			drivemap.setRightMotorSpeed(0);
+			
+			if (autonShotTime != 0 && autonShotTime+2<timer.get()){
+				autonState++;
+				autonShotTime = 0;
+			} else {
+				if (turret.isAtYawTarget()){
+						turret.setYawSpeed(0);
+					if (shooter.getState() == ShooterState.IDLE){
+						shooter.arm();
+					}
+					if (shooter.getState() == ShooterState.ARMED){
+						Timer.delay(1.2);
+						autonShotTime = timer.get();
+						shooter.shoot();
+					}
+				}
+			}
+			break;
+		default:
+			drivemap.setLeftMotorSpeed(0);
+			drivemap.setRightMotorSpeed(0);
+			intake.lower();
+			shooter.idle();
+			turret.idle();
+			break;
 		}
+		intake.step();
+		shooter.step();
+		turret.endstep();
 	}
 
 	/**
@@ -141,21 +251,8 @@ public class Robot extends IterativeRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
-		driverController.prestep();
-		gunnerController.prestep();
-
 		ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
-
-		// if(gunnerController.getButtonTripped(GamepadButton.START)){
-		// DriverStation.reportError("There is an Error", false);
-		// camServer.setCam(frontCameraController);
-		// }else if(gunnerController.getButtonReleased(GamepadButton.START)){
-		// camServer.setCam(shooterCameraController);
-		// }
-
-		driverController.endstep();
-		gunnerController.endstep();
 	}
 
 	/**
@@ -186,7 +283,9 @@ public class Robot extends IterativeRobot {
 //		DriverStation.reportError("\n Enc 1 Position:" + shooter.getFlyEncDist(), false);
 //		DriverStation.reportError("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024, false);
 //		driveTrain.drive(driverController, true);
-		intake.setPitchSpeed(gunnerController.getLY());
+//		intake.setPitchSpeed(gunnerController.getLY());
+		DriverStation.reportError("\n" + CowDash.getNum("AUTONOMOUS_MODE",0), false);
+
 		
 	}
 
