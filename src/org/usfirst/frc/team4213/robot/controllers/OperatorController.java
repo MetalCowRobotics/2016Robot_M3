@@ -6,37 +6,34 @@ import org.team4213.lib14.CowMath;
 import org.team4213.lib14.GamepadButton;
 import org.team4213.lib14.PIDController;
 import org.team4213.lib14.Target;
+import org.usfirst.frc.team4213.robot.raw_systems.RawTurret;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeRaiseState;
-import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeRollerState;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Camera;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 
 public class OperatorController {
-	private TurretMap turret;
-	private ShooterMap shooter;
-	private IntakeMap intake;
-	private PIDController visionPIDX;
-	private PIDController visionPIDY;
 
-	private enum OperatorState {
-		IDLE, INTAKE_RAISED, TURRET_ENGAGED, INTAKE, EJECT;
+	private static PIDController visionPIDX;
+	private static PIDController visionPIDY;
+
+	private static enum OperatorState {
+		IDLE, IntakeMap_RAISED, TurretMap_ENGAGED, IntakeMap, EJECT;
 	}
 
-	private enum VisionState {
+	private static enum VisionState {
 		OFF, LONG;
 	}
 
-	private OperatorState state;
-	private VisionState visionState;
+	private static OperatorState state;
+	private static VisionState visionState;
 
-	public OperatorController(TurretMap turret, ShooterMap shooter, IntakeMap intake) {
-		this.turret = turret;
-		this.shooter = shooter;
-		this.intake = intake;
-		state = OperatorState.INTAKE_RAISED;
+	private OperatorController() {}
+	static {
+		
+		state = OperatorState.IntakeMap_RAISED;
 		visionState = VisionState.OFF;
 		visionPIDX = new PIDController("Vision_PID_X", 10, 0, 0, 1);
 		visionPIDY = new PIDController("Vision_PID_Y", 10, 0, 0, 1);
@@ -46,79 +43,79 @@ public class OperatorController {
 
 	}
 
-	public void drive(CowGamepad controller) {
-		turret.prestep();
+	public static void drive(CowGamepad controller) {
+		TurretMap.prestep();
 
-		// INTAKE
+		// IntakeMap
 		if (state == OperatorState.IDLE && controller.getButton(GamepadButton.B)) {
-			shooter.intake();
-			intake.intake();
-			turret.idle();
-			state = OperatorState.INTAKE;
-		} else if (state == OperatorState.INTAKE && (!controller.getButton(GamepadButton.B))) {
+			ShooterMap.intake();
+			IntakeMap.intake();
+			TurretMap.idle();
+			state = OperatorState.IntakeMap;
+		} else if (state == OperatorState.IntakeMap && (!controller.getButton(GamepadButton.B))) {
 			idleAll();
-			intake.idleRoller();
+			IntakeMap.idleRoller();
 			state = OperatorState.IDLE;
 		}
 
 
 
 		// EJECT
-		if ((state == OperatorState.IDLE || state == OperatorState.INTAKE_RAISED) && controller.getButton(GamepadButton.Y)) {
-			shooter.eject();
-			turret.idle();
+		if ((state == OperatorState.IDLE || state == OperatorState.IntakeMap_RAISED) && controller.getButton(GamepadButton.Y)) {
+			ShooterMap.eject();
+			TurretMap.idle();
 			state = OperatorState.EJECT;
 		} else if (state == OperatorState.EJECT && (!controller.getButton(GamepadButton.Y))) {
 			idleAll();
-			intake.idleRoller();
-			if(intake.getRaiseState() == IntakeRaiseState.UP || intake.getRaiseState() == IntakeRaiseState.RAISING){
-				state = OperatorState.INTAKE_RAISED;
+			IntakeMap.idleRoller();
+			if(IntakeMap.getRaiseState() == IntakeRaiseState.UP || IntakeMap.getRaiseState() == IntakeRaiseState.RAISING){
+				state = OperatorState.IntakeMap_RAISED;
 			}else{
 				state = OperatorState.IDLE;
 			}
 		}
 
 		// Shoot the Ball
-		if (state == OperatorState.TURRET_ENGAGED && controller.getButton(GamepadButton.RB)) {
-			shooter.shoot();
+		if (state == OperatorState.TurretMap_ENGAGED && controller.getButton(GamepadButton.RB)) {
+			ShooterMap.shoot();
 		}
 
 		// Raise Arm
 		if (state == OperatorState.IDLE && controller.getPOV() == 0) {
 			// DriverStation.reportError("\n RAISING", false);
-			intake.raise();
-			state = OperatorState.INTAKE_RAISED;
+			IntakeMap.raise();
+			state = OperatorState.IntakeMap_RAISED;
 		}
 
 		// Lower Arm
-		if (state == OperatorState.INTAKE_RAISED && controller.getPOV() == 180) {
+		if (state == OperatorState.IntakeMap_RAISED && controller.getPOV() == 180) {
 			// DriverStation.reportError("\n LOWERING", false);
 			idleAll();
-			intake.idleRoller();
-			intake.lower();
+			IntakeMap.idleRoller();
+			IntakeMap.lower();
 			state = OperatorState.IDLE;
 		}
 
-		// ENGAGING TURRET
-		if (state == OperatorState.IDLE && intake.getRaiseState() == IntakeRaiseState.DOWN && controller.getButton(GamepadButton.LT)) {
+		// ENGAGING TurretMap
+		if (state == OperatorState.IDLE && IntakeMap.getRaiseState() == IntakeRaiseState.DOWN && controller.getButton(GamepadButton.LT)) {
 			// DriverStation.reportError("\n ENGAGING", false);
-			turret.engage();
-			state = OperatorState.TURRET_ENGAGED;
-		} else if (state == OperatorState.TURRET_ENGAGED && !controller.getButton(GamepadButton.LT)){
+			TurretMap.engage();
+			state = OperatorState.TurretMap_ENGAGED;
+		} else if (state == OperatorState.TurretMap_ENGAGED && !controller.getButton(GamepadButton.LT)){
 			// DriverStation.reportError("\n DISENGAGING", false);
 			idleAll();
 			state = OperatorState.IDLE;
 		}
 
-		// Arm Shooter
-		if (state == OperatorState.TURRET_ENGAGED && shooter.getState() == ShooterState.IDLE && controller.getButton(GamepadButton.RT))  {
-			shooter.arm();
+		// Arm ShooterMap
+		if (state == OperatorState.TurretMap_ENGAGED && ShooterMap.getState() == ShooterState.IDLE && controller.getButton(GamepadButton.RT))  {
+			ShooterMap.arm();
 			// DriverStation.reportError("\n ARMING", false);
-		} else if (state == OperatorState.TURRET_ENGAGED 
-				&& (shooter.getState() == ShooterState.ARMING || shooter.getState() == ShooterState.ARMED ) 
+		} else if (state == OperatorState.TurretMap_ENGAGED 
+				&& (ShooterMap.getState() == ShooterState.ARMING || ShooterMap.getState() == ShooterState.ARMED ) 
 				&& (!controller.getButton(GamepadButton.RT))) {
 			// DriverStation.reportError("\n DISARMING", false);
-			shooter.idle();
+			ShooterMap.idle();
 		}
 		
 		// Cycle state
@@ -132,19 +129,19 @@ public class OperatorController {
 //			}
 //		}
 
-		if (state == OperatorState.TURRET_ENGAGED) {
+		if (state == OperatorState.TurretMap_ENGAGED) {
 			double speedMod = 0.8;
 			if(controller.getButton(GamepadButton.LB)){
 				speedMod = 0.4;
 			}
-			manualTurretDrive(controller, speedMod);
+			manualTurretMapDrive(controller, speedMod);
 //			switch (visionState) {
 //			case OFF:
 ////				if (imageProcessor.getTarget() != null) {
 ////					speedMod = 0.5;
 ////				}	
-//				// Turret Motion by Operator Directly
-//				manualTurretDrive(controller, speedMod);
+//				// TurretMap Motion by Operator Directly
+//				manualTurretMapDrive(controller, speedMod);
 //				break;
 //			case LONG:
 //				try {
@@ -153,7 +150,7 @@ public class OperatorController {
 //
 //						visionDrive(curTarget);
 //					} else {
-//						manualTurretDrive(controller, speedMod);
+//						manualTurretMapDrive(controller, speedMod);
 //					}
 //				} catch (Exception ex) {
 //
@@ -162,34 +159,34 @@ public class OperatorController {
 //			}
 		}
 
-		turret.endstep();
-		shooter.step();
-		intake.step();
+		TurretMap.endstep();
+		ShooterMap.step();
+		IntakeMap.step();
 
 		// TODO Stitch in vision
 
 	}
 
-	public void manualTurretDrive(CowGamepad controller, double speedMod) {
+	public static void manualTurretMapDrive(CowGamepad controller, double speedMod) {
 		if (Math.abs(controller.getLY()) > 0.15) {
-			turret.manualPitchOverride(-controller.getLY() * speedMod);
+			TurretMap.manualPitchOverride(-controller.getLY() * speedMod);
 		}
 		if (Math.abs(controller.getRX()) > 0.15) {
-			turret.manualYawOverride(controller.getRX() * speedMod);
+			TurretMap.manualYawOverride(controller.getRX() * speedMod);
 		}
 	}
 
 	public void visionDrive(Target curTarget) {
 
 		double yawSpeedMod = 1;
-		if (shooter.getState() == ShooterState.ARMING || shooter.getState() == ShooterState.ARMED) {
+		if (ShooterMap.getState() == ShooterState.ARMING || ShooterMap.getState() == ShooterState.ARMED) {
 			yawSpeedMod = CowDash.getNum("Vision_Yaw_Slowdown", 0.75);
 		}
 		String visionYawState;
-		// Turret Yaw Movement
+		// TurretMap Yaw Movement
 		if (Math.abs(curTarget.angleX) > CowDash.getNum("Vision_X_Hi_Limit", 15)) {
 			visionYawState = "HIGH";
-			turret.manualYawBumpOverride(
+			TurretMap.manualYawBumpOverride(
 					yawSpeedMod
 							* CowMath.copySign(curTarget.angleX,
 									Math.sqrt(Math.abs(Math
@@ -197,7 +194,7 @@ public class OperatorController {
 							* CowDash.getNum("Vision_Tracking_X_Kp1_Hi", 1.5)));
 		} else if (Math.abs(curTarget.angleX) > CowDash.getNum("Vision_X_Med_Limit", 10)) {
 			visionYawState = "MED";
-			turret.manualYawBumpOverride(
+			TurretMap.manualYawBumpOverride(
 					yawSpeedMod
 							* CowMath.copySign(curTarget.angleX,
 									Math.sqrt(Math.abs(Math
@@ -205,7 +202,7 @@ public class OperatorController {
 							* CowDash.getNum("Vision_Tracking_X_Kp1_Med", 1.5)));
 		} else {
 			visionYawState = "LOW";
-			turret.manualYawBumpOverride(
+			TurretMap.manualYawBumpOverride(
 					yawSpeedMod
 							* CowMath
 									.copySign(curTarget.angleX,
@@ -216,7 +213,7 @@ public class OperatorController {
 		CowDash.setString("Vision_Yaw_Setting", visionYawState);
 
 		// double deg_pp = CowDash.getNum("Deg_Per_PX", 0.14);
-		// double dist = 64/ Math.tan(turret.getPitchEncDistance() +
+		// double dist = 64/ Math.tan(TurretMap.getPitchEncDistance() +
 		// curTarget.angleY - 39);
 		// CowDash.setNum("Distance_From_Target", dist);
 		// double yOffset = (5*Math.pow(10,-10)*Math.pow(dist,5) -
@@ -224,28 +221,28 @@ public class OperatorController {
 		// - (0.0001)*Math.pow(dist,3) - (0.0163)*Math.pow(dist,2) -
 		// (1.1415)*dist + 51.707);
 		// CowDash.setNum("Desired_angle", yOffset);
-		// yOffset -= turret.getPitchEncDistance() - curTarget.angleY ;
+		// yOffset -= TurretMap.getPitchEncDistance() - curTarget.angleY ;
 		// double targetPitch = yOffset ;
 		double yOffset = 0;
 		double pitchSpeedMod = 1;
 		int bracket = 1;
 
-		if (turret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_1", 90)) {
+		if (RawTurret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_1", 90)) {
 			yOffset = CowDash.getNum("Vision_Offset_1", -10);
 			bracket = 1;
-		} else if (turret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_2", 85)) {
+		} else if (RawTurret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_2", 85)) {
 			yOffset = CowDash.getNum("Vision_Offset_2", -10);
 			bracket = 2;
-		} else if (turret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_3", 80)) {
+		} else if (RawTurret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_3", 80)) {
 			yOffset = CowDash.getNum("Vision_Offset_3", -10);
 			bracket = 3;
-		} else if (turret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_4", 76)) {
+		} else if (RawTurret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_4", 76)) {
 			yOffset = CowDash.getNum("Vision_Offset_4", -10);
 			bracket = 4;
-		} else if (turret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_5", 73)) {
+		} else if (RawTurret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_5", 73)) {
 			yOffset = CowDash.getNum("Vision_Offset_5", -10);
 			bracket = 5;
-		} else if (turret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_6", 70)) {
+		} else if (RawTurret.getPitchEncDistance() + curTarget.angleY > CowDash.getNum("Vision_Offset_Ang_6", 70)) {
 			yOffset = CowDash.getNum("Vision_Offset_6", -10);
 			bracket = 6;
 		} else {
@@ -256,14 +253,14 @@ public class OperatorController {
 
 		yOffset *= Camera.DEG_PER_PX;
 		double targetPitch = yOffset + curTarget.angleY;
-		// Turret Pitch Movement
+		// TurretMap Pitch Movement
 		if (targetPitch < 0) {
 			pitchSpeedMod = CowDash.getNum("Vision_Pitch_Slowdown", 0.5);
 		}
 		String visionPitchState;
 		if (Math.abs(targetPitch) > CowDash.getNum("Vision_Y_Hi_Limit", 15)) {
 			visionPitchState = "HIGH";
-			turret.manualPitchBumpOverride(
+			TurretMap.manualPitchBumpOverride(
 					pitchSpeedMod
 							* CowMath
 									.copySign(targetPitch,
@@ -272,7 +269,7 @@ public class OperatorController {
 									* CowDash.getNum("Vision_Tracking_Y_Kp1_Hi", .6)));
 		} else if (Math.abs(targetPitch) > CowDash.getNum("Vision_Y_Med_Limit", 7)) {
 			visionPitchState = "MED";
-			turret.manualPitchBumpOverride(
+			TurretMap.manualPitchBumpOverride(
 					pitchSpeedMod
 							* CowMath
 									.copySign(targetPitch,
@@ -281,7 +278,7 @@ public class OperatorController {
 									* CowDash.getNum("Vision_Tracking_Y_Kp1_Med", .6)));
 		} else {
 			visionPitchState = "LOW";
-			turret.manualPitchBumpOverride(
+			TurretMap.manualPitchBumpOverride(
 					pitchSpeedMod
 							* CowMath
 									.copySign(targetPitch,
@@ -290,21 +287,20 @@ public class OperatorController {
 									* CowDash.getNum("Vision_Tracking_Y_Kp1", .6)));
 		}
 		CowDash.setString("Vision_Pitch_Setting", visionPitchState);
-		// turret.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
-		// turret.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
-		if (turret.getPitchEncDistance() > CowDash.getNum("Vision_Shoot_BR_1", 100)) {
-			shooter.setShootWheelSpeed(CowDash.getNum("Vision_Shoot_Speed_BR_1", 74));
-		} else if (turret.getPitchEncDistance() > CowDash.getNum("Vision_Shoot_BR_2", 85)) {
-			shooter.setShootWheelSpeed(CowDash.getNum("Vision_Shoot_Speed_BR_2", 90));
+		// TurretMap.manualPitchOverride(-visionPIDY.feedAndGetValue(curTarget.center.y));
+		// TurretMap.manualYawOverride(-visionPIDX.feedAndGetValue(curTarget.center.x));
+		if (RawTurret.getPitchEncDistance() > CowDash.getNum("Vision_Shoot_BR_1", 100)) {
+			ShooterMap.setShootWheelSpeed(CowDash.getNum("Vision_Shoot_Speed_BR_1", 74));
+		} else if (RawTurret.getPitchEncDistance() > CowDash.getNum("Vision_Shoot_BR_2", 85)) {
+			ShooterMap.setShootWheelSpeed(CowDash.getNum("Vision_Shoot_Speed_BR_2", 90));
 		} else {
-			shooter.setShootWheelSpeed(100);
+			ShooterMap.setShootWheelSpeed(100);
 		}
 	}
 
-	public void idleAll() {
-		shooter.idle();
-//		intake.idle();
-		turret.idle();
+	public static void idleAll() {
+		ShooterMap.idle();
+		TurretMap.idle();
 	}
 
 }
