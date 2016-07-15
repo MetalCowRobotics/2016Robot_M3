@@ -73,13 +73,13 @@ public class ShooterMap {
 		state = ShooterState.INTAKE;
 	}
 
-	public void eject() {
+	public static void eject() {
 		ejectTimer.reset();
 		ejectTimer.start();
 		state = ShooterState.EJECT;
 	}
 
-	public boolean shoot() {
+	public static boolean shoot() {
 		if (state == ShooterState.ARMED) {
 			shootTimer.reset();
 			shootTimer.start();
@@ -91,15 +91,15 @@ public class ShooterMap {
 		}
 	}
 
-	public void idle() {
+	public static void idle() {
 		state = ShooterState.IDLE;
 	}
 
-	private void runCamPID() {
+	private static void runCamPID() {
 		RawShooter.setCamSpeed(camPID.feedAndGetValue(-RawShooter.getCamEncDist()));
 	}
 
-	public void step() {
+	public static void step() {
 		switch (state) {
 		case INTAKE:
 			CowDash.setString("Shooter_state", "INTAKE");
