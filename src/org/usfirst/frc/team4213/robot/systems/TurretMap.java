@@ -14,19 +14,21 @@ import edu.wpi.first.wpilibj.SpeedController;
 public class TurretMap { // Replace these with the Constants
 	
 
-	private boolean overrideYawPID;
-	private boolean overridePitchPID;
+	private static boolean overrideYawPID;
+	private static boolean overridePitchPID;
 
-	private TurretState state;
+	private static TurretState state;
 	
 	private static PIDController PITCH_PID = new PIDController("Turret_Pitch", 100, 0, 0, 1);
 	private static PIDController YAW_PID = new PIDController("Turret_Yaw", 100, 0, 0, 1);
 
-	public enum TurretState {
+	public static enum TurretState {
 		ENGAGING, ENGAGED, IDLING, IDLE;
 	}
 
-	public TurretMap() {
+	private TurretMap(){}
+	
+	static {
 		state = TurretState.IDLE;
 		RawTurret.resetYawEnc();
 		RawTurret.setYawEncDistPerPulse(1 / Turret.Yaw_Motor.COUNT_PER_DEG);
@@ -37,11 +39,11 @@ public class TurretMap { // Replace these with the Constants
 		overrideYawPID = false;
 	}
 
-	public TurretState getState() {
+	public static TurretState getState() {
 		return state;
 	}
 
-	public void setYawSpeed(double speed) {
+	public static void setYawSpeed(double speed) {
 
 		// STATE CHECKING
 		if (state == TurretState.IDLE) {
@@ -69,7 +71,7 @@ public class TurretMap { // Replace these with the Constants
 		RawTurret.setYawSpeed(speed);
 	}
 
-	public void setPitchSpeed(double speed) {
+	public static void setPitchSpeed(double speed) {
 		CowDash.setNum("Turret Up Speed", speed);
 		if ((speed > 0 && RawTurret.getPitchEncDistance() > Turret.Pitch_Motor.MAX_ANGLE)
 				|| (speed < 0 && RawTurret.getPitchEncDistance() < 0)) {
@@ -93,15 +95,15 @@ public class TurretMap { // Replace these with the Constants
 		RawTurret.setPitchSpeed(speed);
 	}
 
-	public void engage() {
+	public static void engage() {
 		state = TurretState.ENGAGING;
 	}
 
-	public void idle() {
+	public static void idle() {
 		state = TurretState.IDLING;
 	}
 
-	public void bumpTurretUp() {
+	public static void bumpTurretUp() {
 		if (PITCH_PID.getTarget() < Turret.Pitch_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
 			PITCH_PID.bumpTarget(Turret.Pitch_Motor.BUMP_AMT);
 			// DriverStation.reportError("\n Moving Turret Up", false);
@@ -110,7 +112,7 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	public void bumpTurretDown() {
+	public static void bumpTurretDown() {
 		if (PITCH_PID.getTarget() > Turret.Pitch_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
 			PITCH_PID.bumpTarget(-Turret.Pitch_Motor.BUMP_AMT);
 			// DriverStation.reportError("\n Moving Turret Down", false);
@@ -119,7 +121,7 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	public void bumpTurretRight() {
+	public static void bumpTurretRight() {
 		if (YAW_PID.getTarget() < Turret.Yaw_Motor.MAX_ANGLE && state == TurretState.ENGAGED) {
 			YAW_PID.bumpTarget(Turret.Yaw_Motor.BUMP_AMT);
 		} else {
@@ -127,7 +129,7 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	public void bumpTurretLeft() {
+	public static void bumpTurretLeft() {
 		if (YAW_PID.getTarget() > Turret.Yaw_Motor.MIN_ANGLE && state == TurretState.ENGAGED) {
 			YAW_PID.bumpTarget(-Turret.Yaw_Motor.BUMP_AMT);
 		} else {
@@ -135,7 +137,7 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	public void manualPitchOverride(double speed) {
+	public static void manualPitchOverride(double speed) {
 		overridePitchPID = true;
 		if (state == TurretState.ENGAGED) {
 			overridePitchPID = true;
@@ -144,7 +146,7 @@ public class TurretMap { // Replace these with the Constants
 	}
 
 	
-	public void manualYawOverride(double speed) {
+	public static void manualYawOverride(double speed) {
 		overrideYawPID = true;
 		if (state == TurretState.ENGAGED) {
 			overrideYawPID = true;
@@ -153,19 +155,19 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	public void manualYawBumpOverride(double angle) {
+	public static void manualYawBumpOverride(double angle) {
 		if (state == TurretState.ENGAGED) {
 			YAW_PID.setTarget(RawTurret.getYawEncDistance() + angle);
 		}
 	}
 
-	public void manualPitchBumpOverride(double angle) {
+	public static void manualPitchBumpOverride(double angle) {
 		if (state == TurretState.ENGAGED) {
 			PITCH_PID.setTarget(RawTurret.getPitchEncDistance() + angle);
 		}
 	}
 
-	private void runPitchPID() {
+	private static void runPitchPID() {
 		if (overridePitchPID) {
 			PITCH_PID.setTarget(RawTurret.getPitchEncDistance());
 		} else {
@@ -173,7 +175,7 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	private void runYawPID() {
+	private static void runYawPID() {
 		if (overrideYawPID) {
 			YAW_PID.setTarget(RawTurret.getYawEncDistance());
 		} else {
@@ -181,12 +183,12 @@ public class TurretMap { // Replace these with the Constants
 		}
 	}
 
-	public void prestep() {
+	public static void prestep() {
 		overrideYawPID = false;
 		overridePitchPID = false;
 	}
 
-	public void endstep() {
+	public static void endstep() {
 		switch (state) {
 		case IDLING:
 			CowDash.setString("Turret_state", "IDLING");
@@ -225,7 +227,7 @@ public class TurretMap { // Replace these with the Constants
 
 	}
 
-	public boolean isAtYawTarget() {
+	public static boolean isAtYawTarget() {
 		return Math.abs(YAW_PID.getError())<Turret.Yaw_Motor.ABS_TOLERANCE;
 	}
 
