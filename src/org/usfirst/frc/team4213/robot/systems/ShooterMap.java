@@ -47,7 +47,7 @@ public class ShooterMap {
 		return state;
 	}
 	
-	static void setShootWheelSpeed(double speed) {
+	public static void setShootWheelSpeed(double speed) {
 		flywheelSpeed = speed;
 	}
 
