@@ -1,22 +1,22 @@
 package org.usfirst.frc.team4213.robot.systems;
 
-import org.team4213.lib14.CowDash;
-import org.team4213.lib14.PIDController;
-import org.team4213.lib14.TBHController;
+import org.usfirst.frc.team4213.lib14.CowDash;
+import org.usfirst.frc.team4213.lib14.PIDController;
+import org.usfirst.frc.team4213.lib14.TBHController;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Victor;
 
 public class ShooterMap {
 
-	private static final SpeedController CAM_MOTOR = new CANTalon(Shooter.CAM_CHANNEL);
-	private static final SpeedController FLYWHEEL_MOTOR = new CANTalon(Shooter.FLYWHEEL_CHANNEL);
-	private static final SpeedController FLYWHEEL_MOTOR_2 = new CANTalon(Shooter.FLYWHEEL_CHANNEL_2);
+	private static final SpeedController CAM_MOTOR = new Victor(Shooter.CAM_CHANNEL);
+	private static final SpeedController FLYWHEEL_MOTOR = new Victor(Shooter.FLYWHEEL_CHANNEL);
+	//private static final SpeedController FLYWHEEL_MOTOR_2 = new Victor(Shooter.FLYWHEEL_CHANNEL_2);
 
 	private static final Encoder CAM_ENCODER = new Encoder(Shooter.CAM_ENC_CH_A, Shooter.CAM_ENC_CH_B, false,
 			CounterBase.EncodingType.k4X);
@@ -24,21 +24,28 @@ public class ShooterMap {
 			false, CounterBase.EncodingType.k4X);
 
 	private double flywheelSpeed;
-	private ShooterState state;
+	private int state;
 	private Timer armTimer;
 	private Timer shootTimer;
 	private Timer ejectTimer;
 	private PIDController camPID;
 	private TBHController flywheelTBH;
-
-	public enum ShooterState {
+        
+        public class ShooterState {
+            public static final int INTAKE = 1;
+            public static final int EJECT = 2;
+            public static final int IDLE = 3;
+            public static final int ARMING = 4;
+            public static final int ARMED = 5;
+            public static final int SHOOTING = 6;
+        }
+	/*public enum ShooterState {
 		INTAKE, EJECT, IDLE, ARMING, ARMED, SHOOTING;
-	}
+	}*/
 
 	public ShooterMap() {
 		state = ShooterState.IDLE;
 		CAM_ENCODER.setReverseDirection(true);
-		CAM_MOTOR.setInverted(true);
 		armTimer = new Timer();
 		shootTimer = new Timer();
 		ejectTimer = new Timer();
@@ -50,22 +57,24 @@ public class ShooterMap {
 		camPID.setTarget(0);
 		CAM_ENCODER.setDistancePerPulse(1 / Shooter.CAM_PPD);
 		FLYWHEEL_ENCODER.setDistancePerPulse(1 / Shooter.FLYWHEEL_PPR);
+                CAM_ENCODER.start();
+                FLYWHEEL_ENCODER.start();
 	}
 
-	public ShooterState getState() {
+	public int getState() {
 		return state;
 	}
 
 	public void setCamSpeed(double speed) {
 		CowDash.setNum("Shooter_camSpeed", speed);
-		CAM_MOTOR.set(speed);
+		CAM_MOTOR.set(-speed);
 	}
 
 	public void setCurrentWheelSpeed(double speed) {
 //		speed *= -1;
 		CowDash.setNum("Shooter_wheelSpeed", speed);
 		FLYWHEEL_MOTOR.set(speed);
-		FLYWHEEL_MOTOR_2.set(speed);
+		//FLYWHEEL_MOTOR_2.set(speed);
 	}
 
 	public void setShootWheelSpeed(double speed) {
@@ -146,7 +155,7 @@ public class ShooterMap {
 
 	public void step() {
 		switch (state) {
-		case INTAKE:
+		case ShooterState.INTAKE:
 			CowDash.setString("Shooter_state", "INTAKE");
 			// if (getSwitchHit()) {
 			// state = ShooterState.IDLE;
@@ -155,7 +164,7 @@ public class ShooterMap {
 			camPID.setTarget(CowDash.getNum("Cam_Intake_Angle", -30));
 			setCurrentWheelSpeed(-1 * CowDash.getNum("Shooter_intakePower", 0.5));
 			break;
-		case EJECT:
+		case ShooterState.EJECT:
 			CowDash.setString("Shooter_state", "EJECT");
 
 			if (ejectTimer.get() < 0.4) {
@@ -168,7 +177,7 @@ public class ShooterMap {
 				camPID.setTarget(CowDash.getNum("Cam_Eject_Angle", -180));
 			}
 			break;
-		case SHOOTING:
+		case ShooterState.SHOOTING:
 			CowDash.setString("Shooter_state", "SHOOTING");
 			setCurrentWheelSpeed(flywheelTBH.feedAndGetValue(getFlyEncRate(), FLYWHEEL_MOTOR.get()));
 			camPID.setTarget(CowDash.getNum("Cam_Shoot_Angle", -180));
@@ -179,7 +188,7 @@ public class ShooterMap {
 				camPID.setTarget(0);
 			}
 			break;
-		case ARMING:
+		case ShooterState.ARMING:
 			CowDash.setString("Shooter_state", "ARMING");
 			camPID.setTarget(CowDash.getNum("Cam_Arm_Angle", 10));
 			// Intake for armIntakeTime, then go out
@@ -199,12 +208,12 @@ public class ShooterMap {
 				state = ShooterState.ARMED;
 			}
 			break;
-		case ARMED:
+		case ShooterState.ARMED:
 			camPID.setTarget(CowDash.getNum("Cam_Arm_Angle", 10));
 			CowDash.setString("Shooter_state", "ARMED");
 			setCurrentWheelSpeed(flywheelTBH.feedAndGetValue(-getFlyEncRate(), FLYWHEEL_MOTOR.get()));
 			break;
-		case IDLE:
+		case ShooterState.IDLE:
 			CowDash.setString("Shooter_state", "IDLE");
 			camPID.setTarget(CowDash.getNum("Cam_Idle_Angle", 0));
 			setCurrentWheelSpeed(0);

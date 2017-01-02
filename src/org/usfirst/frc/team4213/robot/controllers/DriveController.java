@@ -1,8 +1,8 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
-import org.team4213.lib14.AIRFLOController;
-import org.team4213.lib14.GamepadButton;
-import org.team4213.lib14.Xbox360Controller;
+import org.usfirst.frc.team4213.lib14.AIRFLOController;
+import org.usfirst.frc.team4213.lib14.GamepadButton;
+import org.usfirst.frc.team4213.lib14.Xbox360Controller;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Drivetrain;
 
@@ -27,6 +27,7 @@ public class DriveController {
 	public void drive (AIRFLOController controller, boolean squareUnits) {
 		double throttle = controller.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,
 				Drivetrain.SPRINT_SPEED);
+                System.out.println("Throttle: " + Double.toString(throttle) + "\n");
 		
 		if (controller.getButton(GamepadButton.A) || controller.getButton(GamepadButton.LT)){			//Go into half-arcade
 			driveMap.setLeftMotorSpeed(-controller.getLY() * throttle);
