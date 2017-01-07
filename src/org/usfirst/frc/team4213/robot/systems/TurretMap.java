@@ -1,18 +1,18 @@
 package org.usfirst.frc.team4213.robot.systems;
 
-import org.team4213.lib14.CowDash;
-import org.team4213.lib14.PIDController;
+import org.usfirst.frc.team4213.lib14.CowDash;
+import org.usfirst.frc.team4213.lib14.PIDController;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Turret;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Victor;
 
 public class TurretMap { // Replace these with the Constants
-	private static final SpeedController YAW_MOTOR = new CANTalon(Turret.Yaw_Motor.MOTOR_CHANNEL);
-	private static final SpeedController PITCH_MOTOR = new CANTalon(Turret.Pitch_Motor.MOTOR_CHANNEL);
+	private static final SpeedController YAW_MOTOR = new Victor(Turret.Yaw_Motor.MOTOR_CHANNEL);
+	private static final SpeedController PITCH_MOTOR = new Victor(Turret.Pitch_Motor.MOTOR_CHANNEL);
 	private static final Encoder YAW_ENC = new Encoder(Turret.Yaw_Motor.ENC_CH_A, Turret.Yaw_Motor.ENC_CH_B, true,
 			CounterBase.EncodingType.k4X);
 	private static final Encoder PITCH_ENC = new Encoder(Turret.Pitch_Motor.ENC_CH_A, Turret.Pitch_Motor.ENC_CH_B, true,
@@ -23,11 +23,19 @@ public class TurretMap { // Replace these with the Constants
 	private boolean overrideYawPID;
 	private boolean overridePitchPID;
 
-	private TurretState state;
-
-	public enum TurretState {
-		ENGAGING, ENGAGED, IDLING, IDLE;
-	}
+	private int state;
+        
+        public class TurretState {
+            public final static int ENGAGING = 1;
+            public final static int ENGAGED = 2;
+            public final static int IDLING = 3;
+            public final static int IDLE = 4;
+            
+        }
+	/*public enum TurretState {
+        1: ENGAGING,2: ENGAGED,3: IDLING,4: IDLE;
+	}*/
+        
 
 	public TurretMap() {
 		state = TurretState.IDLE;
@@ -35,12 +43,14 @@ public class TurretMap { // Replace these with the Constants
 		YAW_ENC.setDistancePerPulse(1 / Turret.Yaw_Motor.COUNT_PER_DEG);
 		PITCH_ENC.reset();
 		PITCH_ENC.setDistancePerPulse(1 / Turret.Pitch_Motor.COUNT_PER_DEG);
-		PITCH_MOTOR.setInverted(true);
+                PITCH_ENC.start();
+                YAW_ENC.start();
+		//PITCH_MOTOR.setInverted(true);
 		overridePitchPID = false;
 		overrideYawPID = false;
 	}
 
-	public TurretState getState() {
+	public int getState() {
 		return state;
 	}
 
@@ -51,7 +61,7 @@ public class TurretMap { // Replace these with the Constants
 
 	public void setRawPitchSpeed(double speed) {
 		CowDash.setNum("Turret_pitchSpeed", speed);
-		PITCH_MOTOR.set(speed);
+		PITCH_MOTOR.set(-speed);
 	}
 
 	public void setYawSpeed(double speed) {
@@ -94,7 +104,7 @@ public class TurretMap { // Replace these with the Constants
 		if (state == TurretState.ENGAGED) {
 			if (speed < 0) {
 				if(getPitchEncDistance() < Turret.Pitch_Motor.MIN_ANGLE){
-					DriverStation.reportError("We Cannot Go Any Lower", false);
+					//DriverStation.reportError("We Cannot Go Any Lower", false);
 					setRawPitchSpeed(0);
 					speed = 0;
 					return;
@@ -102,7 +112,7 @@ public class TurretMap { // Replace these with the Constants
 			}
 		}
 		
-		DriverStation.reportError("\n Speed : " + speed + "; Current Pos : " + getPitchEncDistance() + "; State : " + state.toString(), false);
+		//DriverStation.reportError("\n Speed : " + speed + "; Current Pos : " + getPitchEncDistance() + "; State : " + state.toString(), false);
 		setRawPitchSpeed(speed);
 	}
 
@@ -217,7 +227,7 @@ public class TurretMap { // Replace these with the Constants
 
 	public void endstep() {
 		switch (state) {
-		case IDLING:
+		case TurretState.IDLING:
 			CowDash.setString("Turret_state", "IDLING");
 			YAW_PID.setTarget(0);
 			if (Math.abs(YAW_PID.getError()) < Turret.Yaw_Motor.ABS_TOLERANCE) {
@@ -227,7 +237,7 @@ public class TurretMap { // Replace these with the Constants
 				}
 			}
 			break;
-		case ENGAGING:
+		case TurretState.ENGAGING:
 			CowDash.setString("Turret_state", "ENGAGING");
 			PITCH_PID.setTarget(Turret.Pitch_Motor.MIN_ANGLE);
 			if (Math.abs(PITCH_PID.getError()) < Turret.Pitch_Motor.ABS_TOLERANCE) {
@@ -237,10 +247,10 @@ public class TurretMap { // Replace these with the Constants
 //				}
 			}
 			break;
-		case ENGAGED:
+		case TurretState.ENGAGED:
 			CowDash.setString("Turret_state", "ENGAGED");
 			break;
-		case IDLE:
+		case TurretState.IDLE:
 			CowDash.setString("Turret_state", "IDLE");
 			setPitchSpeed(0);
 			setYawSpeed(0);
@@ -258,4 +268,19 @@ public class TurretMap { // Replace these with the Constants
 		return Math.abs(YAW_PID.getError())<Turret.Yaw_Motor.ABS_TOLERANCE;
 	}
 
+	public void setYawTarget(int target) {
+		if(-target > Turret.Yaw_Motor.MAX_ANGLE || -target < Turret.Yaw_Motor.MIN_ANGLE){
+			//DriverStation.reportError("Target set Too Far", false);
+			return;
+		}
+		YAW_PID.setTarget(-target);
+	}
+	
+	public void setPitchTarget(int target) {
+		if(target > Turret.Pitch_Motor.MAX_ANGLE || target < Turret.Pitch_Motor.MIN_ANGLE){
+			//sDriverStation.reportError("Target set Too Far", false);
+			return;
+		}
+		PITCH_PID.setTarget(target);
+	}
 }
