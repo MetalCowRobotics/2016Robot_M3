@@ -25,14 +25,18 @@ public class DriveMap{
 //		tankDrive(leftStick*throttle, rightStick * throttle, squareUnits); // TankDrive
 //	}
 	public void setLeftMotorSpeed(double speed){
-            System.out.print("LEFT: ");
-            System.out.println(speed);
-		LEFT_MOTOR.set(speed);
+            System.out.println("LEFT: " + speed);
+            if(Math.abs(speed)<.1){
+                speed=0;
+            }
+            LEFT_MOTOR.set(speed);
 	}
 	public void setRightMotorSpeed(double speed){
-            System.out.print("Right: ");
-            System.out.println(speed);
-		RIGHT_MOTOR.set(speed);
+            System.out.println("Right: " + speed);
+            if(Math.abs(speed)<.1){
+                speed=0;
+            }
+            RIGHT_MOTOR.set(speed);
 	}
 	
 	public double getRightMotorSpeed(){

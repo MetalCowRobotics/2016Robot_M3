@@ -4,27 +4,9 @@ package org.usfirst.frc.team4213.robot;
 //import java.util.concurrent.ScheduledExecutorService;
 //import java.util.concurrent.TimeUnit;
 
-import org.usfirst.frc.team4213.lib14.AIRFLOController;
-//import org.usfirst.frc.team4213.lib14.CowCamServer;
-import org.usfirst.frc.team4213.lib14.CowDash;
-import org.usfirst.frc.team4213.lib14.CowGamepad;
-import org.usfirst.frc.team4213.lib14.GamepadButton;
 import org.usfirst.frc.team4213.lib14.Xbox360Controller;
-import org.usfirst.frc.team4213.robot.controllers.DriveController;
-import org.usfirst.frc.team4213.robot.controllers.OperatorController;
 import org.usfirst.frc.team4213.robot.systems.DriveMap;
-import org.usfirst.frc.team4213.robot.systems.IntakeMap;
-import org.usfirst.frc.team4213.robot.systems.RobotMap;
-import org.usfirst.frc.team4213.robot.systems.ShooterMap;
-import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
-import org.usfirst.frc.team4213.robot.systems.TurretMap;
-import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Timer;
-import org.usfirst.frc.team4213.robot.systems.RobotMap.Intake;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -35,19 +17,17 @@ import org.usfirst.frc.team4213.robot.systems.RobotMap.Intake;
  */
 public class Robot extends IterativeRobot {
 
-	TurretMap turret;
-	IntakeMap intake; // TODO: Stitch in and test intake
-	ShooterMap shooter;
+//	TurretMap turret;
+//	IntakeMap intake; // TODO: Stitch in and test intake
+//	ShooterMap shooter;
 
-	AIRFLOController driverController;
-	CowGamepad gunnerController;
+//	AIRFLOController driverController;
+	Xbox360Controller controller;
         
-        Joystick j;
-
-	DriveController driveTrain;
-	OperatorController ballSystems;
+//	DriveController driveTrain;
+//	OperatorController ballSystems;
 	DriveMap drivemap;
-	Timer timer;
+//	Timer timer;
 
 	// Camera Controller
 //	public static CowCamServer camServer;
@@ -68,13 +48,14 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void robotInit() {
-                System.out.println("HOI IM FLANK!!!!!!!!!!!!\n");
+                System.out.println("/n/nStarting Robot Initilization...");
 
-		CowDash.load();
+//		CowDash.load();
 
-		driverController = new AIRFLOController(1); // AIRFLOController(1);
-		gunnerController = new Xbox360Controller(2);
-
+                System.out.print("\tCreate controller: ");
+		controller = new Xbox360Controller(1);
+                System.out.println("SUCCESS!");
+                
 //		executor = Executors.newScheduledThreadPool(1);
 
 //		timer = new Timer();
@@ -88,15 +69,20 @@ public class Robot extends IterativeRobot {
 //		}
 
 		// Systems
-		turret = new TurretMap();
-		shooter = new ShooterMap();
-		intake = new IntakeMap();
+//		turret = new TurretMap();
+//		shooter = new ShooterMap();
+//		intake = new IntakeMap();
+
+                System.out.print("\tPopulate drive map: ");
 		drivemap = new DriveMap();
-		
+		System.out.println("SUCCESS!");
+                
 		//Controllers
-		driveTrain = new DriveController(drivemap);
-		ballSystems = new OperatorController(turret, shooter, intake);
-		CowDash.getNum("AUTONOMOUS_MODE", 0);
+//		driveTrain = new DriveController(drivemap);
+//		ballSystems = new OperatorController(turret, shooter, intake);
+//		CowDash.getNum("AUTONOMOUS_MODE", 0);
+
+                System.out.println("... initialization complete!\n");
 
 	}
 
@@ -167,8 +153,8 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void teleopPeriodic() {
-		ballSystems.drive(gunnerController);
-		driveTrain.drive(driverController, true);
+//		ballSystems.drive(gunnerController);
+//		driveTrain.drive(driverController, true);
 	}
 
 	/**
@@ -179,8 +165,8 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void testPeriodic() {
-		turret.setRawPitchSpeed(gunnerController.getLY());
-		turret.setRawYawSpeed(gunnerController.getRX());
+//		turret.setRawPitchSpeed(gunnerController.getLY());
+//		turret.setRawYawSpeed(gunnerController.getRX());
 
 //		if (gunnerController.getButton(GamepadButton.A))
 //			shooter.setCurrentWheelSpeed(1);
@@ -197,20 +183,20 @@ public class Robot extends IterativeRobot {
 //			shooter.setCamSpeed(0);
 
                 
-                if(gunnerController.getButton(GamepadButton.A) ){//&& Intake.LIMIT_SWITCH_DWN==0){
-                    System.out.println("I am moving down!");
-                }
-                if(gunnerController.getButton(GamepadButton.A) ){//&& Intake.LIMIT_SWITCH_DWN==1){
-                    System.out.println("I am down!");
-                }
-                if(gunnerController.getButton(GamepadButton.Y) ){//&& Intake.LIMIT_SWITCH_UP==0){
-                    System.out.println("I am moving up!");
-                }
-                if(gunnerController.getButton(GamepadButton.Y) ){//&& Intake.LIMIT_SWITCH_UP==1){
-                    System.out.println("I am up!");
-                }
-System.out.println("Down Switch: "+intake.LIMIT_SWITCH_DOWN);
-System.out.println("  Up Switch: "+intake.LIMIT_SWITCH_UP);
+//                if(gunnerController.getButton(GamepadButton.A) ){//&& Intake.LIMIT_SWITCH_DWN==0){
+//                    System.out.println("I am moving down!");
+//                }
+//                if(gunnerController.getButton(GamepadButton.A) ){//&& Intake.LIMIT_SWITCH_DWN==1){
+//                    System.out.println("I am down!");
+//                }
+//                if(gunnerController.getButton(GamepadButton.Y) ){//&& Intake.LIMIT_SWITCH_UP==0){
+//                    System.out.println("I am moving up!");
+//                }
+//                if(gunnerController.getButton(GamepadButton.Y) ){//&& Intake.LIMIT_SWITCH_UP==1){
+//                    System.out.println("I am up!");
+//                }
+//System.out.println("Down Switch: "+intake.LIMIT_SWITCH_DOWN);
+//System.out.println("  Up Switch: "+intake.LIMIT_SWITCH_UP);
 
 
                 
@@ -218,9 +204,37 @@ System.out.println("  Up Switch: "+intake.LIMIT_SWITCH_UP);
 		//System.out.println("\n Enc 1 Position:" + shooter.getFlyEncDist());
 		//System.out.println("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024);
 		
-                driveTrain.drive(driverController, true);
-		intake.setPitchSpeed(gunnerController.getLY());
+//                driveTrain.drive(driverController, true);
+//		intake.setPitchSpeed(gunnerController.getLY());
 		//DriverStation.reportError("\n" + CowDash.getNum("AUTONOMOUS_MODE",0), false);
+                
+                /*********
+                 * Robot has two modes drive/shoot
+                 *     Drive = allows intake operation and movement
+                 *     Shoot = engages turret, intake is down, and cannot move around
+                 * Toggle between these two modes is determined by if the Right-trigger
+                 * is pressed all the way down.
+                 */
+                if(controller.getRT()==1){
+                    //in shooter mode
+                    System.out.println("Shooter Mode!");
+                    drivemap.setLeftMotorSpeed(0); //needs to be inverted, unless motor is inverted
+                    drivemap.setRightMotorSpeed(0);
+                    
+                    
+                    
+                    
+                    
+                }else{
+                    //Engages Drive Mode
+                    drivemap.setLeftMotorSpeed(-1*controller.getLY()); //needs to be inverted, unless motor is inverted
+                    drivemap.setRightMotorSpeed(controller.getRY());
+                    
+                    
+                    
+                    
+                }
+                
 
 		
 	}
