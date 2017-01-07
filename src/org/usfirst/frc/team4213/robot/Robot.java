@@ -39,7 +39,7 @@ public class Robot extends IterativeRobot {
 	IntakeMap intake; // TODO: Stitch in and test intake
 	ShooterMap shooter;
 
-	CowGamepad driverController;
+	AIRFLOController driverController;
 	CowGamepad gunnerController;
         
         Joystick j;
@@ -72,7 +72,7 @@ public class Robot extends IterativeRobot {
 
 		CowDash.load();
 
-		driverController = new Xbox360Controller(1); // AIRFLOController(1);
+		driverController = new AIRFLOController(1); // AIRFLOController(1);
 		gunnerController = new Xbox360Controller(2);
 
 //		executor = Executors.newScheduledThreadPool(1);
