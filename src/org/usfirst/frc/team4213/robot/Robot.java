@@ -48,7 +48,7 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void robotInit() {
-                System.out.println("/n/nStarting Robot Initilization...");
+                System.out.println("\n\nStarting Robot Initilization...");
 
 //		CowDash.load();
 
