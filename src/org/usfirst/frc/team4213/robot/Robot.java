@@ -22,7 +22,6 @@ import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Intake;
 
@@ -39,10 +38,8 @@ public class Robot extends IterativeRobot {
 	IntakeMap intake; // TODO: Stitch in and test intake
 	ShooterMap shooter;
 
-	AIRFLOController driverController;
-	CowGamepad gunnerController;
-        
-        Joystick j;
+	Xbox360Controller driverController;
+	Xbox360Controller gunnerController;
 
 	DriveController driveTrain;
 	OperatorController ballSystems;
@@ -72,7 +69,7 @@ public class Robot extends IterativeRobot {
 
 		CowDash.load();
 
-		driverController = new AIRFLOController(1); // AIRFLOController(1);
+		driverController = new Xbox360Controller(1); // AIRFLOController(1);
 		gunnerController = new Xbox360Controller(2);
 
 //		executor = Executors.newScheduledThreadPool(1);
@@ -171,6 +168,23 @@ public class Robot extends IterativeRobot {
 		driveTrain.drive(driverController, true);
 	}
 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 	/**
 	 * This function is called periodically during test mode Coders and
 	 * Developers use this during their tests
@@ -179,8 +193,8 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void testPeriodic() {
-		turret.setRawPitchSpeed(gunnerController.getLY());
-		turret.setRawYawSpeed(gunnerController.getRX());
+		//turret.setRawPitchSpeed(gunnerController.getLY());
+		//turret.setRawYawSpeed(gunnerController.getRX());
 
 //		if (gunnerController.getButton(GamepadButton.A))
 //			shooter.setCurrentWheelSpeed(1);
@@ -196,30 +210,23 @@ public class Robot extends IterativeRobot {
 //		else
 //			shooter.setCamSpeed(0);
 
-                
-                if(gunnerController.getButton(GamepadButton.A) ){//&& Intake.LIMIT_SWITCH_DWN==0){
-                    System.out.println("I am moving down!");
-                }
-                if(gunnerController.getButton(GamepadButton.A) ){//&& Intake.LIMIT_SWITCH_DWN==1){
-                    System.out.println("I am down!");
-                }
-                if(gunnerController.getButton(GamepadButton.Y) ){//&& Intake.LIMIT_SWITCH_UP==0){
-                    System.out.println("I am moving up!");
-                }
-                if(gunnerController.getButton(GamepadButton.Y) ){//&& Intake.LIMIT_SWITCH_UP==1){
-                    System.out.println("I am up!");
-                }
-System.out.println("Down Switch: "+intake.LIMIT_SWITCH_DOWN);
-System.out.println("  Up Switch: "+intake.LIMIT_SWITCH_UP);
 
 
+
+            //ballSystems.drive(gunnerController);
+            //driveTrain.drive(driverController, true);
+                if(gunnerController.getButton(GamepadButton.A)){
+                    intake.PITCH_MOTOR.set(gunnerController.getLY());
+                }else{
+                    intake.PITCH_MOTOR.set(0);
+                }
                 
                 
 		//System.out.println("\n Enc 1 Position:" + shooter.getFlyEncDist());
 		//System.out.println("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024);
 		
-                driveTrain.drive(driverController, true);
-		intake.setPitchSpeed(gunnerController.getLY());
+                //driveTrain.drive(driverController, true);
+		//intake.setPitchSpeed(gunnerController.getLY());
 		//DriverStation.reportError("\n" + CowDash.getNum("AUTONOMOUS_MODE",0), false);
 
 		

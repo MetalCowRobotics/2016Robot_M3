@@ -28,22 +28,14 @@ public class IntakeMap {
             public static final int RAISING = 3;
             public static final int LOWERING = 4;
         }
-	/*public enum IntakeRaiseState {
-		DOWN, UP, RAISING , LOWERING ;
-	}*/
         
         public class IntakeRollerState {
             public static final int INTAKE = 1;
             public static final int EJECT = 2;
             public static final int IDLE = 3;
         }
-	
-	/*public enum IntakeRollerState {
-		INTAKE,EJECT,IDLE;
-	}*/
 
 	public IntakeMap() {
-		//setEncDistPerPulse(1 / Intake.COUNT_PER_DEG);
 		
 		vertState = IntakeRaiseState.UP;
 		rollerState = IntakeRollerState.IDLE;
@@ -111,6 +103,9 @@ public class IntakeMap {
 	}
 
 	public void step() {
+            
+            System.out.println("Roller State:" + rollerState);
+            System.out.println("Vert State:" + vertState);
 		
 		switch (rollerState) {
 		case IntakeRollerState.EJECT:
@@ -133,7 +128,7 @@ public class IntakeMap {
 			break;
 		case IntakeRaiseState.RAISING:
 			if(moveTimer.get() < CowDash.getNum("Intake_Rise_Time", 8)){
-			setPitchSpeed(Intake.RAISE_SPEED);
+                        	setPitchSpeed(Intake.RAISE_SPEED);
 			}else{
 				vertState = IntakeRaiseState.UP;
 			}

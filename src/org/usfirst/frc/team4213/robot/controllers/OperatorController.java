@@ -50,7 +50,7 @@ public class OperatorController {
 
 	public void drive(CowGamepad controller) {
 		turret.prestep();
-
+                
 		// INTAKE
 		if (state == OperatorState.IDLE && controller.getButton(GamepadButton.B)) {
 			shooter.intake();
