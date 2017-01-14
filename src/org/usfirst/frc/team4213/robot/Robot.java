@@ -4,6 +4,7 @@ package org.usfirst.frc.team4213.robot;
 //import java.util.concurrent.ScheduledExecutorService;
 //import java.util.concurrent.TimeUnit;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import org.usfirst.frc.team4213.lib14.AIRFLOController;
 //import org.usfirst.frc.team4213.lib14.CowCamServer;
 import org.usfirst.frc.team4213.lib14.CowDash;
@@ -164,7 +165,7 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void teleopPeriodic() {
-		ballSystems.drive(gunnerController);
+		//ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
 	}
 
@@ -215,11 +216,12 @@ public class Robot extends IterativeRobot {
 
             //ballSystems.drive(gunnerController);
             //driveTrain.drive(driverController, true);
-                if(gunnerController.getButton(GamepadButton.A)){
-                    intake.PITCH_MOTOR.set(gunnerController.getLY());
-                }else{
-                    intake.PITCH_MOTOR.set(0);
-                }
+
+            
+                System.out.println("Limit Switch Up: "+intake.LIMIT_SWITCH_UP.get());
+                System.out.println("Limit Switch Down: "+intake.LIMIT_SWITCH_DOWN.get());
+                
+                
                 
                 
 		//System.out.println("\n Enc 1 Position:" + shooter.getFlyEncDist());

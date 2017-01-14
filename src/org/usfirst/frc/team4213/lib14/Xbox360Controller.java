@@ -46,21 +46,21 @@ public class Xbox360Controller extends CowGamepad {
 
 	
 	public double getLY() {
-		return Math.abs( getRawAxis(2) ) > 0.1 ? -getRawAxis(2) : 0;
+		return getRawAxis(2);
 	}
 
 
 	public double getLX() {
-		return Math.abs( getRawAxis(1)) > 0.1 ? -getRawAxis(1) : 0;
+		return getRawAxis(1);
 	}
 
 	
 	public double getRY() {
-		return Math.abs( getRawAxis(6) ) > 0.1 ? getRawAxis(6) : 0;
+		return getRawAxis(6);
 	}
 
 	public double getRX() {
-		return Math.abs( getRawAxis(5)) > 0.1 ? getRawAxis(5) : 0;
+		return getRawAxis(5);
 	}
 	
 	/*public void rumbleLeft(float amt){
