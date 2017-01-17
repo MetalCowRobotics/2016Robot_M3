@@ -53,11 +53,13 @@ public class OperatorController {
                 
 		// INTAKE
 		if (state == OperatorState.IDLE && controller.getButton(GamepadButton.B)) {
+                    System.out.println("I am Intaking!!!");
 			shooter.intake();
 			intake.intake();
 			turret.idle();
 			state = OperatorState.INTAKE;
 		} else if (state == OperatorState.INTAKE && (!controller.getButton(GamepadButton.B))) {
+                    System.out.println("I am ejecting!!");
 			idleAll();
 			intake.idleRoller();
 			state = OperatorState.IDLE;

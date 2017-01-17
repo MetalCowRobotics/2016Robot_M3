@@ -23,6 +23,7 @@ import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team4213.robot.systems.RobotMap.Intake;
 
@@ -124,31 +125,6 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void autonomousInit() {
-		// TODO: AUTO!!!
-//		timer.reset();
-//		timer.start();
-//		switch ( (int) CowDash.getNum("AUTONOMOUS_MODE", 0)){
-//		case 1:
-//			angleX = 94;
-//			angleY = 36;
-//			break;
-//		case 5:
-//			angleX = 270;
-//			angleY = 49;
-//			break;
-//		case 2:
-//			angleX = 90;
-//			angleY = 49;
-//			break;
-//		case 34:
-//			straightAuton = true;
-//			break;
-//		default:
-//			angleX = 92;
-//			angleY = 38;
-//			break;
-//		
-//		}
 	}
 
 	/**
@@ -165,7 +141,7 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void teleopPeriodic() {
-		//ballSystems.drive(gunnerController);
+		ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
 	}
 
@@ -194,43 +170,48 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void testPeriodic() {
-		//turret.setRawPitchSpeed(gunnerController.getLY());
-		//turret.setRawYawSpeed(gunnerController.getRX());
 
-//		if (gunnerController.getButton(GamepadButton.A))
-//			shooter.setCurrentWheelSpeed(1);
-//		else if (gunnerController.getButton(GamepadButton.B))
-//			shooter.setCurrentWheelSpeed(-1);
-//		else
-//			shooter.setCurrentWheelSpeed(0);
-
-//		if (gunnerController.getButton(GamepadButton.X))
-//			shooter.setCamSpeed(1);
-//		else if (gunnerController.getButton(GamepadButton.Y))
-//			shooter.setCamSpeed(-1);
-//		else
-//			shooter.setCamSpeed(0);
+                
+//                if (driverController.getButton(GamepadButton.A)) {
+//                    System.out.println("Pressing A");
+//                    intake.setRollerSpeed(.75);
+//                } else if (driverController.getButton(GamepadButton.B)){
+//                    System.out.println("Pressing B");
+//                    intake.setRollerSpeed(-.75);
+//                } else {
+//                    System.out.println("Not pressing A or B");
+//                    intake.setRollerSpeed(0);
+//                }
 
 
-
-
-            //ballSystems.drive(gunnerController);
-            //driveTrain.drive(driverController, true);
-
-            
-                System.out.println("Limit Switch Up: "+intake.LIMIT_SWITCH_UP.get());
-                System.out.println("Limit Switch Down: "+intake.LIMIT_SWITCH_DOWN.get());
+                drivemap.setLeftMotorSpeed(-driverController.getLY());
+                drivemap.setRightMotorSpeed(driverController.getRY());
                 
                 
                 
+                if(gunnerController.getButton(GamepadButton.B)){
+                    System.out.println("Roller in!");
+                    intake.setRollerSpeed(.5);
+                }else if(gunnerController.getButton(GamepadButton.X)){
+                    System.out.println("Roller eject!");
+                    intake.setRollerSpeed(-0.5);
+                }else{
+                    System.out.println("Roller Stopped!");
+                    intake.setRollerSpeed(0);
+                }
                 
-		//System.out.println("\n Enc 1 Position:" + shooter.getFlyEncDist());
-		//System.out.println("\n Enc 2 Revolutions:" + turret.getYawEncPosition() / 1024);
-		
-                //driveTrain.drive(driverController, true);
-		//intake.setPitchSpeed(gunnerController.getLY());
-		//DriverStation.reportError("\n" + CowDash.getNum("AUTONOMOUS_MODE",0), false);
+                if(gunnerController.getButton(GamepadButton.Y)){
+                    System.out.println("Intake Up!");
+                    intake.setPitchSpeed(1);
+                }else if(gunnerController.getButton(GamepadButton.A)){
+                    System.out.println("Intake Down!");
+                    intake.setPitchSpeed(-1);
+                }else{
+                    System.out.println("Intake Stopped!");
+                    intake.setPitchSpeed(0);
+                }
 
+                
 		
 	}
 

@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Victor;
 public class DriveMap{
 
 	private static final SpeedController LEFT_MOTOR = new Victor(RobotMap.Drivetrain.LEFT_MOTOR_CHANNEL);
-	private static final SpeedController RIGHT_MOTOR = new Victor(RobotMap.Drivetrain.RIGHT_MOTOR_CHANNEL);
+	private static final SpeedController RIGHT_MOTOR = new Talon(RobotMap.Drivetrain.RIGHT_MOTOR_CHANNEL);
 
 //	/**
 //	 * This one will actually move the robot.
@@ -25,13 +25,11 @@ public class DriveMap{
 //		tankDrive(leftStick*throttle, rightStick * throttle, squareUnits); // TankDrive
 //	}
 	public void setLeftMotorSpeed(double speed){
-            System.out.print("LEFT: ");
-            System.out.println(speed);
+            //System.out.println("LEFT: "+ speed);
 		LEFT_MOTOR.set(speed);
 	}
 	public void setRightMotorSpeed(double speed){
-            System.out.print("Right: ");
-            System.out.println(speed);
+            //System.out.println("Right: "+ speed);
 		RIGHT_MOTOR.set(speed);
 	}
 	

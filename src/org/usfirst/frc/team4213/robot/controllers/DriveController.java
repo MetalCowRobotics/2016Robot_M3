@@ -27,7 +27,7 @@ public class DriveController {
 	public void drive (Xbox360Controller controller, boolean squareUnits) {
 		double throttle = controller.getThrottle(Drivetrain.NORMAL_SPEED, Drivetrain.CRAWL_SPEED,Drivetrain.SPRINT_SPEED);
                 
-                System.out.println("Throttle: " + Double.toString(throttle) + "\n");
+                //System.out.println("Throttle: " + Double.toString(throttle) + "\n");
 		
 		if (controller.getButton(GamepadButton.A) || controller.getButton(GamepadButton.LT)){			//Go into half-arcade
 			driveMap.setLeftMotorSpeed(-controller.getLY() * throttle);

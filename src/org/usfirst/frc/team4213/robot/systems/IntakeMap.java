@@ -15,8 +15,8 @@ public class IntakeMap {
 	public final SpeedController ROLLER_MOTOR = new Victor(Intake.ROLLER_MOTOR_CHANNEL);
 	public final SpeedController PITCH_MOTOR = new Victor(Intake.PITCH_MOTOR_CHANNEL);
 	//public Encoder PITCH_ENCODER = new Encoder(Intake.ENCODER_CH_A, Intake.ENCODER_CH_B, false, CounterBase.EncodingType.k4X);
-        public final DigitalInput LIMIT_SWITCH_UP = new DigitalInput(Intake.LIMIT_SWITCH_UP);
-        public final DigitalInput LIMIT_SWITCH_DOWN = new DigitalInput(Intake.LIMIT_SWITCH_DWN);
+        //public final DigitalInput LIMIT_SWITCH_UP = new DigitalInput(Intake.LIMIT_SWITCH_UP);
+        //public final DigitalInput LIMIT_SWITCH_DOWN = new DigitalInput(Intake.LIMIT_SWITCH_DWN);
 
 	private Timer moveTimer;
 	private int vertState;
