@@ -211,7 +211,27 @@ public class Robot extends IterativeRobot {
                     intake.setPitchSpeed(0);
                 }
 
-                
+         if(gunnerController.getButton(GamepadButton.RT)){
+                    System.out.println("Kicker forward!");
+                    shooter.setCamSpeed(1);
+                }else if(gunnerController.getButton(GamepadButton.LT)){
+                    System.out.println("Kicker backward!");
+                    shooter.setCamSpeed(-1);
+                }else{
+                    System.out.println("Kicker Stopped!");
+                    shooter.setCamSpeed(0);
+                }
+         
+          if(gunnerController.getButton(GamepadButton.LB)){
+                    System.out.println("Shooter In!");
+                    shooter.setCurrentWheelSpeed(1);
+                }else if(gunnerController.getButton(GamepadButton.RB)){
+                    System.out.println("Shooter Out!");
+                    shooter.setCurrentWheelSpeed(-1);
+                }else{
+                    System.out.println("Shooter Stopped!");
+                    shooter.setCurrentWheelSpeed(0);
+                }
 		
 	}
 
