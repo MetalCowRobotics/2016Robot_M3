@@ -48,8 +48,6 @@ public class Robot extends IterativeRobot {
 	DriveMap drivemap;
 	Timer timer;
 
-        DigitalInput limitSwitchUp;
-        DigitalInput limitSwitchDwn;
         
         
 	// Camera Controller
@@ -75,13 +73,10 @@ public class Robot extends IterativeRobot {
 
 		CowDash.load();
 
-		driverController = new Xbox360Controller(1); // AIRFLOController(1);
-		gunnerController = new Xbox360Controller(2);
+		driverController = new Xbox360Controller(1); //CRio port 1, Dash port 0, because cRio is 1 index
+		gunnerController = new Xbox360Controller(2); //Crio port 2, dash port 1, because cRio is 2 index
 
-                
-                limitSwitchUp = new DigitalInput(14);
-                limitSwitchDwn = new DigitalInput(7);
-                
+
                 
 //		executor = Executors.newScheduledThreadPool(1);
 
@@ -104,7 +99,7 @@ public class Robot extends IterativeRobot {
 		//Controllers
 		driveTrain = new DriveController(drivemap);
 		ballSystems = new OperatorController(turret, shooter, intake);
-		CowDash.getNum("AUTONOMOUS_MODE", 0);
+		//CowDash.getNum("AUTONOMOUS_MODE", 0);
 
 	}
 
@@ -171,6 +166,14 @@ public class Robot extends IterativeRobot {
         
         
         
+        
+        
+        
+        
+        
+        
+        
+        
 	/**
 	 * This function is called periodically during test mode Coders and
 	 * Developers use this during their tests
@@ -178,7 +181,7 @@ public class Robot extends IterativeRobot {
 	 * But here it's for mechanical team to test their shit
 	 */
 //	@Override
-	public void testPeriodic() {
+	public void testPeriodic() {   //this is test mode button!!
 
                 
 //                if (driverController.getButton(GamepadButton.A)) {
@@ -193,7 +196,7 @@ public class Robot extends IterativeRobot {
 //                }
 
                 //This is the wheels code
-               drivemap.setLeftMotorSpeed(-driverController.getLY());
+                drivemap.setLeftMotorSpeed(-driverController.getLY());
                 drivemap.setRightMotorSpeed(driverController.getRY());
                 
                 
@@ -202,46 +205,46 @@ public class Robot extends IterativeRobot {
                 
                 
                 if(gunnerController.getButton(GamepadButton.B)){
-                    System.out.println("Roller in!");
+                    //System.out.println("Roller in!");
                     intake.setRollerSpeed(.5);
                 }else if(gunnerController.getButton(GamepadButton.X)){
-                    System.out.println("Roller eject!");
+                    //System.out.println("Roller eject!");
                     intake.setRollerSpeed(-0.5);
                 }else{
-                    System.out.println("Roller Stopped!");
+                    //System.out.println("Roller Stopped!");
                     intake.setRollerSpeed(0);
                 }
                 
                 if(gunnerController.getButton(GamepadButton.Y)){
-                    System.out.println("Intake Up!");
+                    //System.out.println("Intake Up!");
                     intake.setPitchSpeed(1);
                 }else if(gunnerController.getButton(GamepadButton.A)){
-                    System.out.println("Intake Down!");
+                    //System.out.println("Intake Down!");
                     intake.setPitchSpeed(-1);
                 }else{
-                    System.out.println("Intake Stopped!");
+                    //System.out.println("Intake Stopped!");
                     intake.setPitchSpeed(0);
                 }
 
          if(gunnerController.getButton(GamepadButton.RT)){
-                    System.out.println("Kicker forward!");
+                    //System.out.println("Kicker forward!");
                     shooter.setCamSpeed(1);
                 }else if(gunnerController.getButton(GamepadButton.LT)){
-                    System.out.println("Kicker backward!");
+                    //System.out.println("Kicker backward!");
                     shooter.setCamSpeed(-1);
                 }else{
-                    System.out.println("Kicker Stopped!");
+                    //System.out.println("Kicker Stopped!");
                     shooter.setCamSpeed(0);
                 }
          
           if(gunnerController.getButton(GamepadButton.LB)){
-                    System.out.println("Shooter In!");
+                    //System.out.println("Shooter In!");
                     shooter.setCurrentWheelSpeed(1);
                 }else if(gunnerController.getButton(GamepadButton.RB)){
-                    System.out.println("Shooter Out!");
+                    //System.out.println("Shooter Out!");
                     shooter.setCurrentWheelSpeed(-1);
                 }else{
-                    System.out.println("Shooter Stopped!");
+                    //System.out.println("Shooter Stopped!");
                     shooter.setCurrentWheelSpeed(0);
                 }
           
@@ -251,25 +254,25 @@ public class Robot extends IterativeRobot {
           
           
           if(gunnerController.getLY()==1){
-                    System.out.println("Pitch Turret Down!");
+                    //System.out.println("Pitch Turret Down!");
                     turret.setRawPitchSpeed(-.5);
          }else if(gunnerController.getLY()==-1){
-                    System.out.println("Pitch Turret Up!");
+                    //System.out.println("Pitch Turret Up!");
                     turret.setRawPitchSpeed(.5);
          }else{
-                    System.out.println("Pitch Turret Stopped!");
+                    //System.out.println("Pitch Turret Stopped!");
                     turret.setRawPitchSpeed(0);
          }
           
          if(gunnerController.getLX()==1) {
-             System.out.println("Turret spinning Left!");
-             turret.setRawYawSpeed(-.5);}
+                //System.out.println("Turret spinning Left!");
+                turret.setRawYawSpeed(-.5);}
              else if(gunnerController.getLX()==-1){
-                 System.out.println("Turret Spinning Right!");
-                 turret.setRawYawSpeed(.5);}
+                //System.out.println("Turret Spinning Right!");
+                turret.setRawYawSpeed(.5);}
              else {
-                 System.out.println("Turret Spinning Stopped!");
-                 turret.setRawYawSpeed(0);
+                //System.out.println("Turret Spinning Stopped!");
+                turret.setRawYawSpeed(0);
          }
         
         
@@ -277,12 +280,15 @@ public class Robot extends IterativeRobot {
         //turret.getPitchEncPosition()
         System.out.println(); //blank line
         System.out.println("Shooter Pitch Encoder: "+turret.getPitchEncPosition());
+        
         System.out.println("Cam Encoder: "+shooter.getCamEncValue());
+        System.out.println("Cam Encoder Angle: "+shooter.getCamEncDist());
+        
         System.out.println("Flywheel: "+shooter.getFlyEncValue());
         System.out.println("Turret Spin Encoder: "+turret.getYawEncPosition());
         
-        System.out.println("Limit Switch Up: "+limitSwitchUp.get());
-        System.out.println("Limit Switch Dwn: "+limitSwitchDwn.get());
+        System.out.println("Limit Switch Up: "+intake.LIMIT_SWITCH_UP.get());
+        System.out.println("Limit Switch Dwn: "+intake.LIMIT_SWITCH_DOWN.get());
         
 	}
 

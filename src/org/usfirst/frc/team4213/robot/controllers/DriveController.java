@@ -19,7 +19,7 @@ public class DriveController {
 	 * Arcade style driving for the DriveTrain.
 	 * 
 	 * @param driverController
-	 *            - AIRFLO Controller that will be used for driving
+	 *            - xbox360 Controller that will be used for driving
 	 * @param squaredUnits
 	 *            - should units be squared, provides more fine control at lower
 	 *            speeds
