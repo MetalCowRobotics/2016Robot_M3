@@ -48,6 +48,10 @@ public class Robot extends IterativeRobot {
 	DriveMap drivemap;
 	Timer timer;
 
+        DigitalInput limitSwitchUp;
+        DigitalInput limitSwitchDwn;
+        
+        
 	// Camera Controller
 //	public static CowCamServer camServer;
 	
@@ -74,6 +78,11 @@ public class Robot extends IterativeRobot {
 		driverController = new Xbox360Controller(1); // AIRFLOController(1);
 		gunnerController = new Xbox360Controller(2);
 
+                
+                limitSwitchUp = new DigitalInput(14);
+                limitSwitchDwn = new DigitalInput(7);
+                
+                
 //		executor = Executors.newScheduledThreadPool(1);
 
 //		timer = new Timer();
@@ -183,9 +192,12 @@ public class Robot extends IterativeRobot {
 //                    intake.setRollerSpeed(0);
 //                }
 
-
-                drivemap.setLeftMotorSpeed(-driverController.getLY());
+                //This is the wheels code
+               drivemap.setLeftMotorSpeed(-driverController.getLY());
                 drivemap.setRightMotorSpeed(driverController.getRY());
+                
+                
+                //this is all the other code
                 
                 
                 
@@ -232,7 +244,46 @@ public class Robot extends IterativeRobot {
                     System.out.println("Shooter Stopped!");
                     shooter.setCurrentWheelSpeed(0);
                 }
-		
+          
+          
+          //double gunnerControllerLYvalue = gunnerController.getLY();
+          //if(gunnerControllerLYvalue==1){ //do this
+          
+          
+          if(gunnerController.getLY()==1){
+                    System.out.println("Pitch Turret Down!");
+                    turret.setRawPitchSpeed(-.5);
+         }else if(gunnerController.getLY()==-1){
+                    System.out.println("Pitch Turret Up!");
+                    turret.setRawPitchSpeed(.5);
+         }else{
+                    System.out.println("Pitch Turret Stopped!");
+                    turret.setRawPitchSpeed(0);
+         }
+          
+         if(gunnerController.getLX()==1) {
+             System.out.println("Turret spinning Left!");
+             turret.setRawYawSpeed(-.5);}
+             else if(gunnerController.getLX()==-1){
+                 System.out.println("Turret Spinning Right!");
+                 turret.setRawYawSpeed(.5);}
+             else {
+                 System.out.println("Turret Spinning Stopped!");
+                 turret.setRawYawSpeed(0);
+         }
+        
+        
+        ///encoder tests
+        //turret.getPitchEncPosition()
+        System.out.println(); //blank line
+        System.out.println("Shooter Pitch Encoder: "+turret.getPitchEncPosition());
+        System.out.println("Cam Encoder: "+shooter.getCamEncValue());
+        System.out.println("Flywheel: "+shooter.getFlyEncValue());
+        System.out.println("Turret Spin Encoder: "+turret.getYawEncPosition());
+        
+        System.out.println("Limit Switch Up: "+limitSwitchUp.get());
+        System.out.println("Limit Switch Dwn: "+limitSwitchDwn.get());
+        
 	}
 
-}
+}   

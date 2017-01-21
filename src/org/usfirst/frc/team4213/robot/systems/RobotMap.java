@@ -19,7 +19,7 @@ public final class RobotMap {
 
 	public final class Turret {
 		public final class Yaw_Motor {
-			public static final int MOTOR_CHANNEL = 1;
+			public static final int MOTOR_CHANNEL = 3;
 			public static final int ENC_CH_A = 8;
 			public static final int ENC_CH_B = 7;
 			
@@ -37,9 +37,9 @@ public final class RobotMap {
 		}
 
 		public final class Pitch_Motor {
-			public static final int MOTOR_CHANNEL = 2;
-                        public static final int ENC_CH_A = 4;
-			public static final int ENC_CH_B = 3;
+			public static final int MOTOR_CHANNEL = 4;
+                        public static final int ENC_CH_A = 3;
+			public static final int ENC_CH_B = 4;
                         
 			private static final int GEARSGR = 4;
 			private static final int PLANETARYGR = 188;
@@ -94,8 +94,8 @@ public final class RobotMap {
 
 		public static final int FLYWHEEL_CHANNEL = 5;
 		//public static final int FLYWHEEL_CHANNEL_2 = 5; //TODO: this needs follow up to make sure it is on a Y == 7
-		public static final int FLYWHEEL_ENC_CH_A = 6;
-		public static final int FLYWHEEL_ENC_CH_B = 5;
+		public static final int FLYWHEEL_ENC_CH_A = 5;
+		public static final int FLYWHEEL_ENC_CH_B = 6;
 		public static final double FLYWHEEL_PPR = 100;
 
 	}
