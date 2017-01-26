@@ -71,12 +71,11 @@ public class Robot extends IterativeRobot {
 	public void robotInit() {
                 System.out.println("HOI IM FLANK!!!!!!!!!!!!\n");
 
-		CowDash.load();
+                CowDash.load();
+
 
 		driverController = new Xbox360Controller(1); //CRio port 1, Dash port 0, because cRio is 1 index
 		gunnerController = new Xbox360Controller(2); //Crio port 2, dash port 1, because cRio is 2 index
-
-
                 
 //		executor = Executors.newScheduledThreadPool(1);
 
@@ -151,28 +150,7 @@ public class Robot extends IterativeRobot {
 
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         
 	/**
 	 * This function is called periodically during test mode Coders and
@@ -255,10 +233,10 @@ public class Robot extends IterativeRobot {
           
           if(gunnerController.getLY()==1){
                     //System.out.println("Pitch Turret Down!");
-                    turret.setRawPitchSpeed(-.5);
+                    turret.setRawPitchSpeed(.5);
          }else if(gunnerController.getLY()==-1){
                     //System.out.println("Pitch Turret Up!");
-                    turret.setRawPitchSpeed(.5);
+                    turret.setRawPitchSpeed(-.5);
          }else{
                     //System.out.println("Pitch Turret Stopped!");
                     turret.setRawPitchSpeed(0);

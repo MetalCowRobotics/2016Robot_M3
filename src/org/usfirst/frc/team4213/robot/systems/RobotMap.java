@@ -20,8 +20,8 @@ public final class RobotMap {
 	public final class Turret {
 		public final class Yaw_Motor {
 			public static final int MOTOR_CHANNEL = 3;
-			public static final int ENC_CH_A = 8;
-			public static final int ENC_CH_B = 9;
+			public static final int ENC_CH_A = 9;
+			public static final int ENC_CH_B = 8;
 			
                         public static final int STRING_POT = 0;
 			public static final int LIMIT_SWITCH = 14;
@@ -60,8 +60,6 @@ public final class RobotMap {
 	public final class Intake {
 		public static final int ROLLER_MOTOR_CHANNEL = 8;
 		public static final int PITCH_MOTOR_CHANNEL = 7;
-		//public static final int ENCODER_CH_A = 9;
-		//public static final int ENCODER_CH_B = 10;
 		public static final int LIMIT_SWITCH_UP = 14;
                 public static final int LIMIT_SWITCH_DOWN = 7;
 
@@ -103,7 +101,6 @@ public final class RobotMap {
 		public static final int FRAME_WIDTH = 320;
 		public static final int FRAME_HEIGHT = 240;
 		public final static double CAM_FOV_DIAG = 60;
-		public static final double DEG_PER_PX = CAM_FOV_DIAG
-				/ Math.sqrt(MathUtils.pow(FRAME_WIDTH, 2) + MathUtils.pow(FRAME_HEIGHT, 2));
+		public static final double DEG_PER_PX = CAM_FOV_DIAG / Math.sqrt(MathUtils.pow(FRAME_WIDTH, 2) + MathUtils.pow(FRAME_HEIGHT, 2));
 	}
 }

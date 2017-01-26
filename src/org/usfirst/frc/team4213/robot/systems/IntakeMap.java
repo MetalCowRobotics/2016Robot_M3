@@ -21,6 +21,8 @@ public class IntakeMap {
 	private Timer moveTimer;
 	private int vertState;
 	private int rollerState;
+        String[] raiseStates = {"Error", "DOWN", "UP", "RAISING", "LOWERING"};
+        String[] intakeStates = {"Error","INTAKE","EJECT","IDLE"};
 	
         public class IntakeRaiseState {
             public static final int DOWN = 1;
@@ -105,8 +107,8 @@ public class IntakeMap {
 
 	public void step() {
             
-            System.out.println("Roller State:" + rollerState);
-            System.out.println("Vert State:" + vertState);
+            System.out.println("Roller State:" + intakeStates[rollerState]);
+            System.out.println("Vert State:" + raiseStates[vertState]);
 		
 		switch (rollerState) {
 		case IntakeRollerState.EJECT:

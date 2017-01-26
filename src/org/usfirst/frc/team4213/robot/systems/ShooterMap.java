@@ -7,6 +7,7 @@ import org.usfirst.frc.team4213.robot.systems.RobotMap.Shooter;
 
 import edu.wpi.first.wpilibj.CounterBase;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.Timer;
@@ -157,10 +158,7 @@ public class ShooterMap {
 		switch (state) {
 		case ShooterState.INTAKE:
 			CowDash.setString("Shooter_state", "INTAKE");
-			// if (getSwitchHit()) {
-			// state = ShooterState.IDLE;
-			// break;
-			// } // FIXED: This really doesn't help, we found -Thad
+
 			camPID.setTarget(CowDash.getNum("Cam_Intake_Angle", -30));
 			setCurrentWheelSpeed(-1 * CowDash.getNum("Shooter_intakePower", 0.5));
 			break;

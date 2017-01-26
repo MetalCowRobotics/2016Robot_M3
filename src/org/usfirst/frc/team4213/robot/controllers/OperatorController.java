@@ -23,6 +23,7 @@ public class OperatorController {
 	private ShooterMap shooter;
 	private IntakeMap intake;
 	
+        String[] operatorStates = {"ERROR","IDLE","Intake_RAISED","Turret_Engaged","INTAKE","EJECT"};
         private class OperatorState {
             public static final int IDLE = 1;
             public static final int INTAKE_RAISED = 2;
@@ -88,14 +89,14 @@ public class OperatorController {
 		}
 
 		// Raise Arm
-		if (state == OperatorState.IDLE && controller.getButton(GamepadButton.START)) {
+		if (state == OperatorState.IDLE && controller.getButton(GamepadButton.X)) {
 			// DriverStation.reportError("\n RAISING", false);
 			intake.raise();
 			state = OperatorState.INTAKE_RAISED;
 		}
 
 		// Lower Arm
-		if (state == OperatorState.INTAKE_RAISED && controller.getButton(11)) { // Try Select Button ?
+		if (state == OperatorState.INTAKE_RAISED && controller.getButton(GamepadButton.A)) { // Try Select Button ?
 			// DriverStation.reportError("\n LOWERING", false);
 			idleAll();
 			intake.idleRoller();
@@ -167,7 +168,7 @@ public class OperatorController {
 		intake.step();
 
 		// TODO Stitch in vision
-
+                System.out.println("Operator State: " + operatorStates[state]);
 	}
 
 	public void manualTurretDrive(CowGamepad controller, double speedMod) {

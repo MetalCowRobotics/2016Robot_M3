@@ -25,6 +25,8 @@ public class TurretMap { // Replace these with the Constants
 
 	private int state;
         
+        String[] turretStates = {"ERROR","ENGAGING","IDLING","IDLE"};
+        
         public class TurretState {
             public final static int ENGAGING = 1;
             public final static int ENGAGED = 2;
