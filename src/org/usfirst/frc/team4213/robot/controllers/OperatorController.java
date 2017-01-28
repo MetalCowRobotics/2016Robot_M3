@@ -51,7 +51,11 @@ public class OperatorController {
 
 	public void drive(CowGamepad controller) {
 		turret.prestep();
-                
+                 
+                        //System.out.println("Shooter Pitch Encoder: "+turret.getPitchEncPosition());
+                        //System.out.println("Shooter Pitch Angle: "+turret.getPitchEncDistance());
+                        System.out.println("Cam Encoder: "+shooter.getCamEncValue());
+                        System.out.println("Cam Encoder Angle: "+shooter.getCamEncDist());
 		// INTAKE
 		if (state == OperatorState.IDLE && controller.getButton(GamepadButton.B)) {
                     System.out.println("I am Intaking!!!");
@@ -173,7 +177,7 @@ public class OperatorController {
 
 	public void manualTurretDrive(CowGamepad controller, double speedMod) {
 		if (Math.abs(controller.getLY()) > 0.15) {
-			turret.manualPitchOverride(-controller.getLY() * speedMod);
+			turret.manualPitchOverride(controller.getLY() * speedMod);
 		}
 		if (Math.abs(controller.getRX()) > 0.15) {
 			turret.manualYawOverride(controller.getRX() * speedMod);

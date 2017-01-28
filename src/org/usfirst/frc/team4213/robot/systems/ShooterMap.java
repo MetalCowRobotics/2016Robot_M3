@@ -46,13 +46,12 @@ public class ShooterMap {
 
 	public ShooterMap() {
 		state = ShooterState.IDLE;
-		CAM_ENCODER.setReverseDirection(true);
+		CAM_ENCODER.setReverseDirection(false);
 		armTimer = new Timer();
 		shootTimer = new Timer();
 		ejectTimer = new Timer();
 		flywheelSpeed = CowDash.getNum("Shooter_desiredFlywheelRPS", 80);
-
-		camPID = new PIDController("Shooter_Cam", 75, 0, 1.2, 1);
+		camPID = new PIDController("Shooter_Cam", 30, 0, 1, 1);
 		flywheelTBH = new TBHController("Shooter_Flywheel");
 		resetEnc();
 		camPID.setTarget(0);

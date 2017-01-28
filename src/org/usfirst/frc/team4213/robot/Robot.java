@@ -146,6 +146,20 @@ public class Robot extends IterativeRobot {
 	public void teleopPeriodic() {
 		ballSystems.drive(gunnerController);
 		driveTrain.drive(driverController, true);
+                
+                
+                        //System.out.println(); //blank line
+                       // System.out.println("Shooter Pitch Encoder: "+turret.getPitchEncPosition());
+                        //System.out.println("Shooter Pitch Angle: "+turret.getPitchEncDistance());
+                       // System.out.println("Cam Encoder Value: "+shooter.getCamEncValue());
+                        //System.out.println("Cam Encoder Distance: "+shooter.getCamEncDist());
+        
+                        //System.out.println("Flywheel: "+shooter.getFlyEncValue());
+                        //System.out.println("Turret Spin Encoder: "+turret.getYawEncPosition());
+        
+                        //System.out.println("Limit Switch Up: "+intake.LIMIT_SWITCH_UP_IS_OPEN.get());
+                        //System.out.println("Limit Switch Dwn: "+intake.LIMIT_SWITCH_DOWN_IS_OPEN.get());
+                
 	}
 
         
@@ -252,12 +266,14 @@ public class Robot extends IterativeRobot {
                 //System.out.println("Turret Spinning Stopped!");
                 turret.setRawYawSpeed(0);
          }
+         if (intake.LIMIT_SWITCH_UP_IS_OPEN.get()==true)
         
         
         ///encoder tests
         //turret.getPitchEncPosition()
         System.out.println(); //blank line
-        System.out.println("Shooter Pitch Encoder: "+turret.getPitchEncPosition());
+       /* System.out.println("Shooter Pitch Encoder: "+turret.getPitchEncPosition());
+        System.out.println("Shooter Pitch Angle: "+turret.getPitchEncDistance());*/
         
         System.out.println("Cam Encoder: "+shooter.getCamEncValue());
         System.out.println("Cam Encoder Angle: "+shooter.getCamEncDist());
@@ -265,8 +281,9 @@ public class Robot extends IterativeRobot {
         System.out.println("Flywheel: "+shooter.getFlyEncValue());
         System.out.println("Turret Spin Encoder: "+turret.getYawEncPosition());
         
-        System.out.println("Limit Switch Up: "+intake.LIMIT_SWITCH_UP.get());
-        System.out.println("Limit Switch Dwn: "+intake.LIMIT_SWITCH_DOWN.get());
+        System.out.println("Limit Switch Up: "+intake.LIMIT_SWITCH_UP_IS_OPEN.get());
+        System.out.println("Limit Switch Dwn: "+intake.LIMIT_SWITCH_DOWN_IS_OPEN.get());
+        
         
 	}
 

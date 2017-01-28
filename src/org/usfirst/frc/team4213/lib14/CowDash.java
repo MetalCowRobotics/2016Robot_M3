@@ -31,7 +31,7 @@ public class CowDash {
         values.put("Turret_Yaw::kp","100");
         values.put("Vision_Y_Med_Limit","4");
         values.put("Vision_Lum_Lo","115");
-        values.put("Shooter_Cam::kp","75");
+        values.put("Shooter_Cam::kp","0");
         values.put("Shooter_Cam::current","-9.682539682539682");
         values.put("Shooter_intakePower","0.75");
         values.put("RockWall","false");
@@ -134,7 +134,7 @@ public class CowDash {
         values.put("Shooter_Cam::ki","0");
         values.put("Vision_Hue_Hi","100");
         values.put("Shooter_Flywheel::currentPWM","1");
-        values.put("Shooter_Cam::kd","1.2");
+        values.put("Shooter_Cam::kd","0");
         values.put("Distance_From_Target","-47.479636889370695");
         values.put("RockWallFire","false");
         values.put("Shooter_camSpeed","-0.02380952380952386");

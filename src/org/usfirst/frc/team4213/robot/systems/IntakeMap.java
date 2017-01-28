@@ -15,8 +15,8 @@ public class IntakeMap {
 	public final SpeedController ROLLER_MOTOR = new Victor(Intake.ROLLER_MOTOR_CHANNEL);
 	public final SpeedController PITCH_MOTOR = new Victor(Intake.PITCH_MOTOR_CHANNEL);
 	//public Encoder PITCH_ENCODER = new Encoder(Intake.ENCODER_CH_A, Intake.ENCODER_CH_B, false, CounterBase.EncodingType.k4X);
-        public final DigitalInput LIMIT_SWITCH_UP = new DigitalInput(Intake.LIMIT_SWITCH_UP);
-        public final DigitalInput LIMIT_SWITCH_DOWN = new DigitalInput(Intake.LIMIT_SWITCH_DOWN);
+        public final DigitalInput LIMIT_SWITCH_UP_IS_OPEN = new DigitalInput(Intake.LIMIT_SWITCH_UP);
+        public final DigitalInput LIMIT_SWITCH_DOWN_IS_OPEN = new DigitalInput(Intake.LIMIT_SWITCH_DOWN);
 
 	private Timer moveTimer;
 	private int vertState;
@@ -130,14 +130,14 @@ public class IntakeMap {
 			setPitchSpeed(0);
 			break;
 		case IntakeRaiseState.RAISING:
-			if(moveTimer.get() < CowDash.getNum("Intake_Rise_Time", 8)){
+			if(moveTimer.get() < CowDash.getNum("Intake_Rise_Time", 8)&& LIMIT_SWITCH_UP_IS_OPEN.get()){
                         	setPitchSpeed(Intake.RAISE_SPEED);
 			}else{
 				vertState = IntakeRaiseState.UP;
 			}
 			break;
 		case IntakeRaiseState.LOWERING:
-			if(moveTimer.get() < CowDash.getNum("Intake_Lower_Time", 8)){
+			if(moveTimer.get() < CowDash.getNum("Intake_Lower_Time", 8) && LIMIT_SWITCH_DOWN_IS_OPEN.get()){
 				setPitchSpeed(Intake.LOWER_SPEED);
 			}else{
 				vertState = IntakeRaiseState.DOWN;
