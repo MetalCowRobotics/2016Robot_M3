@@ -75,7 +75,7 @@ public final class RobotMap {
 		public static final int RAISE_ANGLE = 100;
 		public static final double PID_P_VAL = 1.0 / 120;
 
-		public static final double RAISE_SPEED = 0.6;
+		public static final double RAISE_SPEED = 0.8;
 		public static final double LOWER_SPEED = -0.6;
 
 	}

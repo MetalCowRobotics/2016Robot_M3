@@ -1,22 +1,14 @@
 package org.usfirst.frc.team4213.robot.controllers;
 
-import org.usfirst.frc.team4213.lib14.CowDash;
 import org.usfirst.frc.team4213.lib14.CowGamepad;
-import org.usfirst.frc.team4213.lib14.CowMath;
 import org.usfirst.frc.team4213.lib14.GamepadButton;
-import org.usfirst.frc.team4213.lib14.PIDController;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap;
-import org.usfirst.frc.team4213.robot.systems.RobotMap;
 import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeRaiseState;
-import org.usfirst.frc.team4213.robot.systems.IntakeMap.IntakeRollerState;
-import org.usfirst.frc.team4213.robot.systems.RobotMap.Camera;
-import org.usfirst.frc.team4213.robot.systems.RobotMap.Turret;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap;
 import org.usfirst.frc.team4213.robot.systems.ShooterMap.ShooterState;
 import org.usfirst.frc.team4213.robot.systems.TurretMap;
 import org.usfirst.frc.team4213.robot.systems.TurretMap.TurretState;
 
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class OperatorController {
 	private TurretMap turret;
