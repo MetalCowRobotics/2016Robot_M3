@@ -28,9 +28,9 @@ public class DriveController {
                 
                 //System.out.println("Throttle: " + Double.toString(throttle) + "\n");
 		
-		if (controller.getButton(GamepadButton.A) || controller.getButton(GamepadButton.LT)){			//Go into half-arcade
-			driveMap.setLeftMotorSpeed(-controller.getLY() * throttle);
-			driveMap.setRightMotorSpeed(controller.getRY() * throttle);
+		if (controller.getButton(GamepadButton.LT)){			//Go into half-arcade
+			driveMap.setLeftMotorSpeed(0);
+			driveMap.setRightMotorSpeed(0);
 		} else {											//Stay in regular drive
 			driveMap.setLeftMotorSpeed(-controller.getLY() * throttle);
 			driveMap.setRightMotorSpeed(controller.getRY() * throttle);

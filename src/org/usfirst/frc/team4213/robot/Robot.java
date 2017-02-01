@@ -90,8 +90,9 @@ public class Robot extends IterativeRobot {
 	 */
 //	@Override
 	public void teleopPeriodic() {
-		ballSystems.drive(gunnerController);
-		driveTrain.drive(driverController, true);                
+                driveTrain.drive(driverController, true);  
+		ballSystems.drive(driverController);
+		            
 	}
 
         
@@ -99,19 +100,11 @@ public class Robot extends IterativeRobot {
 	 * This function is called periodically during test mode Coders and
 	 * Developers use this during their tests
 	 * 
-	 * But here it's for mechanical team to test their shit
+	 * But here it's for mechanical team to test their stuff, no cussing here
 	 */
 //	@Override
 	public void testPeriodic() {   //this is test mode button!!
-
-                //if the Turret is IDLE you can drive around.
-                System.out.println("LT Val: "+driverController.getLT());
-                if(driverController.getLT()==0){  //if it is zero let them drive
-                    driveTrain.drive(driverController, true); 
-                }else{ //if not zero turret will be up and they should not drive.
-                    drivemap.setLeftMotorSpeed(0);  //Stop left wheels
-                    drivemap.setRightMotorSpeed(0);  //Stop right wheels
-                }
+                driveTrain.drive(driverController, true); 
                 ballSystems.drive(driverController);  //this always needs to run, regardless of driving
                 
                 
