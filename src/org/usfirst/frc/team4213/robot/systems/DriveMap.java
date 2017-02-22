@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.Victor;
 public class DriveMap{
 
 	private static final SpeedController LEFT_MOTOR = new Victor(RobotMap.Drivetrain.LEFT_MOTOR_CHANNEL);
-	private static final SpeedController RIGHT_MOTOR = new Talon(RobotMap.Drivetrain.RIGHT_MOTOR_CHANNEL);
+	private static final SpeedController RIGHT_MOTOR = new Victor(RobotMap.Drivetrain.RIGHT_MOTOR_CHANNEL);
 
 //	/**
 //	 * This one will actually move the robot.
